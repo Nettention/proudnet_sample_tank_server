@@ -1,0 +1,39 @@
+FROM mcr.microsoft.com/dotnet/runtime:9.0 AS runtime
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    libssl3 \
+    libicu-dev \
+    lsof \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application files
+COPY bin/Debug/net9.0/ ./
+
+# Copy all Windows DLLs for reference
+COPY ProudNet_libs/ ./ProudNet_libs/
+
+# Special Linux setup - flatten directory structure for DLL loading
+RUN mkdir -p /app/dll-backup && \
+    cp -r /app/ProudNet_libs/* /app/ && \
+    cp -r /app/ProudNet_libs/linux/* /app/ && \
+    echo "Flattened directory for easier DLL loading" && \
+    ls -la /app
+
+# Set LD_LIBRARY_PATH so shared libraries can be found
+ENV LD_LIBRARY_PATH=/app:/app/ProudNet_libs/linux:$LD_LIBRARY_PATH
+
+# Open port
+EXPOSE 33334
+
+# Debugging command - run server with environment trace
+CMD echo "Starting with library path:" && \
+    echo $LD_LIBRARY_PATH && \
+    echo "Files in current directory:" && \
+    ls -la && \
+    echo "Starting application..." && \
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
+    dotnet TankServer.dll 

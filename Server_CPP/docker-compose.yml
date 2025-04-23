@@ -1,0 +1,10 @@
+services:
+  tank-server:
+    build:
+      context: ../..
+      dockerfile: tank_server/Server_CPP/Dockerfile
+    ports:
+      - "33334:33334/tcp"
+      - "33335:33335/tcp"
+    restart: unless-stopped
+    

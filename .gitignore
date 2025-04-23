@@ -1,0 +1,123 @@
+# C++ 관련
+# 컴파일된 객체 파일
+*.o
+*.obj
+*.ko
+*.elf
+
+# 빌드된 바이너리/라이브러리
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# CMake 관련
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Makefile
+*.cmake
+.cmake/
+build/
+bin/
+
+# 디버그 정보
+*.dSYM/
+*.pdb
+*.ilk
+*.exp
+*.idb
+
+# 비주얼 스튜디오 관련 파일
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+ipch/
+*.VC.db
+*.VC.opendb
+*.suo
+*.userosscache
+*.sdf
+*.opensdf
+*.aps
+*.ncb
+*.sbr
+
+# C# 관련
+# 빌드 결과물
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+# NuGet 패키지 폴더
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+*.nuget.props
+*.nuget.targets
+
+# .NET Core
+*.runtimeconfig.json
+*.runtimeconfig.dev.json
+
+# Visual Studio for Mac
+.vscode/
+.idea/
+*.userprefs
+mono_crash.*
+
+# 운영체제 관련 파일
+# Windows
+[Tt]humbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# 로그 파일
+*.log
+logs/
+
+# 로컬 설정 파일
+local.settings.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+
+# 커스텀 임시 파일들
+temp/
+tmp/
