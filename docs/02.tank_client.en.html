@@ -59,14 +59,15 @@
             <h3 class="heading-3">Required Software Installation</h3>
             <ol class="ordered-list">
                 <li class="list-item"><strong class="text-strong">Unity Hub</strong> and <strong class="text-strong">Unity Editor</strong> (2021.3 LTS or newer recommended)</li>
-                <li class="list-item"><strong class="text-strong">ProudNet Unity Package</strong> - Available from ProudNet installation</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity Tank Client Sample Package</strong> - Available from GitHub at https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99</li>
                 <li class="list-item"><strong class="text-strong">Completed Tank Server</strong> - From the previous server setup documentation</li>
             </ol>
 
-            <h3 class="heading-3">ProudNet Unity Package Location</h3>
-            <p class="paragraph">The ProudNet Unity package should be available at:</p>
+            <h3 class="heading-3">ProudNet Unity Tank Client Sample Package Location</h3>
+            <p class="paragraph">The ProudNet Unity Tank Client Sample Package can be downloaded from:</p>
             <div class="code-block">
-                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+File: tank_unity_client_proudnet_sample.unitypackage</pre>
             </div>
         </section>
 
@@ -230,8 +231,8 @@
         <section id="proudnet-unity-integration" class="md-section">
             <h2 class="heading-2">2. ProudNet Unity Integration</h2>
 
-            <h3 class="heading-3">Step 1: Import ProudNet Unity Package</h3>
-            <p class="paragraph">Import the ProudNet Unity package to add networking capabilities:</p>
+            <h3 class="heading-3">Step 1: Import ProudNet Unity Tank Client Sample Package</h3>
+            <p class="paragraph">Import the ProudNet Unity Tank Client Sample Package to add networking capabilities:</p>
 
             <p class="paragraph"><strong class="text-strong">Expected Package File:</strong></p>
             <div class="code-block">
@@ -240,15 +241,16 @@
 
             <p class="paragraph"><strong class="text-strong">Import Package in Unity:</strong></p>
             <ol class="ordered-list">
+                <li class="list-item">Download <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> from the GitHub release</li>
                 <li class="list-item">In Unity Editor, go to <strong class="text-strong">Assets > Import Package > Custom Package...</strong></li>
-                <li class="list-item">Navigate to <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code></li>
+                <li class="list-item">Navigate to the downloaded <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code></li>
                 <li class="list-item">Select the package file and click <strong class="text-strong">"Open"</strong></li>
                 <li class="list-item">In the import dialog, select <strong class="text-strong">"All"</strong> to import all components</li>
                 <li class="list-item">Click <strong class="text-strong">"Import"</strong> to add ProudNet to the project</li>
             </ol>
 
-            <img src="img/image_003.png" alt="ProudNet Unity Package Import" class="image">
-            <p class="image-caption">ProudNet Unity Package Import</p>
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">ProudNet Unity Tank Client Sample Package Import</p>
 
             <h3 class="heading-3">Step 2: Verify ProudNet Installation</h3>
             <p class="paragraph">Check that ProudNet components are properly integrated:</p>
