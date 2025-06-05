@@ -237,8 +237,8 @@ void TankServer::OnClientJoin(::Proud::CNetClientInfo* clientInfo) {
             tankProxy.OnTankHealthUpdated(existingClient.first, rmiCtx, (int)hostId, 
                                         defaultHealth, defaultMaxHealth);
             
-            DebugLog("Notifying existing client " + std::to_string(static_cast<int>(existingClient.first)) + " about new player: ID=" + std::to_string(static_cast<int>(hostId)) 
-                 + ", Type=" + std::to_string(defaultTankType) + ", Health=" + std::to_string(defaultHealth) + "/" + std::to_string(defaultMaxHealth));
+            // DebugLog("Notifying existing client " + std::to_string(static_cast<int>(existingClient.first)) + " about new player: ID=" + std::to_string(static_cast<int>(hostId)) 
+                //  + ", Type=" + std::to_string(defaultTankType) + ", Health=" + std::to_string(defaultHealth) + "/" + std::to_string(defaultMaxHealth));
         }
     }
     
@@ -280,6 +280,7 @@ void TankServer::UpdateP2PGroup() {
     // 기존 그룹 제거
     if (gameP2PGroupID != ::Proud::HostID_None) {
         server->DestroyP2PGroup(gameP2PGroupID);
+        gameP2PGroupID = ::Proud::HostID_None;
     }
     
     // 새 그룹 생성 (2명 이상일 때)
@@ -291,8 +292,21 @@ void TankServer::UpdateP2PGroup() {
         
         // Sample 코드 참조 - ByteArray 없이 호출
         gameP2PGroupID = server->CreateP2PGroup(&clients[0], clients.size());
-        DebugLog("P2P group created with " + std::to_string(tanks.size()) + " members");
+        DebugLog("P2P group created with " + std::to_string(tanks.size()) + " members, Group ID: " + std::to_string(static_cast<int>(gameP2PGroupID)));
+        
+        // 모든 클라이언트에게 P2P 그룹 ID 알림
+        for (const auto& clientPair : tanks) {
+            ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
+            
+            // P2PMessage에 그룹 ID 정보 전송
+            ::Proud::String groupInfoMsg;
+            groupInfoMsg.Format(_PNT("P2P_GROUP_INFO:%d"), static_cast<int>(gameP2PGroupID));
+            tankProxy.P2PMessage(clientPair.first, rmiCtx, groupInfoMsg);
+            
+            // DebugLog("Sent P2P group info to client " + std::to_string(static_cast<int>(clientPair.first)) + ": " + std::string(groupInfoMsg));
+        }
     } else {
+        DebugLog("Not enough clients to create P2P group (need at least 2)");
         gameP2PGroupID = ::Proud::HostID_None;
     }
 }
@@ -388,7 +402,7 @@ bool TankServer::SendTankType(::Proud::HostID remote, ::Proud::RmiContext& rmiCo
     // 해당 클라이언트의 탱크 정보 업데이트
     if (tanks.find(remote) != tanks.end()) {
         tanks[remote].tankType = tankType;
-        DebugLog("Tank type updated for client " + std::to_string(static_cast<int>(remote)) + ": Type=" + std::to_string(tankType));
+        // DebugLog("Tank type updated for client " + std::to_string(static_cast<int>(remote)) + ": Type=" + std::to_string(tankType));
         
         // 모든 다른 클라이언트에게 이 클라이언트의 탱크 타입 알림
         for (const auto& clientPair : tanks) {
@@ -396,7 +410,7 @@ bool TankServer::SendTankType(::Proud::HostID remote, ::Proud::RmiContext& rmiCo
                 ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
                 
                 // OnPlayerJoined 메시지를 통해 탱크 타입 정보 전송
-                DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about tank type of client " + std::to_string(static_cast<int>(remote)));
+                // DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about tank type of client " + std::to_string(static_cast<int>(remote)));
                 tankProxy.OnPlayerJoined(clientPair.first, rmiCtx, (int)remote, 
                                          tanks[remote].posX, tanks[remote].posY, tankType);
             }
@@ -436,7 +450,7 @@ bool TankServer::SendTankHealthUpdated(::Proud::HostID remote, ::Proud::RmiConte
             if (clientPair.first != remote) {
                 ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
                 
-                DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about health of client " + std::to_string(static_cast<int>(remote)));
+                // DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about health of client " + std::to_string(static_cast<int>(remote)));
                 tankProxy.OnTankHealthUpdated(clientPair.first, rmiCtx, (int)remote, 
                                               currentHealth, maxHealth);
             }
@@ -474,7 +488,7 @@ bool TankServer::SendTankDestroyed(::Proud::HostID remote, ::Proud::RmiContext& 
             if (clientPair.first != remote) {
                 ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
                 
-                DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about destruction of client " + std::to_string(static_cast<int>(remote)));
+                // DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about destruction of client " + std::to_string(static_cast<int>(remote)));
                 tankProxy.OnTankDestroyed(clientPair.first, rmiCtx, (int)remote, destroyedById);
             }
         }
@@ -517,7 +531,7 @@ bool TankServer::SendTankSpawned(::Proud::HostID remote, ::Proud::RmiContext& rm
             if (clientPair.first != remote) {
                 ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
                 
-                DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about spawn of client " + std::to_string(static_cast<int>(remote)));
+                // DebugLog("Notifying client " + std::to_string(static_cast<int>(clientPair.first)) + " about spawn of client " + std::to_string(static_cast<int>(remote)));
                 tankProxy.OnTankSpawned(clientPair.first, rmiCtx, (int)remote, 
                                          posX, posY, direction, tankType, initialHealth);
             }
@@ -537,8 +551,27 @@ DEFRMI_Tank_P2PMessage(TankServer)
 bool TankServer::P2PMessage(::Proud::HostID remote, ::Proud::RmiContext& rmiContext, const ::Proud::String& message)
 #endif
 {
-    // Proud::String에서 변환하지 않고 바로 메시지 표시
-    DebugLog("P2P message from client " + std::to_string(static_cast<int>(remote)) + ": <message content omitted>");
+    std::lock_guard<std::mutex> lock(mutex);
+    
+    // ProudNet::String을 C++ std::string으로 변환
+    std::string messageStr = std::string(message);
+    DebugLog("P2PMessage from client " + std::to_string(static_cast<int>(remote)) + ": " + messageStr);
+    
+    // P2P 그룹이 있는 경우 해당 클라이언트 제외한 모든 멤버에게 릴레이
+    if (gameP2PGroupID != ::Proud::HostID_None && messageStr.find("P2P_GROUP_INFO:") == std::string::npos) {
+        // 메시지 보낸 클라이언트를 제외한 모든 클라이언트에게 릴레이
+        for (const auto& clientPair : tanks) {
+            if (clientPair.first != remote) {
+                ::Proud::RmiContext rmiCtx = CreateServerRmiContext();
+                ::Proud::String relayedMessage;
+                relayedMessage.Format(_PNT("RELAY_FROM_%d:%s"), static_cast<int>(remote), message.GetString());
+                
+                tankProxy.P2PMessage(clientPair.first, rmiCtx, relayedMessage);
+                DebugLog("Relayed P2P message to client " + std::to_string(static_cast<int>(clientPair.first)) + ": " + std::string(relayedMessage));
+            }
+        }
+    }
+    
     return true;
 }
 
@@ -700,7 +733,7 @@ void TankServer::ApplyDamageToTank(const string& input) {
                 }
                 
                 // 체력 감소
-                tank.currentHealth = ::std::max(0.0f, tank.currentHealth - damageAmount);
+                tank.currentHealth = std::max(0.0f, tank.currentHealth - damageAmount);
                 
                 // 파괴 여부 확인
                 bool wasDestroyed = tank.currentHealth <= 0;
@@ -767,7 +800,7 @@ void TankServer::HealTank(const string& input) {
                 
                 // 체력 회복 (최대 체력 초과하지 않도록)
                 float oldHealth = tank.currentHealth;
-                tank.currentHealth = ::std::min(tank.maxHealth, tank.currentHealth + healAmount);
+                tank.currentHealth = std::min(tank.maxHealth, tank.currentHealth + healAmount);
                 float actualHeal = tank.currentHealth - oldHealth;
                 
                 // 클라이언트에게 체력 업데이트 전송

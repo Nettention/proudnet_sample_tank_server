@@ -5,7 +5,7 @@ using Nettention.Proud;
 
 namespace TankGame
 {
-    // 간단한 탱크 정보를 저장하는 클래스
+    // Simple class to store tank information
     public class TankInfo
     {
         public int ClientId { get; set; }
@@ -13,9 +13,9 @@ namespace TankGame
         public float PosY { get; set; }
         public float Direction { get; set; }
         public int TankType { get; set; }
-        public float CurrentHealth { get; set; } // 추가: 현재 체력
-        public float MaxHealth { get; set; } // 추가: 최대 체력
-        public bool IsDestroyed { get; set; } // 추가: 파괴 상태
+        public float CurrentHealth { get; set; } // Added: Current health
+        public float MaxHealth { get; set; } // Added: Maximum health
+        public bool IsDestroyed { get; set; } // Added: Destruction status
 
         public TankInfo(int clientId, float posX = 0, float posY = 0, float direction = 0, int tankType = 0, float maxHealth = 100f)
         {
@@ -25,97 +25,104 @@ namespace TankGame
             Direction = direction;
             TankType = tankType;
             MaxHealth = maxHealth;
-            CurrentHealth = maxHealth; // 초기 체력은 최대 체력으로 설정
+            CurrentHealth = maxHealth; // Initial health is set to maximum health
             IsDestroyed = false;
         }
     }
 
-    // 간단한 탱크 게임 클라이언트
+    // Simple tank game client
     class TankClient
     {
-        // 동기화 객체 (멀티스레드 보호용)
+        // Synchronization object (for multi-thread protection)
         private object syncObj = new object();
 
-        // RMI Stub 및 Proxy 인스턴스
+        // RMI Stub and Proxy instances
         private Tank.Stub tankStub = new Tank.Stub();
         private Tank.Proxy tankProxy = new Tank.Proxy();
 
-        // 네트워크 클라이언트 인스턴스
+        // Network client instance
         private NetClient netClient;
 
-        // 다른 탱크들의 정보
+        // Information of other tanks
         private Dictionary<int, TankInfo> otherTanks = new Dictionary<int, TankInfo>();
 
-        // 로컬 탱크 정보
+        // Local tank information
         private TankInfo localTank;
-        
-        // 연결 상태
+
+        // Connection status
         private bool isConnected = false;
-        
-        // 종료 플래그
+
+        // Exit flag
         private bool isRunning = true;
-        
-        // 마지막으로 P2P 그룹에 참가한 그룹 ID
+
+        // Last joined P2P group ID
         private HostID lastJoinedP2PGroupID = HostID.HostID_None;
+
+        // Store other client IDs in P2P group
+        private List<HostID> p2pGroupMembers = new List<HostID>();
+
+        // P2P message UI history
+        private List<string> messageHistory = new List<string>();
+        private const int MAX_MESSAGE_HISTORY = 10;
 
         private bool isAutoMove = false;
         private Thread autoMoveThread;
         private Random random = new Random();
 
-        // 초기화 함수
+        // Initialization function
         private void Initialize()
         {
-            // 네트워크 클라이언트 생성
+            // Create network client
             netClient = new NetClient();
-            
-            // 로컬 탱크 초기화
-            localTank = new TankInfo(0); // 임시 ID, 서버 연결 후 업데이트됨
-            
-            // 스텁 초기화
+
+            // Initialize local tank
+            localTank = new TankInfo(0); // Temporary ID, will be updated after server connection
+
+            // Initialize stub
             InitializeStub();
-            
-            // 프록시와 스텁을 클라이언트에 연결
+
+            // Attach proxy and stub to client
             netClient.AttachProxy(tankProxy);
             netClient.AttachStub(tankStub);
-            
-            // 서버 연결 완료 핸들러
+
+            // Server connection complete handler
             netClient.JoinServerCompleteHandler = OnJoinServerComplete;
-            
-            // 서버 연결 해제 핸들러
+
+            // Server disconnection handler
             netClient.LeaveServerHandler = OnLeaveServer;
-            
-            // P2P 멤버 참가 핸들러
+
+            // P2P member join handler
             netClient.P2PMemberJoinHandler = OnP2PMemberJoin;
-            
-            // P2P 멤버 퇴장 핸들러
+
+            // P2P member leave handler
             netClient.P2PMemberLeaveHandler = OnP2PMemberLeave;
         }
 
-        // 스텁 초기화
+        // Initialize stub
         private void InitializeStub()
         {
-            // 위치 업데이트 처리
+            // Handle position updates
             tankStub.OnTankPositionUpdated = (remote, rmiContext, clientId, posX, posY, direction) =>
             {
                 lock (syncObj)
                 {
                     if (clientId == (int)netClient.GetLocalHostID())
                     {
-                        // 자신의 탱크 정보 업데이트
+                        // Update own tank information
                         localTank.PosX = posX;
                         localTank.PosY = posY;
                         localTank.Direction = direction;
                     }
                     else
                     {
-                        // 다른 탱크 정보 업데이트
+                        // Update other tank information
                         if (otherTanks.ContainsKey(clientId))
                         {
                             otherTanks[clientId].PosX = posX;
                             otherTanks[clientId].PosY = posY;
                             otherTanks[clientId].Direction = direction;
-                            
-                            // 다른 탱크의 위치 변경 정보를 콘솔에 출력
+
+                            // Output other tank's position change information to console
                             Console.WriteLine($">>> OTHER TANK {clientId} MOVED TO ({posX},{posY}) dir={direction}");
                         }
                     }
@@ -123,53 +130,53 @@ namespace TankGame
                 return true;
             };
 
-            // 총알 발사 처리
+            // Handle bullet firing
             tankStub.OnSpawnBullet = (remote, rmiContext, clientId, shooterId, posX, posY, direction, launchForce, fireX, fireY, fireZ) =>
             {
                 lock (syncObj)
                 {
-                    // 총알 발사 정보 출력
+                    // Output bullet firing information
                     Console.WriteLine($"OnSpawnBullet: Tank {clientId} fired from ({posX},{posY}) dir={direction}, force={launchForce}");
                     Console.WriteLine($"Fire position: ({fireX}, {fireY}, {fireZ}), shooter ID={shooterId}");
-                    
-                    // 추가 로직이 필요하면 여기에 구현
+
+                    // Implement additional logic here if needed
                 }
                 return true;
             };
 
-            // 플레이어 참가 처리
+            // Handle player join
             tankStub.OnPlayerJoined = (remote, rmiContext, clientId, posX, posY, tankType) =>
             {
                 lock (syncObj)
                 {
-                    // 새 탱크 정보 저장 (자신이 아닌 경우)
+                    // Store new tank information (if not self)
                     if (clientId != (int)netClient.GetLocalHostID())
                     {
                         TankInfo newTank = new TankInfo(clientId, posX, posY, 0, tankType);
                         otherTanks[clientId] = newTank;
-                        
+
                         Console.WriteLine($"OnPlayerJoined: Tank {clientId} joined at ({posX},{posY}) with tank type {tankType}");
                     }
                     else
                     {
-                        // 자신의 초기 위치 설정
+                        // Set own initial position
                         localTank.ClientId = clientId;
                         localTank.PosX = posX;
                         localTank.PosY = posY;
                         localTank.TankType = tankType;
-                        
+
                         Console.WriteLine($"My tank spawned at ({posX},{posY}) with tank type {tankType}");
                     }
                 }
                 return true;
             };
 
-            // 플레이어 퇴장 처리
+            // Handle player leave
             tankStub.OnPlayerLeft = (remote, rmiContext, clientId) =>
             {
                 lock (syncObj)
                 {
-                    // 퇴장한 탱크 정보 제거
+                    // Remove left tank information
                     if (otherTanks.ContainsKey(clientId))
                     {
                         otherTanks.Remove(clientId);
@@ -179,89 +186,135 @@ namespace TankGame
                 return true;
             };
 
-            // P2P 메시지 처리
+            // Handle P2P messages
             tankStub.P2PMessage = (remote, rmiContext, message) =>
             {
                 lock (syncObj)
                 {
-                    // P2P 메시지 출력
-                    Console.WriteLine($"P2PMessage from {remote}: {message}");
+                    if (message.StartsWith("P2P_GROUP_INFO:"))
+                    {
+                        // Receive P2P group information from server
+                        string[] parts = message.Split(':');
+                        if (parts.Length >= 2)
+                        {
+                            try
+                            {
+                                HostID groupID = HostID.HostID_None;
+                                lastJoinedP2PGroupID = groupID;
+                                Console.WriteLine($"P2P: Received group info, Group ID: {parts[1]}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error parsing P2P group info: {ex.Message}");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("RELAY_FROM_"))
+                    {
+                        // Handle server relay P2P message
+                        int start = message.IndexOf(':');
+                        if (start != -1)
+                        {
+                            string sourceInfo = message.Substring(11, start - 11); // From after "RELAY_FROM_" to before colon
+                            string actualMessage = message.Substring(start + 1);
+
+                            string displayMsg = $"P2P Message from Client ID {sourceInfo} (relayed): {actualMessage}";
+                            Console.WriteLine(displayMsg);
+
+                            // Add to message history
+                            AddToMessageHistory(displayMsg);
+                        }
+                        else
+                        {
+                            // Invalid message format
+                            Console.WriteLine($"Invalid relayed P2P message format: {message}");
+                        }
+                    }
+                    else
+                    {
+                        // Direct P2P message received
+                        string displayMsg = $"P2P Message from Client ID {remote.ToString()} (direct): {message}";
+                        Console.WriteLine(displayMsg);
+
+                        // Add to message history
+                        AddToMessageHistory(displayMsg);
+                    }
                 }
                 return true;
             };
 
-            // 탱크 타입 요청 처리
+            // Handle tank type request
             tankStub.SendTankType = (remote, rmiContext, tankType) =>
             {
                 lock (syncObj)
                 {
                     Console.WriteLine($"SendTankType from client {remote}: tank type {tankType}");
-                    
-                    // 해당 클라이언트의 탱크 타입 저장을 위한 추가 로직 (서버에서 저장됨)
-                    // 클라이언트에서는 이 정보를 받아도 별도로 처리할 필요가 없음
+
+                    // Additional logic for storing tank type of the client (stored on server)
+                    // Client doesn't need to process this information separately
                 }
                 return true;
             };
-            
-            // 탱크 체력 업데이트 처리
+
+            // Handle tank health update
             tankStub.OnTankHealthUpdated = (remote, rmiContext, clientId, currentHealth, maxHealth) =>
             {
                 lock (syncObj)
                 {
                     Console.WriteLine($"OnTankHealthUpdated: Tank {clientId} health: {currentHealth}/{maxHealth}");
-                    
+
                     if (clientId == (int)netClient.GetLocalHostID())
                     {
-                        // 자신의 탱크 체력 업데이트
+                        // Update own tank health
                         localTank.CurrentHealth = currentHealth;
                         localTank.MaxHealth = maxHealth;
                         Console.WriteLine($"My tank health updated: {currentHealth}/{maxHealth}");
                     }
                     else if (otherTanks.ContainsKey(clientId))
                     {
-                        // 다른 탱크 체력 업데이트
+                        // Update other tank health
                         otherTanks[clientId].CurrentHealth = currentHealth;
                         otherTanks[clientId].MaxHealth = maxHealth;
                     }
                 }
                 return true;
             };
-            
-            // 탱크 파괴 이벤트 처리
+
+            // Handle tank destruction event
             tankStub.OnTankDestroyed = (remote, rmiContext, clientId, destroyedById) =>
             {
                 lock (syncObj)
                 {
                     string destroyedByText = destroyedById > 0 ? $"by tank {destroyedById}" : "by environment";
                     Console.WriteLine($"OnTankDestroyed: Tank {clientId} was destroyed {destroyedByText}");
-                    
+
                     if (clientId == (int)netClient.GetLocalHostID())
                     {
-                        // 자신의 탱크가 파괴됨
+                        // Own tank was destroyed
                         localTank.IsDestroyed = true;
                         localTank.CurrentHealth = 0;
                         Console.WriteLine($"MY TANK WAS DESTROYED {destroyedByText}!");
                     }
                     else if (otherTanks.ContainsKey(clientId))
                     {
-                        // 다른 탱크가 파괴됨
+                        // Other tank was destroyed
                         otherTanks[clientId].IsDestroyed = true;
                         otherTanks[clientId].CurrentHealth = 0;
                     }
                 }
                 return true;
             };
-            
-            // 탱크 생성/리스폰 이벤트 처리
+
+            // Handle tank creation/respawn event
             tankStub.OnTankSpawned = (remote, rmiContext, clientId, posX, posY, direction, tankType, initialHealth) =>
             {
                 lock (syncObj)
                 {
                     Console.WriteLine($"OnTankSpawned: Tank {clientId} spawned at ({posX},{posY}) with type {tankType} and health {initialHealth}");
-                    
+
                     if (clientId == (int)netClient.GetLocalHostID())
                     {
-                        // 자신의 탱크 생성/리스폰
+                        // Own tank creation/respawn
                         localTank.PosX = posX;
                         localTank.PosY = posY;
                         localTank.Direction = direction;
@@ -272,10 +325,10 @@ namespace TankGame
                     }
                     else
                     {
-                        // 다른 탱크 생성/리스폰
+                        // Other tank creation/respawn
                         if (otherTanks.ContainsKey(clientId))
                         {
-                            // 기존 탱크 정보 업데이트
+                            // Update existing tank information
                             otherTanks[clientId].PosX = posX;
                             otherTanks[clientId].PosY = posY;
                             otherTanks[clientId].Direction = direction;
@@ -285,7 +338,7 @@ namespace TankGame
                         }
                         else
                         {
-                            // 새 탱크 정보 생성
+                            // Create new tank information
                             TankInfo newTank = new TankInfo(clientId, posX, posY, direction, tankType, initialHealth);
                             otherTanks[clientId] = newTank;
                         }
@@ -295,31 +348,31 @@ namespace TankGame
             };
         }
 
-        // 서버 연결 완료 처리
+        // Handle server connection complete
         private void OnJoinServerComplete(ErrorInfo info, ByteArray replyFromServer)
         {
             lock (syncObj)
             {
                 if (info.errorType == ErrorType.Ok)
                 {
-                    // 연결 성공
+                    // Connection successful
                     isConnected = true;
-                    
-                    // 자신의 ID 업데이트
+
+                    // Update own ID
                     localTank.ClientId = (int)netClient.GetLocalHostID();
-                    
+
                     Console.WriteLine($"Connected to server. My ID: {localTank.ClientId}");
                 }
                 else
                 {
-                    // 연결 실패
+                    // Connection failed
                     Console.WriteLine($"Failed to connect to server: {info.comment}");
                     isRunning = false;
                 }
             }
         }
 
-        // 서버 연결 해제 처리
+        // Handle server disconnection
         private void OnLeaveServer(ErrorInfo errorInfo)
         {
             lock (syncObj)
@@ -330,166 +383,267 @@ namespace TankGame
             }
         }
 
-        // P2P 멤버 참가 처리
+        // Handle P2P member join
         private void OnP2PMemberJoin(HostID memberHostID, HostID groupHostID, int memberCount, ByteArray customField)
         {
             lock (syncObj)
             {
                 Console.WriteLine($"P2P: Member {memberHostID} joined group {groupHostID}");
                 lastJoinedP2PGroupID = groupHostID;
+
+                // Add to member list
+                if (!p2pGroupMembers.Contains(memberHostID) && memberHostID != netClient.GetLocalHostID())
+                {
+                    p2pGroupMembers.Add(memberHostID);
+                    Console.WriteLine($"P2P: Added member {memberHostID} to group member list");
+                }
             }
         }
 
-        // P2P 멤버 퇴장 처리
+        // Handle P2P member leave
         private void OnP2PMemberLeave(HostID memberHostID, HostID groupHostID, int memberCount)
         {
             lock (syncObj)
             {
                 Console.WriteLine($"P2P: Member {memberHostID} left group {groupHostID}");
+
+                // Remove from member list
+                if (p2pGroupMembers.Contains(memberHostID))
+                {
+                    p2pGroupMembers.Remove(memberHostID);
+                    Console.WriteLine($"P2P: Removed member {memberHostID} from group member list");
+                }
+
+                // If no one is in the group, reset group ID
+                if (memberCount <= 1)
+                {
+                    lastJoinedP2PGroupID = HostID.HostID_None;
+                    p2pGroupMembers.Clear();
+                    Console.WriteLine("P2P: Group is now empty or has only this client");
+                }
             }
         }
 
-        // 서버 연결
+        // Connect to server
         private void ConnectToServer()
         {
-            // 연결 파라미터 설정
+            // Set connection parameters
             NetConnectionParam param = new NetConnectionParam();
             param.protocolVersion.Set(Vars.m_Version);
             param.serverIP = Vars.ServerIP;
             param.serverPort = (ushort)Vars.ServerPort;
-            
-            // 서버 연결 시도
+
+            // Attempt server connection
             netClient.Connect(param);
             Console.WriteLine("Connecting to server...");
         }
 
-        // 탱크 이동 요청
+        // Request tank movement
         private void RequestMove(float posX, float posY, float direction)
         {
             if (isConnected)
             {
-                // 서버에 이동 요청
-                tankProxy.SendMove(HostID.HostID_Server, RmiContext.ReliableSend, 
+
+
+
+                // Send movement request to server
+                tankProxy.SendMove(HostID.HostID_Server, RmiContext.ReliableSend,
                     posX, posY, direction);
-                
-                // 로컬 정보 업데이트 (서버에서 다시 갱신될 수 있음)
+
+
+
+
+                // Update local information (may be updated again by server)
                 localTank.PosX = posX;
                 localTank.PosY = posY;
                 localTank.Direction = direction;
             }
         }
 
-        // 발사 요청
+        // Request fire
         private void RequestFire(float direction, float launchForce = 25.0f)
         {
             if (isConnected)
             {
-                // 발사 위치와 파워 설정 (실제 게임에서는 이 값들이 현재 탱크 상태에서 계산됨)
+                // Set fire position and power (in actual game, these values are calculated from current tank state)
                 float fireX = localTank.PosX;
-                float fireY = 1.0f; // 지상에서 약간 높이
-                float fireZ = localTank.PosY; // 주의: 2D 게임에서 Z축은 클라이언트 Y축과 매핑될 수 있음
-                
-                // 서버에 발사 요청 (발사자 ID, 방향, 발사 힘, 발사 위치 포함)
-                tankProxy.SendFire(HostID.HostID_Server, RmiContext.ReliableSend, 
+                float fireY = 1.0f; // Slightly above ground
+                float fireZ = localTank.PosY; // Note: In 2D game, Z-axis may be mapped to client Y-axis
+
+                // Send fire request to server (including shooter ID, direction, launch force, fire position)
+                tankProxy.SendFire(HostID.HostID_Server, RmiContext.ReliableSend,
                     localTank.ClientId, direction, launchForce, fireX, fireY, fireZ);
-                
+
                 Console.WriteLine($"Fire request sent: direction={direction}, force={launchForce}, position=({fireX}, {fireY}, {fireZ})");
             }
         }
 
-        // 체력 업데이트 요청
+        // Send health update request
         private void SendHealthUpdate(float currentHealth, float maxHealth)
         {
             if (isConnected)
             {
-                // 서버에 체력 업데이트 요청 전송
-                tankProxy.SendTankHealthUpdated(HostID.HostID_Server, RmiContext.ReliableSend, 
+                // Send health update request to server
+                tankProxy.SendTankHealthUpdated(HostID.HostID_Server, RmiContext.ReliableSend,
                     currentHealth, maxHealth);
-                
-                // 로컬 정보 업데이트
+
+                // Update local information
                 localTank.CurrentHealth = currentHealth;
                 localTank.MaxHealth = maxHealth;
-                
+
                 Console.WriteLine($"Health update sent: {currentHealth}/{maxHealth}");
             }
         }
-        
-        // 탱크 파괴 이벤트 전송
+
+        // Send tank destruction event
         private void SendTankDestroyed(int destroyedById)
         {
             if (isConnected)
             {
-                // 서버에 탱크 파괴 이벤트 전송
-                tankProxy.SendTankDestroyed(HostID.HostID_Server, RmiContext.ReliableSend, 
+                // Send tank destruction event to server
+                tankProxy.SendTankDestroyed(HostID.HostID_Server, RmiContext.ReliableSend,
                     destroyedById);
-                
-                // 로컬 상태 업데이트
+
+                // Update local state
                 localTank.IsDestroyed = true;
                 localTank.CurrentHealth = 0;
-                
+
                 string destroyedByText = destroyedById > 0 ? $"by tank {destroyedById}" : "by environment";
                 Console.WriteLine($"Tank destroyed event sent: destroyed {destroyedByText}");
             }
         }
-        
-        // 탱크 생성/리스폰 메시지 전송
+
+        // Send tank creation/respawn message
         private void SendTankSpawn(float posX, float posY, float direction, int tankType, float initialHealth)
         {
             if (isConnected)
             {
-                // 서버에 탱크 생성/리스폰 메시지 전송
-                tankProxy.SendTankSpawned(HostID.HostID_Server, RmiContext.ReliableSend, 
+                // Send tank creation/respawn message to server
+                tankProxy.SendTankSpawned(HostID.HostID_Server, RmiContext.ReliableSend,
                     posX, posY, direction, tankType, initialHealth);
-                
-                // 로컬 상태 업데이트
+
+                // Update local state
                 localTank.PosX = posX;
                 localTank.PosY = posY;
                 localTank.Direction = direction;
                 localTank.TankType = tankType;
                 localTank.CurrentHealth = initialHealth;
                 localTank.IsDestroyed = false;
-                
+
                 Console.WriteLine($"Tank spawn message sent: position=({posX},{posY}), type={tankType}, health={initialHealth}");
             }
         }
 
-        // P2P 메시지 전송
+        // Send P2P message
         private void SendP2PMessage(string message)
         {
-            if (isConnected && lastJoinedP2PGroupID != HostID.HostID_None)
+            if (isConnected)
             {
-                // P2P 그룹 멤버에게 메시지 전송
-                RmiContext context = RmiContext.ReliableSend;
-                context.enableLoopback = false; // 자신에게는 전송하지 않음
-                
-                tankProxy.P2PMessage(lastJoinedP2PGroupID, context, message);
+                if (lastJoinedP2PGroupID != HostID.HostID_None)
+                {
+                    // If P2P group exists, send message directly to group
+                    RmiContext context = RmiContext.ReliableSend;
+                    context.enableLoopback = false; // Don't send to self
+
+                    tankProxy.P2PMessage(lastJoinedP2PGroupID, context, message);
+                    Console.WriteLine($"P2P message sent directly to group {lastJoinedP2PGroupID}: {message}");
+
+                    // Add own message to message history
+                    AddToMessageHistory($"Me: {message}");
+                }
+                else
+                {
+                    // If no P2P group, send message through server
+                    tankProxy.P2PMessage(HostID.HostID_Server, RmiContext.ReliableSend, message);
+                    Console.WriteLine($"P2P message sent via server: {message}");
+
+                    // Add own message to message history
+                    AddToMessageHistory($"Me (via server): {message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Cannot send P2P message: Not connected to server");
             }
         }
 
-        // 게임 루프 실행
+        // Add to message history
+        private void AddToMessageHistory(string message)
+        {
+            messageHistory.Add(message);
+
+            // Remove oldest message if exceeding maximum count
+            while (messageHistory.Count > MAX_MESSAGE_HISTORY)
+            {
+                messageHistory.RemoveAt(0);
+            }
+        }
+
+        // Show message history
+        private void ShowMessageHistory()
+        {
+            Console.WriteLine("===== Message History =====");
+            if (messageHistory.Count == 0)
+            {
+                Console.WriteLine("No messages yet");
+            }
+            else
+            {
+                foreach (var msg in messageHistory)
+                {
+                    Console.WriteLine(msg);
+                }
+            }
+            Console.WriteLine("==========================");
+        }
+
+        // Show P2P status information
+        private void ShowP2PStatus()
+        {
+            lock (syncObj)
+            {
+                Console.WriteLine("===== P2P Status =====");
+                Console.WriteLine($"Connected to server: {isConnected}");
+                Console.WriteLine($"P2P Group ID: {(lastJoinedP2PGroupID != HostID.HostID_None ? lastJoinedP2PGroupID.ToString() : "None")}");
+                Console.WriteLine($"P2P Group Members: {p2pGroupMembers.Count}");
+
+                if (p2pGroupMembers.Count > 0)
+                {
+                    Console.WriteLine("Members:");
+                    foreach (var member in p2pGroupMembers)
+                    {
+                        Console.WriteLine($"  - {member}");
+                    }
+                }
+
+                Console.WriteLine("=====================");
+            }
+        }
+
+        // Run game loop
         public void Run()
         {
-            // 초기화
+            // Initialize
             Initialize();
-            
-            // 서버 연결
+
+            // Connect to server
             ConnectToServer();
-            
-            // 네트워크 프레임 처리를 위한 스레드
+
+            // Thread for network frame processing
             Thread networkThread = new Thread(() =>
             {
                 while (isRunning)
                 {
-                    // 주기적으로 네트워크 처리
+                    // Process network periodically
                     netClient.FrameMove();
-                    Thread.Sleep(10); // CPU 사용률 조절
+                    Thread.Sleep(10); // Control CPU usage
                 }
             });
-            
+
             networkThread.IsBackground = true;
             networkThread.Start();
-            
-            // 명령어 안내
+
+            // Command instructions
             Console.WriteLine("Commands:");
             Console.WriteLine("move x y dir : Move tank to position (x,y) with direction dir");
             Console.WriteLine("fire dir [force] : Fire in direction dir with optional force (default 25.0)");
@@ -498,34 +652,36 @@ namespace TankGame
             Console.WriteLine("destroy [id] : Send tank destroyed event (id of destroyer, default 0 = environment)");
             Console.WriteLine("spawn x y dir type health: Spawn/respawn tank");
             Console.WriteLine("msg text     : Send P2P message to other clients");
+            Console.WriteLine("history      : Show message history");
+            Console.WriteLine("status       : Show P2P connection status");
             Console.WriteLine("auto         : Toggle auto movement");
             Console.WriteLine("q            : Quit");
-            
-            // 메인 루프
+
+            // Main loop
             while (isRunning)
             {
                 lock (syncObj)
                 {
                     if (isConnected)
                     {
-                        // 현재 상태 표시
+                        // Display current status
                         string healthStatus = localTank.IsDestroyed ? "DESTROYED" : $"{localTank.CurrentHealth}/{localTank.MaxHealth}";
                         Console.WriteLine($"Status: Tank ID={localTank.ClientId}, Position=({localTank.PosX},{localTank.PosY}), Type={localTank.TankType}, Health={healthStatus}");
                     }
                 }
-                
-                // 사용자 입력 처리
+
+                // Handle user input
                 string input = Console.ReadLine();
-                
+
                 lock (syncObj)
                 {
                     if (!isConnected)
                         continue;
-                    
-                    // 명령어 처리
+
+                    // Process commands
                     if (input.StartsWith("move "))
                     {
-                        // 이동 명령 처리
+                        // Handle move command
                         string[] parts = input.Split(' ');
                         if (parts.Length == 4)
                         {
@@ -534,7 +690,7 @@ namespace TankGame
                                 float x = float.Parse(parts[1]);
                                 float y = float.Parse(parts[2]);
                                 float dir = float.Parse(parts[3]);
-                                
+
                                 RequestMove(x, y, dir);
                             }
                             catch (Exception)
@@ -549,21 +705,21 @@ namespace TankGame
                     }
                     else if (input.StartsWith("fire "))
                     {
-                        // 발사 명령 처리
+                        // Handle fire command
                         string[] parts = input.Split(' ');
                         if (parts.Length >= 2)
                         {
                             try
                             {
                                 float dir = float.Parse(parts[1]);
-                                float force = 25.0f; // 기본값
-                                
-                                // 추가 파라미터가 있으면 발사 힘으로 사용
+                                float force = 25.0f; // Default value
+
+                                // Use additional parameter as launch force if available
                                 if (parts.Length >= 3)
                                 {
                                     force = float.Parse(parts[2]);
                                 }
-                                
+
                                 RequestFire(dir, force);
                             }
                             catch (Exception)
@@ -578,7 +734,7 @@ namespace TankGame
                     }
                     else if (input.StartsWith("tank "))
                     {
-                        // 탱크 타입 선택 처리
+                        // Handle tank type selection
                         string[] parts = input.Split(' ');
                         if (parts.Length == 2)
                         {
@@ -587,7 +743,7 @@ namespace TankGame
                                 int tankType = int.Parse(parts[1]);
                                 if (tankType >= 0 && tankType <= 3)
                                 {
-                                    // 서버에 탱크 타입 요청 전송
+                                    // Send tank type request to server
                                     tankProxy.SendTankType(HostID.HostID_Server, RmiContext.ReliableSend, tankType);
                                     Console.WriteLine($"Tank type set to {tankType}");
                                 }
@@ -608,21 +764,21 @@ namespace TankGame
                     }
                     else if (input.StartsWith("health "))
                     {
-                        // 체력 업데이트 명령 처리
+                        // Handle health update command
                         string[] parts = input.Split(' ');
                         if (parts.Length >= 2)
                         {
                             try
                             {
                                 float health = float.Parse(parts[1]);
-                                float maxHealth = localTank.MaxHealth; // 기본값: 현재 최대 체력
-                                
-                                // 최대 체력 파라미터가 있으면 사용
+                                float maxHealth = localTank.MaxHealth; // Default: current max health
+
+                                // Use max health parameter if available
                                 if (parts.Length >= 3)
                                 {
                                     maxHealth = float.Parse(parts[2]);
                                 }
-                                
+
                                 SendHealthUpdate(health, maxHealth);
                             }
                             catch (Exception)
@@ -637,10 +793,10 @@ namespace TankGame
                     }
                     else if (input.StartsWith("destroy"))
                     {
-                        // 탱크 파괴 명령 처리
+                        // Handle tank destruction command
                         string[] parts = input.Split(' ');
-                        int destroyerId = 0; // 기본값: 환경에 의한 파괴
-                        
+                        int destroyerId = 0; // Default: destroyed by environment
+
                         if (parts.Length >= 2)
                         {
                             try
@@ -652,12 +808,12 @@ namespace TankGame
                                 Console.WriteLine("Invalid destroyer ID. Using default (0 = environment)");
                             }
                         }
-                        
+
                         SendTankDestroyed(destroyerId);
                     }
                     else if (input.StartsWith("spawn "))
                     {
-                        // 탱크 생성/리스폰 명령 처리
+                        // Handle tank creation/respawn command
                         string[] parts = input.Split(' ');
                         if (parts.Length >= 6)
                         {
@@ -668,7 +824,7 @@ namespace TankGame
                                 float direction = float.Parse(parts[3]);
                                 int tankType = int.Parse(parts[4]);
                                 float health = float.Parse(parts[5]);
-                                
+
                                 SendTankSpawn(posX, posY, direction, tankType, health);
                             }
                             catch (Exception)
@@ -683,22 +839,32 @@ namespace TankGame
                     }
                     else if (input.StartsWith("msg "))
                     {
-                        // P2P 메시지 전송 처리
+                        // Handle P2P message sending
                         string message = input.Substring(4);
-                        
+
                         SendP2PMessage(message);
+                    }
+                    else if (input.Equals("history", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Show message history
+                        ShowMessageHistory();
+                    }
+                    else if (input.Equals("status", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Show P2P status information
+                        ShowP2PStatus();
                     }
                     else if (input.Equals("auto", StringComparison.OrdinalIgnoreCase))
                     {
-                        // 자동 이동 토글
+                        // Toggle auto movement
                         ToggleAutoMove();
                     }
                     else if (input.Equals("q"))
                     {
-                        // 종료 처리
+                        // Handle exit
                         isRunning = false;
-                        
-                        // 서버 연결 해제
+
+                        // Disconnect from server
                         netClient.Disconnect();
                     }
                     else
@@ -707,15 +873,15 @@ namespace TankGame
                     }
                 }
             }
-            
-            // 자원 정리
+
+            // Resource cleanup
             if (autoMoveThread != null && autoMoveThread.IsAlive)
             {
                 isAutoMove = false;
                 autoMoveThread.Join(1000);
             }
-            
-            // 연결 종료 (아직 연결되어 있는 경우)
+
+            // Close connection (if still connected)
             if (isConnected)
             {
                 netClient.Disconnect();
@@ -723,18 +889,18 @@ namespace TankGame
             Console.WriteLine("Client stopped");
         }
 
-        // 자동 이동 토글
+        // Toggle auto movement
         private void ToggleAutoMove()
         {
             lock (syncObj)
             {
                 isAutoMove = !isAutoMove;
-                
+
                 if (isAutoMove)
                 {
                     Console.WriteLine("Auto movement enabled");
-                    
-                    // 자동 이동 스레드 시작
+
+                    // Start auto movement thread
                     autoMoveThread = new Thread(AutoMoveThread);
                     autoMoveThread.IsBackground = true;
                     autoMoveThread.Start();
@@ -745,32 +911,32 @@ namespace TankGame
                 }
             }
         }
-        
-        // 자동 이동 스레드
+
+        // Auto movement thread
         private void AutoMoveThread()
         {
             while (isAutoMove && isConnected && isRunning)
             {
                 try
                 {
-                    // 랜덤 방향 및 약간의 이동 생성
+                    // Generate random direction and slight movement
                     lock (syncObj)
                     {
                         float x = localTank.PosX + (float)(random.NextDouble() * 20 - 10);
                         float y = localTank.PosY + (float)(random.NextDouble() * 20 - 10);
                         float dir = (float)(random.NextDouble() * 360);
-                        
-                        // 유효한 범위로 제한
+
+                        // Limit to valid range
                         x = Math.Max(0, Math.Min(100, x));
                         y = Math.Max(0, Math.Min(100, y));
-                        
-                        // 이동 요청
+
+                        // Request movement
                         RequestMove(x, y, dir);
-                        
+
                         Console.WriteLine($"Auto move to ({x},{y}) dir={dir}");
                     }
-                    
-                    // 3-5초 대기
+
+                    // Wait 3-5 seconds
                     int sleepTime = random.Next(3000, 5000);
                     Thread.Sleep(sleepTime);
                 }
@@ -782,11 +948,11 @@ namespace TankGame
             }
         }
 
-        // 메인 함수
+        // Main function
         static void Main(string[] args)
         {
             TankClient client = new TankClient();
             client.Run();
         }
     }
-} 
+}

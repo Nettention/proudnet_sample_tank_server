@@ -34,7 +34,6 @@ bin/
 
 # 비주얼 스튜디오 관련 파일
 .vs/
-*.sln
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
@@ -121,3 +120,7 @@ appsettings.*.json
 # 커스텀 임시 파일들
 temp/
 tmp/
+*test.html
+*deploy.bat
+*README_HTML_CONVERSION.md
+*Dockerrun.aws.json

@@ -1,113 +1,113 @@
-// Tank 게임 RMI 함수 정의
-// 클라이언트와 서버 간의 통신에 사용되는 함수들을 정의합니다.
+// Tank Game RMI Function Definitions
+// Defines functions used for communication between client and server.
 
 rename cs(Proud::String, System.String);
 
-global Tank 2000 // 클라이언트-서버 및 서버-클라이언트 RMI, 첫 메시지 ID = 2000
+global Tank 2000 // Client-Server and Server-Client RMI, first message ID = 2000
 {
     //====================================================================
-    // 클라이언트에서 서버로 보내는 RMI 함수 (Client to Server)
+    // RMI functions sent from Client to Server
     //====================================================================
     
-    // 이동 및 액션 관련 함수
+    // Movement and Action related functions
     SendMove(
-        [in] float posX,     // 이동할 X 좌표
-        [in] float posY,     // 이동할 Y 좌표
-        [in] float direction // 탱크의 방향 (각도)
-    ); // 탱크의 위치 및 방향 이동 요청
+        [in] float posX,     // X coordinate to move to
+        [in] float posY,     // Y coordinate to move to
+        [in] float direction // Tank direction (angle)
+    ); // Request tank position and direction movement
 
     SendFire(
-        [in] int shooterId,     // 발사한 플레이어의 ID
-        [in] float direction,   // 발사 방향 (각도)
-        [in] float launchForce, // 발사 힘 (강도)
-        [in] float fireX,       // 발사 위치 X 좌표
-        [in] float fireY,       // 발사 위치 Y 좌표
-        [in] float fireZ        // 발사 위치 Z 좌표
-    ); // 탱크 포탄 발사 요청
+        [in] int shooterId,     // ID of the player who fired
+        [in] float direction,   // Fire direction (angle)
+        [in] float launchForce, // Launch force (intensity)
+        [in] float fireX,       // Fire position X coordinate
+        [in] float fireY,       // Fire position Y coordinate
+        [in] float fireZ        // Fire position Z coordinate
+    ); // Request tank projectile fire
     
-    // 탱크 상태 및 속성 관련 함수
+    // Tank status and property related functions
     SendTankType(
-        [in] int tankType    // 탱크 타입 번호 (0-3: 각 탱크 유형)
-    ); // 클라이언트가 선택한 탱크 유형을 서버에 알림
+        [in] int tankType    // Tank type number (0-3: each tank type)
+    ); // Notify server of tank type selected by client
 
     SendTankHealthUpdated(
-        [in] float currentHealth, // 현재 체력
-        [in] float maxHealth      // 최대 체력
-    ); // 탱크 체력 상태 업데이트 요청
+        [in] float currentHealth, // Current health
+        [in] float maxHealth      // Maximum health
+    ); // Request tank health status update
 
     SendTankDestroyed(
-        [in] int destroyedById // 탱크를 파괴한 플레이어 ID (0: 환경에 의한 파괴)
-    ); // 탱크 파괴 이벤트 알림
+        [in] int destroyedById // Player ID who destroyed the tank (0: destroyed by environment)
+    ); // Tank destruction event notification
 
     SendTankSpawned(
-        [in] float posX,         // 스폰 위치 X 좌표
-        [in] float posY,         // 스폰 위치 Y 좌표
-        [in] float direction,    // 초기 방향 (각도)
-        [in] int tankType,       // 탱크 유형
-        [in] float initialHealth // 초기 체력
-    ); // 탱크 생성/리스폰 요청
+        [in] float posX,         // Spawn position X coordinate
+        [in] float posY,         // Spawn position Y coordinate
+        [in] float direction,    // Initial direction (angle)
+        [in] int tankType,       // Tank type
+        [in] float initialHealth // Initial health
+    ); // Tank creation/respawn request
     
     //====================================================================
-    // 서버에서 클라이언트로 보내는 RMI 함수 (Server to Client)
+    // RMI functions sent from Server to Client
     //====================================================================
     
-    // 플레이어 관리 관련 함수
+    // Player management related functions
     OnPlayerJoined(
-        [in] int clientId,    // 참가한 플레이어 ID
-        [in] float posX,      // 위치 X 좌표
-        [in] float posY,      // 위치 Y 좌표
-        [in] int tankType     // 탱크 유형
-    ); // 새 플레이어가 게임에 참가했음을 알림
+        [in] int clientId,    // Joined player ID
+        [in] float posX,      // Position X coordinate
+        [in] float posY,      // Position Y coordinate
+        [in] int tankType     // Tank type
+    ); // Notify that a new player has joined the game
 
     OnPlayerLeft(
-        [in] int clientId     // 퇴장한 플레이어 ID
-    ); // 플레이어가 게임에서 나갔음을 알림
+        [in] int clientId     // Left player ID
+    ); // Notify that a player has left the game
     
-    // 탱크 상태 업데이트 관련 함수
+    // Tank status update related functions
     OnTankPositionUpdated(
-        [in] int clientId,    // 대상 플레이어 ID
-        [in] float posX,      // 업데이트된 X 좌표
-        [in] float posY,      // 업데이트된 Y 좌표
-        [in] float direction  // 업데이트된 방향 (각도)
-    ); // 탱크 위치 및 방향 업데이트 알림
+        [in] int clientId,    // Target player ID
+        [in] float posX,      // Updated X coordinate
+        [in] float posY,      // Updated Y coordinate
+        [in] float direction  // Updated direction (angle)
+    ); // Tank position and direction update notification
 
     OnTankHealthUpdated(
-        [in] int clientId,        // 대상 플레이어 ID
-        [in] float currentHealth, // 현재 체력
-        [in] float maxHealth      // 최대 체력
-    ); // 탱크 체력 상태 변경 알림
+        [in] int clientId,        // Target player ID
+        [in] float currentHealth, // Current health
+        [in] float maxHealth      // Maximum health
+    ); // Tank health status change notification
 
     OnTankDestroyed(
-        [in] int clientId,     // 파괴된 탱크의 플레이어 ID
-        [in] int destroyedById // 탱크를 파괴한 플레이어 ID (0: 환경에 의한 파괴)
-    ); // 탱크 파괴 이벤트 알림
+        [in] int clientId,     // Player ID of destroyed tank
+        [in] int destroyedById // Player ID who destroyed the tank (0: destroyed by environment)
+    ); // Tank destruction event notification
 
     OnTankSpawned(
-        [in] int clientId,       // 대상 플레이어 ID
-        [in] float posX,         // 스폰 위치 X 좌표
-        [in] float posY,         // 스폰 위치 Y 좌표
-        [in] float direction,    // 초기 방향 (각도)
-        [in] int tankType,       // 탱크 유형
-        [in] float initialHealth // 초기 체력
-    ); // 탱크 생성/리스폰 알림
+        [in] int clientId,       // Target player ID
+        [in] float posX,         // Spawn position X coordinate
+        [in] float posY,         // Spawn position Y coordinate
+        [in] float direction,    // Initial direction (angle)
+        [in] int tankType,       // Tank type
+        [in] float initialHealth // Initial health
+    ); // Tank creation/respawn notification
     
-    // 게임 이벤트 관련 함수
+    // Game event related functions
     OnSpawnBullet(
-        [in] int clientId,       // 발사한 플레이어 ID
-        [in] int shooterId,      // 발사자 ID
-        [in] float posX,         // 발사 위치 X 좌표
-        [in] float posY,         // 발사 위치 Y 좌표
-        [in] float direction,    // 발사 방향 (각도)
-        [in] float launchForce,  // 발사 힘 (강도)
-        [in] float fireX,        // 정확한 발사 위치 X 좌표
-        [in] float fireY,        // 정확한 발사 위치 Y 좌표
-        [in] float fireZ         // 정확한 발사 위치 Z 좌표
-    ); // 포탄 발사 이벤트 알림
+        [in] int clientId,       // Player ID who fired
+        [in] int shooterId,      // Shooter ID
+        [in] float posX,         // Fire position X coordinate
+        [in] float posY,         // Fire position Y coordinate
+        [in] float direction,    // Fire direction (angle)
+        [in] float launchForce,  // Launch force (intensity)
+        [in] float fireX,        // Exact fire position X coordinate
+        [in] float fireY,        // Exact fire position Y coordinate
+        [in] float fireZ         // Exact fire position Z coordinate
+    ); // Projectile fire event notification
     
     //====================================================================
-    // P2P 통신 관련 함수
+    // P2P Communication related functions
     //====================================================================
     P2PMessage(
-        [in] Proud::String message  // 전송할 메시지
-    ); // 다른 클라이언트에게 P2P 메시지 전송
+        [in] Proud::String message  // Message to send
+    ); // Send P2P message to other clients
 } 

@@ -1,175 +1,190 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 
-# 비대화형 설치 설정
+# Non-interactive installation setup
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Seoul
 
-# 기본 도구 및 종속성 설치
+# Install basic tools and dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
-    libssl1.0-dev \
-    libcurl4-gnutls-dev \
+    libssl-dev \
+    libssl3 \
+    libcurl4-openssl-dev \
     tzdata \
     inotify-tools \
     unixodbc \
     unixodbc-dev \
     openssl \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# 작업 디렉토리 설정
+# Set working directory
 WORKDIR /app
 
-# 필요한 디렉토리만 복사
-# Server_CPP 디렉토리 복사
+# Copy only necessary directories
+# Copy Server_CPP directory
 COPY tank_server/Server_CPP/src /app/src/
 COPY tank_server/Server_CPP/include /app/include/
 COPY tank_server/Server_CPP/CMakeLists.txt /app/CMakeLists.txt
 
 
-# Common 디렉토리 복사 (필수 파일만)
+# Copy Common directory (essential files only)
 COPY tank_server/Common/Vars.cpp /app/Common/Vars.cpp
 COPY tank_server/Common/Vars.h /app/Common/Vars.h
 
-# ProudNet 라이브러리 디렉토리 복사 (필수 파일만)
+# Copy ProudNet library directory (essential files only)
 COPY ProudNet/include /app/ProudNet/include/
 COPY ProudNet/lib/x86_x64-linux /app/ProudNet/lib/x86_x64-linux/
 COPY ProudNet/util/PNLicenseAuth /app/ProudNet/util/
-COPY tank_server/licensekey.txt /app/licensekey.txt
 
-# 라이센스 인증 시도 (절대 경로 사용)
+# Copy license key file only if it contains a valid key
+RUN if [ -f "tank_server/licensekey.txt" ] && \
+    [ "$(cat tank_server/licensekey.txt)" != "PUT_YOUR_PROUDNET_LICENSE_KEY_HERE" ]; then \
+    cp tank_server/licensekey.txt /app/; \
+fi
+
+# Try license authentication (using absolute path)
 RUN chmod +x /app/ProudNet/util/PNLicenseAuth && \
-    echo "시스템 정보:" && \
+    echo "System information:" && \
     uname -a && \
-    echo "현재 디렉토리:" && \
+    echo "Current directory:" && \
     pwd && \
     ls -la /app/ProudNet/util/ && \
-    /app/ProudNet/util/PNLicenseAuth /app/licensekey.txt || true
+    if [ -f "/app/licensekey.txt" ]; then \
+        /app/ProudNet/util/PNLicenseAuth /app/licensekey.txt || true; \
+    else \
+        echo "License key file not found. Build will continue."; \
+    fi
 
-# 복사된 파일 확인
-RUN echo "복사된 파일 구조:" && \
+# Check copied files
+RUN echo "Copied file structure:" && \
     ls -la /app && \
-    echo "Common 디렉토리:" && \
-    ls -la /app/Common/ || echo "Common 디렉토리 복사 실패" && \
-    echo "ProudNet 디렉토리:" && \
-    ls -la /app/ProudNet/ || echo "ProudNet 디렉토리 복사 실패" && \
-    echo "ProudNet/lib 디렉토리:" && \
-    ls -la /app/ProudNet/lib/ || echo "ProudNet/lib 디렉토리 없음" && \
-    echo "ProudNet/lib/x86_x64-linux 디렉토리:" && \
-    ls -la /app/ProudNet/lib/x86_x64-linux/ || echo "x86_x64-linux 디렉토리 없음"
+    echo "Common directory:" && \
+    ls -la /app/Common/ || echo "Failed to copy Common directory" && \
+    echo "ProudNet directory:" && \
+    ls -la /app/ProudNet/ || echo "Failed to copy ProudNet directory" && \
+    echo "ProudNet/lib directory:" && \
+    ls -la /app/ProudNet/lib/ || echo "ProudNet/lib directory not found" && \
+    echo "ProudNet/lib/x86_x64-linux directory:" && \
+    ls -la /app/ProudNet/lib/x86_x64-linux/ || echo "x86_x64-linux directory not found"
 
-# 포트 노출
+# Expose ports
 EXPOSE 33334/tcp
 EXPOSE 33335/tcp
 
-# 빌드 스크립트 생성
+# Build script generation
 RUN echo '#!/bin/bash \n\
-echo "서버 빌드 시작..." \n\
+echo "Server build starting..." \n\
 \n\
-# 필수 파일 체크 함수 \n\
+# Required file check function \n\
 check_file() { \n\
   if [ ! -f "$1" ]; then \n\
-    echo "파일을 찾을 수 없습니다: $1" \n\
-    echo "파일이 올바르게 복사되었는지 확인하세요." \n\
+    echo "File not found: $1" \n\
+    echo "Please check if the file was copied correctly." \n\
     return 1 \n\
   else \n\
-    echo "파일 확인됨: $1" \n\
+    echo "File found: $1" \n\
     return 0 \n\
   fi \n\
 } \n\
 \n\
-# 필수 디렉토리 체크 함수 \n\
+# Required directory check function \n\
 check_dir() { \n\
   if [ ! -d "$1" ]; then \n\
-    echo "디렉토리를 찾을 수 없습니다: $1" \n\
-    echo "디렉토리가 올바르게 복사되었는지 확인하세요." \n\
+    echo "Directory not found: $1" \n\
+    echo "Please check if the directory was copied correctly." \n\
     return 1 \n\
   else \n\
-    echo "디렉토리 확인됨: $1" \n\
+    echo "Directory found: $1" \n\
     return 0 \n\
   fi \n\
 } \n\
 \n\
-# 필수 파일 및 디렉토리 확인 \n\
+# Required file and directory check \n\
 if ! check_file "/app/Common/Vars.cpp" || ! check_file "/app/Common/Vars.h"; then \n\
-  echo "Common 디렉토리 내용:" \n\
+  echo "Common directory contents:" \n\
   ls -la /app/Common || true \n\
-  echo "계속 실행하기 위해 오류를 무시하고 진행합니다." \n\
+  echo "Continuing execution despite error." \n\
 fi \n\
 \n\
 if ! check_dir "/app/ProudNet/lib/x86_x64-linux"; then \n\
-  echo "ProudNet 디렉토리 구조:" \n\
+  echo "ProudNet directory structure:" \n\
   ls -la /app/ProudNet || true \n\
   ls -la /app/ProudNet/lib || true \n\
-  echo "계속 실행하기 위해 오류를 무시하고 진행합니다." \n\
+  echo "Continuing execution despite error." \n\
 fi \n\
 \n\
-# ProudNet 라이센스 확인 \n\
+# ProudNet license check \n\
 LICENSE_VALID=false \n\
 if [ -f "/app/ProudNet/util/PNLicenseAuth" ]; then \n\
-  echo "ProudNet 라이센스 확인 중..." \n\
-  echo "라이센스 파일 정보:" \n\
+  echo "ProudNet license check in progress..." \n\
+  echo "License file information:" \n\
   ls -la /app/ProudNet/util/ \n\
-  ls -la /app/licensekey.txt \n\
-  LICENSE_OUTPUT=$(/app/ProudNet/util/PNLicenseAuth /app/licensekey.txt) \n\
+  if [ -f "/app/licensekey.txt" ]; then \n\
+    ls -la /app/licensekey.txt \n\
+    LICENSE_OUTPUT=$(/app/ProudNet/util/PNLicenseAuth /app/licensekey.txt) \n\
   LICENSE_STATUS=$? \n\
   \n\
-  # 라이센스 출력 결과 표시 \n\
+  # License output result display \n\
   echo "$LICENSE_OUTPUT" \n\
   \n\
-  # Validity 상태 확인 \n\
+  # Validity status check \n\
   if echo "$LICENSE_OUTPUT" | grep -q "Validity : OK"; then \n\
     LICENSE_VALID=true \n\
-    echo -e "\n\033[32m[라이센스 확인 성공] ProudNet 라이센스가 유효합니다.\033[0m" \n\
-    # 라이센스 만료일 추출 및 표시 \n\
+    echo -e "\n\033[32m[License check success] ProudNet license is valid.\033[0m" \n\
+    # License expiry date extraction and display \n\
     EXPIRY_DATE=$(echo "$LICENSE_OUTPUT" | grep "ExpiryDate" | awk -F ":" "{print \$2}" | xargs) \n\
-    echo "라이센스 만료일: $EXPIRY_DATE" \n\
+    echo "License expiry date: $EXPIRY_DATE" \n\
   else \n\
-    echo -e "\n\033[31m[라이센스 확인 실패] ProudNet 라이센스가 유효하지 않습니다.\033[0m" \n\
-    echo "라이센스 오류 코드: $LICENSE_STATUS" \n\
-    echo "필요시 수동으로 라이센스 키를 등록하세요: /app/ProudNet/util/PNLicenseAuth /app/licensekey.txt" \n\
+    echo -e "\n\033[31m[License check failed] ProudNet license is invalid.\033[0m" \n\
+    echo "License error code: $LICENSE_STATUS" \n\
+    echo "If needed, manually register the license key: /app/ProudNet/util/PNLicenseAuth /app/licensekey.txt" \n\
+  fi \n\
+  else \n\
+    echo "License key file not found: /app/licensekey.txt" \n\
+    echo "Building without ProudNet license." \n\
   fi \n\
 else \n\
-  echo "Warning: ProudNet 라이센스 확인 프로그램을 찾을 수 없습니다." \n\
+  echo "Warning: Could not find ProudNet license check program." \n\
 fi \n\
 \n\
-# ODBC 설치 확인 \n\
-echo "ODBC 드라이버 정보:" \n\
-odbcinst -j || echo "ODBC 정보를 가져올 수 없습니다." \n\
+# ODBC installation check \n\
+echo "ODBC driver information:" \n\
+odbcinst -j || echo "Could not get ODBC information." \n\
 \n\
-# 빌드 및 실행 \n\
+# Build and run \n\
 mkdir -p build \n\
 cd build \n\
-cmake .. || echo "CMake 실행 중 오류 발생, 그러나 계속 진행합니다." \n\
-make || echo "빌드 중 오류 발생, 그러나 계속 진행합니다." \n\
-echo "빌드 완료, 서버 시작 시도..." \n\
+cmake .. || echo "CMake execution error, but will continue." \n\
+make || echo "Build error, but will continue." \n\
+echo "Build completed, attempting to start server..." \n\
 \n\
-# 실행 파일이 존재하면 실행, 그렇지 않으면 메시지 출력 \n\
+# If executable exists, run, otherwise print message \n\
 if [ -f "/app/build/TankServer" ]; then \n\
   if [ "$LICENSE_VALID" = true ]; then \n\
-    echo "유효한 라이센스로 서버를 시작합니다." \n\
-    /app/build/TankServer || echo "서버 실행 중 오류가 발생했습니다." \n\
+    echo "Starting server with valid license." \n\
   else \n\
-    echo "라이센스가 유효하지 않아 서버를 시작하지 않습니다." \n\
-    echo "서버를 실행하려면 유효한 라이센스가 필요합니다." \n\
+    echo "Starting server without license (50 CCU limitation mode)." \n\
   fi \n\
+  /app/build/TankServer || echo "Server execution error occurred." \n\
 else \n\
-  echo "서버 실행 파일을 찾을 수 없습니다. 빌드에 실패했습니다." \n\
+  echo "Server executable not found. Build failed." \n\
 fi \n\
 \n\
-# 컨테이너가 종료되지 않도록 유지 \n\
-echo "컨테이너를 계속 실행 상태로 유지합니다. Ctrl+C로 중지할 수 있습니다." \n\
-echo "문제를 디버깅하기 위해 다른 터미널에서 'docker exec -it 컨테이너ID /bin/bash'를 실행하세요." \n\
+# Keep container from exiting \n\
+echo "Keeping container running. Ctrl+C to stop." \n\
+echo "To debug, run 'docker exec -it containerID /bin/bash' in another terminal." \n\
 \n\
-# 컨테이너 유지를 위한 무한 루프 \n\
+# Infinite loop for container retention \n\
 while true; do \n\
   sleep 60 \n\
-  echo "컨테이너 실행 중... (1분마다 메시지 출력)" \n\
+  echo "Container running... (1 minute message)" \n\
 done' > /app/start.sh
 
-# 스크립트에 실행 권한 부여
+# Grant execution permission to script
 RUN chmod +x /app/start.sh
 
-# 서버 시작 (컨테이너가 계속 실행되도록 함)
+# Start server (keep container running)
 CMD ["/bin/bash", "/app/start.sh"] 

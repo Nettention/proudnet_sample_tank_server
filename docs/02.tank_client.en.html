@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tank Game Unity Client Project Documentation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/image-modal.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>Tank Game Unity Client Project</h1>
+            <p class="paragraph">A multiplayer tank game Unity client implementation using ProudNet networking library, built upon Unity's official tank tutorial template with enhanced multiplayer and chat functionality.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 Table of Contents</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">Prerequisites</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">Project Structure</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">Development Notes</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">Getting Started</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Unity Project Creation and Setup</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. ProudNet Unity Integration</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. PIDL Integration Workflow</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. Tank Multiplayer Integration</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. Testing Multiplayer Functionality</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. Multiplayer Features Testing</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. WebGL Deployment (Optional)</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">Prerequisites</h2>
+            <p class="paragraph">Before building this Unity client project, you must have completed the <strong class="text-strong">Tank Server Setup</strong> from the previous documentation and have the following components installed.</p>
+
+            <h3 class="heading-3">Required Directory Structure</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # Server project (from previous setup)
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # Required: Files from ProudNet installation
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # This Unity project (to be created)
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Required Software Installation</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong> and <strong class="text-strong">Unity Editor</strong> (2021.3 LTS or newer recommended)</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity Package</strong> - Available from ProudNet installation</li>
+                <li class="list-item"><strong class="text-strong">Completed Tank Server</strong> - From the previous server setup documentation</li>
+            </ol>
+
+            <h3 class="heading-3">ProudNet Unity Package Location</h3>
+            <p class="paragraph">The ProudNet Unity package should be available at:</p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">Project Structure</h2>
+
+            <h3 class="heading-3">🎮 Unity Project Assets</h3>
+            <p class="paragraph">Contains Unity-specific game assets and ProudNet integration components.</p>
+
+            <p class="paragraph"><strong class="text-strong">Contents:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank Template</strong> - Unity's official tank tutorial project (single-player base)</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Integration</strong> - Networking scripts and DLL plugins</li>
+                <li class="list-item"><strong class="text-strong">Multiplayer Scripts</strong> - Enhanced tank game logic with network synchronization</li>
+                <li class="list-item"><strong class="text-strong">Chat System</strong> - P2P messaging functionality</li>
+                <li class="list-item"><strong class="text-strong">Network Manager</strong> - Server connection and P2P group management</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Key Components:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - ProudNet DLL files for Unity</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - ProudNet integration scripts</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - Sample game scenes with multiplayer support</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 Network Features</h3>
+            <p class="paragraph">Unity client implementation with ProudNet networking.</p>
+
+            <p class="paragraph"><strong class="text-strong">Features:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Real-time multiplayer tank game client</li>
+                <li class="list-item">Tank movement, firing, and health synchronization</li>
+                <li class="list-item">P2P group participation for efficient networking</li>
+                <li class="list-item">In-game chat system with P2P messaging</li>
+                <li class="list-item">Server connection management</li>
+                <li class="list-item">Cross-platform compatibility (Windows, Mac, Linux builds)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Supported Platforms:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows Standalone</strong> - Desktop application</li>
+                <li class="list-item"><strong class="text-strong">Mac Standalone</strong> - macOS application</li>
+                <li class="list-item"><strong class="text-strong">Linux Standalone</strong> - Linux application</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - Web browser deployment (via WebSocket)</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 Protocol Compatibility</h3>
+            <p class="paragraph">Uses identical protocol definitions from the tank server project.</p>
+
+            <p class="paragraph"><strong class="text-strong">Shared Components:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Same Tank.PIDL</strong> - Identical RMI function definitions</li>
+                <li class="list-item"><strong class="text-strong">Compatible Message Format</strong> - Same network protocol as C# and C++ servers</li>
+                <li class="list-item"><strong class="text-strong">Synchronized Game Logic</strong> - Movement, firing, and health systems match server implementation</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">Development Notes</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Unity version: 2021.3 LTS or newer recommended</li>
+                <li class="list-item">ProudNet Unity package provides native DLL integration</li>
+                <li class="list-item">Compatible with all tank server implementations (C# and C++)</li>
+                <li class="list-item">WebGL builds use WebSocket transport for web browser compatibility</li>
+                <li class="list-item">Desktop builds use TCP transport for optimal performance</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">Getting Started</h2>
+
+            <h3 class="heading-3">Prerequisites Verification</h3>
+            <p class="paragraph">Before starting, ensure you have:</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Completed Tank Server Setup</strong> - Follow the server documentation to set up either C# or C++ server</li>
+                <li class="list-item"><strong class="text-strong">Running Tank Server</strong> - Have a tank server running and accessible</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Installation</strong> - ProudNet folder with Unity package available</li>
+                <li class="list-item"><strong class="text-strong">Unity Hub and Editor</strong> - Unity 2021.3 LTS or newer installed</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Unity Project Creation and Setup</h2>
+
+            <h3 class="heading-3">Step 1: Create New Unity Project</h3>
+            <p class="paragraph">Create a new Unity project for the tank client:</p>
+
+            <p class="paragraph"><strong class="text-strong">Using Unity Hub:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Open <strong class="text-strong">Unity Hub</strong></li>
+                <li class="list-item">Click <strong class="text-strong">"New Project"</strong></li>
+                <li class="list-item">Select <strong class="text-strong">"3D"</strong> template</li>
+                <li class="list-item">Set <strong class="text-strong">Project Name</strong>: <code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item">Set <strong class="text-strong">Location</strong>: <code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item">Click <strong class="text-strong">"Create project"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Expected Project Structure:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Step 2: Import Unity Tank Template</h3>
+            <p class="paragraph">Import Unity's official tank tutorial project as the base template:</p>
+
+            <p class="paragraph"><strong class="text-strong">Via Unity Asset Store:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Open <strong class="text-strong">Window > Asset Store</strong> in Unity Editor</li>
+                <li class="list-item">Search for <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Navigate to: https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item">Click <strong class="text-strong">"Add to My Assets"</strong> (if not already owned)</li>
+                <li class="list-item">In Unity Editor, open <strong class="text-strong">Window > Package Manager</strong></li>
+                <li class="list-item">Select <strong class="text-strong">"My Assets"</strong> from dropdown</li>
+                <li class="list-item">Find <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Click <strong class="text-strong">"Download"</strong> then <strong class="text-strong">"Import"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Import Options:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Select <strong class="text-strong">"All"</strong> to import complete project</li>
+                <li class="list-item">Click <strong class="text-strong">"Import"</strong> to add all tank game assets</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">Step 3: Test Single-Player Template</h3>
+            <p class="paragraph">Verify the imported tank template works correctly:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Open Main Scene</strong>: Navigate to <code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code></li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Unity Tank Demo Scene</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">Enter Play Mode</strong>: Click the <strong class="text-strong">Play</strong> button in Unity Editor</li>
+                <li class="list-item"><strong class="text-strong">Test Controls</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>: Move tank</li>
+                        <li class="list-item"><strong class="text-strong">Space</strong>: Hold to charge shot power, release to fire shells</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Expected Single-Player Behavior:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Tank moves smoothly with WASD controls</li>
+                <li class="list-item">Cannon aims toward mouse position</li>
+                <li class="list-item">Shells fire and create explosions on impact</li>
+                <li class="list-item">Tank health decreases when hit by shells</li>
+                <li class="list-item">Game ends when tank health reaches zero</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. ProudNet Unity Integration</h2>
+
+            <h3 class="heading-3">Step 1: Import ProudNet Unity Package</h3>
+            <p class="paragraph">Import the ProudNet Unity package to add networking capabilities:</p>
+
+            <p class="paragraph"><strong class="text-strong">Expected Package File:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Import Package in Unity:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">In Unity Editor, go to <strong class="text-strong">Assets > Import Package > Custom Package...</strong></li>
+                <li class="list-item">Navigate to <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code></li>
+                <li class="list-item">Select the package file and click <strong class="text-strong">"Open"</strong></li>
+                <li class="list-item">In the import dialog, select <strong class="text-strong">"All"</strong> to import all components</li>
+                <li class="list-item">Click <strong class="text-strong">"Import"</strong> to add ProudNet to the project</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Package Import" class="image">
+            <p class="image-caption">ProudNet Unity Package Import</p>
+
+            <h3 class="heading-3">Step 2: Verify ProudNet Installation</h3>
+            <p class="paragraph">Check that ProudNet components are properly integrated:</p>
+
+            <p class="paragraph"><strong class="text-strong">Sample Assets Installation Verification:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Verify the following folder structure exists:
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # Contains ProudNet DLLs
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # Demo scene and scripts
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # Network-related scripts</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Platform Settings Verification:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Select each DLL in <code class="inline-code">Assets/Plugins/</code></li>
+                <li class="list-item">In Inspector, verify <strong class="text-strong">Platform settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>: Enabled for x86_64 (Standalone Windows)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">Step 3: Configure Network Settings</h3>
+            <p class="paragraph">Set up basic network configuration for tank game:</p>
+
+            <p class="paragraph"><strong class="text-strong">Create Network Configuration:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Right-click in Project window</li>
+                <li class="list-item">Select <strong class="text-strong">Create > ProudNet > Network Config</strong></li>
+                <li class="list-item">Name it <code class="inline-code">TankNetworkConfig</code></li>
+                <li class="list-item">Configure the following settings:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost for testing)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (matches tank server port)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Network Configuration Details:</strong></p>
+            <p class="paragraph">TankNetworkConfig Connection Settings:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Server IP: 127.0.0.1</li>
+                <li class="list-item">TCP Port: 33334 (for standalone builds)</li>
+                <li class="list-item">WebSocket Port: 33335 (for WebGL builds, only supported by C++ server)</li>
+            </ul>
+
+            <p class="paragraph">Note: We will use port 33334 for standalone builds initially. Later for WebGL builds, we'll use the WebSocket port 33335 which is only available in the C++ server implementation (the C# server does not support WebSocket connections).</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. PIDL Integration Workflow (Optional but Recommended)</h2>
+
+            <p class="paragraph">If you completed the server setup from the previous documentation, you can reuse the generated PIDL files:</p>
+
+            <p class="paragraph"><strong class="text-strong">Option A: Copy from Server Project (Recommended)</strong></p>
+            <p class="paragraph">If you have the tank server project available, use the convenience batch script:</p>
+
+            <div class="code-block">
+                <pre># Navigate to tank_server directory
+cd tank_server
+
+# Run the copy script
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">What the script does:</strong></p>
+            <div class="code-block">
+                <pre>Copies from tank_server/:
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Output:</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+Copy completed! The following files have been copied to Unity project:
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+Press any key to continue...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Option B: Manual PIDL Generation (If no server project)</strong></p>
+            <p class="paragraph">If you don't have the server project, you would need to:</p>
+            <ol class="ordered-list">
+                <li class="list-item">Have access to the <code class="inline-code">Tank.PIDL</code> file from the Common folder</li>
+                <li class="list-item">Run <code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code></li>
+                <li class="list-item">Manually copy the generated files to the Unity directories</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Protocol Compatibility Benefits:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Identical Message IDs</strong>: Unity client uses same RMI IDs as server</li>
+                <li class="list-item"><strong class="text-strong">Type Safety</strong>: Compile-time checking of network message parameters</li>
+                <li class="list-item"><strong class="text-strong">Version Synchronization</strong>: Protocol version automatically matches server</li>
+                <li class="list-item"><strong class="text-strong">Zero Configuration</strong>: No additional network setup required</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. Tank Multiplayer Integration</h2>
+
+            <h3 class="heading-3">Step 1: Network Scripts Overview</h3>
+            <p class="paragraph">The tank Unity client uses a comprehensive networking system built on ProudNet RMI (Remote Method Invocation). Here's the actual script structure:</p>
+
+            <p class="paragraph"><strong class="text-strong">Core Network Scripts:</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # Main network manager (Singleton)
+│   └── NetworkTank.cs           # Individual tank network synchronization
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # Protocol version and server configuration
+│   └── Generated/               # Auto-generated from Tank.PIDL
+│       ├── Tank_common.cs       # RMI message IDs and constants
+│       ├── Tank_proxy.cs        # Client-to-server RMI calls
+│       └── Tank_stub.cs         # Server-to-client RMI handlers</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - Main Features:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server Connection Management</strong>: Handles connection to tank server (TCP/WebSocket)</li>
+                <li class="list-item"><strong class="text-strong">P2P Group Management</strong>: Manages peer-to-peer communication groups</li>
+                <li class="list-item"><strong class="text-strong">Tank Lifecycle</strong>: Spawns/destroys local and remote tanks</li>
+                <li class="list-item"><strong class="text-strong">RMI Communication</strong>: Sends/receives tank movement, firing, health updates</li>
+                <li class="list-item"><strong class="text-strong">Chat System</strong>: P2P messaging with other players</li>
+                <li class="list-item"><strong class="text-strong">Multi-platform Support</strong>: Automatic TCP (standalone) vs WebSocket (WebGL) selection</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - Individual Tank Features:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Position Interpolation</strong>: Smooth movement sync for remote tanks</li>
+                <li class="list-item"><strong class="text-strong">Local Player Control</strong>: WASD movement and firing for your tank</li>
+                <li class="list-item"><strong class="text-strong">Remote Player Rendering</strong>: Displays other players' tanks with network data</li>
+                <li class="list-item"><strong class="text-strong">Health Synchronization</strong>: Real-time health updates across all clients</li>
+                <li class="list-item"><strong class="text-strong">Projectile Sync</strong>: Handles shell firing and impact effects</li>
+                <li class="list-item"><strong class="text-strong">Collision Detection</strong>: Tracks damage from shell explosions</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Generated RMI Classes (from Tank.PIDL):</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>: Methods to send data to server (<code class="inline-code">SendMove</code>, <code class="inline-code">SendFire</code>, <code class="inline-code">SendTankHealthUpdated</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>: Handlers to receive data from server (<code class="inline-code">OnTankPositionUpdated</code>, <code class="inline-code">OnSpawnBullet</code>, <code class="inline-code">OnPlayerJoined</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>: Message IDs and RMI constants shared between client and server</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Important Note:</strong> The files in <code class="inline-code">Generated/</code> folder are the <strong class="text-strong">exact same files</strong> generated during the C# server implementation in the previous documentation. This ensures 100% protocol compatibility between the server and Unity client. The Unity client reuses the identical PIDL-generated networking code.</p>
+
+            <p class="paragraph"><strong class="text-strong">Key Network Features Implemented:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Real-time Movement Sync</strong>: 20Hz position updates with interpolation</li>
+                <li class="list-item"><strong class="text-strong">Projectile Synchronization</strong>: Shells fired by other players appear instantly</li>
+                <li class="list-item"><strong class="text-strong">Health Management</strong>: Damage and healing synchronized across all clients</li>
+                <li class="list-item"><strong class="text-strong">P2P Chat System</strong>: Direct messaging between players in the same group</li>
+                <li class="list-item"><strong class="text-strong">Tank Type Selection</strong>: Different tank models synchronized across clients</li>
+                <li class="list-item"><strong class="text-strong">Automatic Reconnection</strong>: Handles network disconnection gracefully</li>
+            </ul>
+
+            <h3 class="heading-3">Step 2: Open Pre-configured Multiplayer Scene</h3>
+            <p class="paragraph">The Unity tank client includes a pre-configured multiplayer scene with ProudNet integration:</p>
+
+            <p class="paragraph"><strong class="text-strong">Open the Network-Ready Scene:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigate to <code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code></li>
+                <li class="list-item">Open <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> scene</li>
+                <li class="list-item">This scene is <strong class="text-strong">already configured</strong> with all necessary networking components</li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">ProudNet Network Demo Scene</p>
+
+            <h3 class="heading-3">Step 3: Verify Network Configuration (Optional)</h3>
+            <p class="paragraph">The scene is pre-configured, but you can verify or modify the network settings if needed:</p>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager Settings (Already Configured):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Select <strong class="text-strong">GameNetworkManager</strong> GameObject in hierarchy</li>
+                <li class="list-item">In Inspector, view <strong class="text-strong">GameNetworkManager</strong> component settings:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost for testing)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (TCP for standalone builds)</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Port</strong>: <code class="inline-code">33335</code> (for WebGL builds only) [Note: This setting is hidden in the inspector for standalone builds but will be used later when building for WebGL]</li>
+                        <li class="list-item"><strong class="text-strong">Auto Connect On Start</strong>: Enabled for automatic connection</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">GameNetworkManager Inspector</p>
+
+            <p class="paragraph"><strong class="text-strong">Customization Options:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server IP</strong>: Change if your server runs on a different machine</li>
+                <li class="list-item"><strong class="text-strong">Ports</strong>: Modify if your server uses different ports</li>
+                <li class="list-item"><strong class="text-strong">Auto Connect</strong>: Disable if you want manual connection control</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. Testing Multiplayer Functionality</h2>
+
+            <h3 class="heading-3">Step 1: Start Tank Server</h3>
+            <p class="paragraph">Before testing the Unity client, ensure your tank server is running:</p>
+
+            <p class="paragraph"><strong class="text-strong">C++ Server</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Server Output:</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">Step 2: Test Unity Client Connection</h3>
+            <p class="paragraph">Test the Unity client connection to the tank server:</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Editor Testing:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Click <strong class="text-strong">Play</strong> button in Unity Editor</li>
+                <li class="list-item">Observe connection status in Unity Console and Game view</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Expected Server Response:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity Game View:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Connection Status</strong>: "Connected to Server" indicator</li>
+                <li class="list-item"><strong class="text-strong">Tank Selection</strong>: Choose from 4 available tank types to spawn</li>
+                <li class="list-item"><strong class="text-strong">Player Tank</strong>: Your selected tank spawns in the game world</li>
+                <li class="list-item"><strong class="text-strong">Chat Interface</strong>: Press Enter to open chat window for P2P messaging</li>
+                <li class="list-item"><strong class="text-strong">Tank Controls</strong>: WASD movement, mouse aiming, click/space firing</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Unity Game Initial Screen</p>
+
+            <h3 class="heading-3">Step 3: Multi-Client Testing</h3>
+            <p class="paragraph">Test multiplayer functionality with multiple Unity clients:</p>
+
+            <p class="paragraph"><strong class="text-strong">Second Unity Instance:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Build Unity Project</strong>: Go to <strong class="text-strong">File > Build and Run</strong></li>
+                <li class="list-item"><strong class="text-strong">Configure Build Settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Target Platform</strong>: PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">Architecture</strong>: x86_64</li>
+                        <li class="list-item"><strong class="text-strong">Scenes</strong>: Add <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> scene</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Build</strong>: Click "Build and Run" to create standalone executable</li>
+                <li class="list-item"><strong class="text-strong">Run Standalone</strong>: This creates a second client instance. After successful build, you can run the game directly from the build location (e.g., <code class="inline-code">Build/unity_tank_client.exe</code>)</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows Standalone Build Settings</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">Build Completed</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">Multi-Client Gameplay</p>
+
+            <p class="paragraph"><strong class="text-strong">Alternative Testing Method:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong> (Unity Asset): Allows multiple Unity Editor instances</li>
+                <li class="list-item"><strong class="text-strong">Clone Project</strong>: Create project clone for simultaneous testing</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Multi-Client Behavior:</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Server Log with Multiple Clients:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. Multiplayer Features Testing</h2>
+
+            <h3 class="heading-3">Movement Synchronization Testing</h3>
+            <p class="paragraph">Test real-time tank movement across multiple clients:</p>
+
+            <p class="paragraph"><strong class="text-strong">Client 1 Actions:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Use <strong class="text-strong">WASD</strong> to move tank around the map</li>
+                <li class="list-item">Observe smooth movement in local client</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Client 2 Observations:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">See Client 1's tank moving in real-time</li>
+                <li class="list-item">Movement is smooth and synchronized</li>
+                <li class="list-item">Position updates occur at 20Hz (configurable)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Network Messages:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Client 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">Firing and Projectile Testing</h3>
+            <p class="paragraph">Test shell firing synchronization:</p>
+
+            <p class="paragraph"><strong class="text-strong">Client 1 Actions:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Aim with <strong class="text-strong">mouse</strong> toward target</li>
+                <li class="list-item">Click <strong class="text-strong">left mouse button</strong> or press <strong class="text-strong">space</strong> to fire</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Client 2 Observations:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">See shell spawn from Client 1's tank</li>
+                <li class="list-item">Shell trajectory follows physics accurately</li>
+                <li class="list-item">Explosion effects occur at impact location</li>
+                <li class="list-item">Health decreases if shell hits Client 2's tank</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Network Messages:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Client 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → All: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">P2P Chat System Testing</h3>
+            <p class="paragraph">Test real-time messaging between players:</p>
+
+            <p class="paragraph"><strong class="text-strong">Client 1 Actions:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Click <strong class="text-strong">chat input field</strong> at bottom of screen</li>
+                <li class="list-item">Type message: <code class="inline-code">"Hello from Client 1!"</code></li>
+                <li class="list-item">Press <strong class="text-strong">Enter</strong> to send</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Client 2 Observations:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Message appears in chat log: <code class="inline-code">"Player: Hello from Client 1!"</code></li>
+                <li class="list-item">Chat log scrolls automatically</li>
+                <li class="list-item">Message timestamp is displayed</li>
+            </ul>
+
+            <h3 class="heading-3">Health and Damage Testing</h3>
+            <p class="paragraph">Test health synchronization and damage effects:</p>
+
+            <p class="paragraph"><strong class="text-strong">Damage Scenario:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Client 1 fires shell at Client 2's tank</li>
+                <li class="list-item">Shell hits and causes damage</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Results:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Client 2</strong>: Health decreases (e.g., 100 → 75)</li>
+                <li class="list-item"><strong class="text-strong">Client 1</strong>: Sees Client 2's health update</li>
+                <li class="list-item"><strong class="text-strong">Health UI</strong>: Both clients show updated health values</li>
+                <li class="list-item"><strong class="text-strong">Visual Effects</strong>: Damage effects and particles displayed</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. WebGL Deployment (Optional)</h2>
+
+            <h3 class="heading-3">WebGL Build Configuration</h3>
+            <p class="paragraph">Deploy the Unity tank client as a web application:</p>
+
+            <p class="paragraph"><strong class="text-strong">Build Settings:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Go to <strong class="text-strong">File > Build Settings</strong></li>
+                <li class="list-item">Select <strong class="text-strong">WebGL</strong> platform</li>
+                <li class="list-item">Click <strong class="text-strong">"Switch Platform"</strong></li>
+                <li class="list-item"><strong class="text-strong">Add Scenes</strong>: Ensure <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> is included</li>
+                <li class="list-item"><strong class="text-strong">Configure ProudNet Plugin Settings</strong> (Important!)</li>
+                <li class="list-item"><strong class="text-strong">Configure WebGL Player Settings</strong> (Important!)</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">WebGL Build Settings</p>
+
+            <h3 class="heading-3">ProudNet Plugin Configuration for WebGL</h3>
+            <p class="paragraph">After switching to WebGL platform, you must configure ProudNet plugin settings:</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Important WebGL Limitation</strong>: ProudNet does not support in-editor play mode when the WebGL platform is selected. You must build and deploy the WebGL version to test networking functionality. Editor play mode will not work for network testing on WebGL platform.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Step 1: Disable Editor for .NET DLL</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigate to <code class="inline-code">Assets/Plugins/ProudNet/</code></li>
+                <li class="list-item">Select <code class="inline-code">ProudDotNetClientUnity.dll</code></li>
+                <li class="list-item">In Inspector → <strong class="text-strong">Platform settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (unchecked)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet .NET DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Step 2: Disable Editor for x86_64 DLLs</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigate to <code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code></li>
+                <li class="list-item">Select <code class="inline-code">ProudNetClient.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (unchecked)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Select <code class="inline-code">ProudNetClientPlugin.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (unchecked)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet x86_64 DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Step 3: Enable Editor for WebGL Files</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigate to <code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code></li>
+                <li class="list-item">Select <code class="inline-code">JSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (checked)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (checked)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Select <code class="inline-code">NewJSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (checked)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (checked)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Select <code class="inline-code">ProudNetClientPlugin-webgl.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (checked)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (checked)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">ProudNet WebGL Files Platform Settings</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Critical</strong>: If these settings are not configured correctly, the WebGL build will fail or the networking will not function properly.</p>
+            </div>
+
+            <h3 class="heading-3">WebGL Player Settings Configuration</h3>
+            <p class="paragraph">Configure Unity's WebGL-specific settings for optimal local testing:</p>
+
+            <p class="paragraph"><strong class="text-strong">Publishing Settings (Critical for Local Testing):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Go to <strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">Expand <strong class="text-strong">Publishing Settings</strong> section</li>
+                <li class="list-item">Set <strong class="text-strong">Compression Format</strong>: <strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">This is essential for local web server testing</li>
+                        <li class="list-item">Compressed builds may not work with simple HTTP servers</li>
+                        <li class="list-item">Can be re-enabled for production deployment</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">WebGL Publishing Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Recommended WebGL Settings:</strong></p>
+            <div class="code-block">
+                <pre>Publishing Settings:
+├── Compression Format: Disabled (for local testing)
+├── Name Files As Hashes: ❌ (unchecked)
+├── Data Caching: ❌ (unchecked)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Memory Settings:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Tip</strong>: For production deployment, you can enable <strong class="text-strong">Gzip</strong> compression format to reduce download sizes, but disable it for local testing to avoid server compatibility issues.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Network Configuration for WebGL:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Transport</strong>: WebSocket (automatically used for WebGL)</li>
+                <li class="list-item"><strong class="text-strong">Server URL</strong>: <code class="inline-code">ws://localhost:33335/ws</code> (local testing)</li>
+                <li class="list-item"><strong class="text-strong">Production URL</strong>: <code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL Network Configuration" class="image">
+            <p class="image-caption">WebGL Network Configuration</p>
+
+            <h3 class="heading-3">WebGL Testing</h3>
+            <p class="paragraph">Test the web version of the tank client:</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Note</strong>: Remember that ProudNet networking does not function in Unity Editor play mode when WebGL platform is selected. You must complete the full build process to test networking features.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Build Process:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Click <strong class="text-strong">"Build"</strong> in Build Settings</li>
+                <li class="list-item">Create or select any folder for output folder : eg- <code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">Wait for build completion (may take several minutes)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Local Web Server Setup:</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Important</strong>: WebGL builds must be hosted on a web server and cannot be played by directly opening the HTML file locally.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Method 1: Python HTTP Server</strong></p>
+            <div class="code-block">
+                <pre># Navigate to WebGL build folder
+cd WebGL_Build/
+
+# Python 3 (recommended)
+python -m http.server 8000
+
+# Python 2 (if Python 3 not available)
+python -m SimpleHTTPServer 8000
+
+# Custom port example
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Python Output:</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Method 2: VS Code Live Server Extension</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Install Extension</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">Open VS Code</li>
+                        <li class="list-item">Go to Extensions (Ctrl+Shift+X)</li>
+                        <li class="list-item">Search for "Live Server" by Ritwick Dey</li>
+                        <li class="list-item">Click "Install"</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Host WebGL Build</strong>:
+                    <div class="code-block">
+                        <pre>1. Open WebGL_Build/ folder in VS Code
+2. Right-click on index.html
+3. Select "Open with Live Server"
+4. Browser opens automatically at http://127.0.0.1:5500</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Method 3: Node.js http-server (Alternative)</strong></p>
+            <div class="code-block">
+                <pre># Install globally (one-time setup)
+npm install -g http-server
+
+# Navigate to build folder and serve
+cd WebGL_Build/
+http-server -p 8000
+
+# With CORS enabled (if needed)
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Access URLs:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>: http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>: http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>: http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Web Browser Testing:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Open web browser</li>
+                <li class="list-item">Navigate to <code class="inline-code">http://localhost:8000</code></li>
+                <li class="list-item">Game loads in browser with WebGL</li>
+                <li class="list-item">Same multiplayer functionality as desktop version</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Expected WebGL Behavior:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WebSocket Connection</strong>: Connects to tank server via WebSocket (port 33335)</li>
+                <li class="list-item"><strong class="text-strong">Cross-Platform Play</strong>: WebGL clients can play with desktop clients</li>
+                <li class="list-item"><strong class="text-strong">Same Game Logic</strong>: Identical movement, firing, and chat functionality</li>
+                <li class="list-item"><strong class="text-strong">Browser Compatibility</strong>: Works in Chrome, Firefox, Safari, Edge</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL Browser Gameplay" class="image">
+            <p class="image-caption">WebGL Browser Gameplay</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">Troubleshooting</h2>
+
+            <p class="paragraph"><strong class="text-strong">Common Issues and Solutions:</strong></p>
+
+            <h3 class="heading-3">Connection Issues</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Failed to connect to server"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verify tank server is running and accessible</li>
+                        <li class="list-item">Check firewall settings for ports 33334-33335</li>
+                        <li class="list-item">Confirm server IP address in NetworkManager settings</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ProudNet Integration Issues</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"ProudNet DLL not found"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verify DLLs are in <code class="inline-code">Assets/Plugins/</code> folder</li>
+                        <li class="list-item">Check platform settings for each DLL file</li>
+                        <li class="list-item">Restart Unity Editor after DLL changes</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Build Issues</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Build failed with networking errors"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Ensure all ProudNet scripts compile without errors</li>
+                        <li class="list-item">Check Unity Console for specific error messages</li>
+                        <li class="list-item">Verify platform settings for ProudNet DLLs in Plugins folder:
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows: x86_64 enabled for standalone builds</li>
+                                <li class="list-item">WebGL: WebGL platform enabled for browser builds</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">WebGL Issues</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"WebSocket connection failed"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verify tank server supports WebSocket (port 33335)</li>
+                        <li class="list-item">Check browser console for specific error messages</li>
+                        <li class="list-item">Ensure CORS headers are properly configured on server</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"Networking not working in Unity Editor with WebGL platform selected"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Expected Behavior</strong>: ProudNet does not support in-editor play mode for WebGL platform</li>
+                        <li class="list-item"><strong class="text-strong">Solution</strong>: Build the project as WebGL and test in a web browser instead</li>
+                        <li class="list-item"><strong class="text-strong">Alternative</strong>: Switch back to Windows/Mac/Linux Standalone platform for editor testing</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Debugging Tools:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Console</strong>: Network connection and error messages</li>
+                <li class="list-item"><strong class="text-strong">Server Console</strong>: Client connection and game state logs</li>
+                <li class="list-item"><strong class="text-strong">Network Profiler</strong>: Unity's built-in network performance analysis</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Monitor</strong>: Real-time network statistics (if available)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Getting Help:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Documentation</strong>: https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Documentation</strong>: Available in <code class="inline-code">ProudNet/doc/</code> folder</li>
+                <li class="list-item"><strong class="text-strong">Unity Forums</strong>: Community support for Unity development</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>: Report bugs and request features (if applicable)</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 
