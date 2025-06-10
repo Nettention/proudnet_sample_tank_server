@@ -123,4 +123,6 @@ tmp/
 *test.html
 *deploy.bat
 *README_HTML_CONVERSION.md
+*README-NOTION-to-MD.md
 *Dockerrun.aws.json
+*localization.md

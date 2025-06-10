@@ -9,12 +9,12 @@ class LanguageSelector {
             'en': {
                 name: 'English',
                 flag: '🇺🇸',
-                file: '02.tank_client.en.html'
+                file: this.getCurrentDocumentType() + '.en.html'
             },
             'ko': {
                 name: '한국어',
                 flag: '🇰🇷', 
-                file: '02.tank_client.kr.html'
+                file: this.getCurrentDocumentType() + '.kr.html'
             }
             // 추후 다른 언어 추가 가능:
             // 'ja': {
@@ -30,6 +30,22 @@ class LanguageSelector {
         };
         
         this.init();
+    }
+    
+    getCurrentDocumentType() {
+        const path = window.location.pathname;
+        const filename = path.split('/').pop();
+        
+        if (filename.includes('01.server')) {
+            return '01.server';
+        } else if (filename.includes('02.tank_client')) {
+            return '02.tank_client';
+        } else if (filename.includes('03.unreal_shooter_sample')) {
+            return '03.unreal_shooter_sample';
+        }
+        
+        // 기본값
+        return '02.tank_client';
     }
     
     detectCurrentLanguage() {
