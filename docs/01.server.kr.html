@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탱크 게임 서버 프로젝트 문서</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/image-modal.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>탱크 게임 서버 프로젝트</h1>
+            <p class="paragraph">ProudNet 네트워킹 라이브러리를 사용한 멀티플레이어 탱크 게임 서버 구현으로, C#과 C++ 버전을 모두 제공하여 크로스 플랫폼을 지원합니다.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 목차</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">사전 요구사항</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">프로젝트 구조</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">개발 노트</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">시작하기</a></li>
+                <li class="list-item"><a href="#cs-server-implementation" class="link">1. C# 서버 구현</a></li>
+                <li class="list-item"><a href="#cs-client-implementation" class="link">2. C# 클라이언트 구현</a></li>
+                <li class="list-item"><a href="#cpp-server-implementation" class="link">3. C++ 서버 구현 (선택사항)</a></li>
+                <li class="list-item"><a href="#multiplayer-movement-testing" class="link">4. 멀티플레이어 이동 테스트</a></li>
+                <li class="list-item"><a href="#fire-and-messaging-testing" class="link">5. 발사 및 메시징 테스트</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">문제 해결</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">사전 요구사항</h2>
+            <p class="paragraph">이 프로젝트를 빌드하기 전에 <code class="inline-code">tank_server</code> 프로젝트 폴더와 같은 레벨에 <strong class="text-strong">ProudNet</strong> 폴더가 설치되어 있어야 합니다.</p>
+
+            <h3 class="heading-3">필수 디렉터리 구조</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # 이 프로젝트
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+└── ProudNet/            # 필수: ProudNet 설치에서 가져온 파일들
+    ├── doc/             # ProudNet 문서
+    ├── include/         # ProudNet 헤더 파일들
+    ├── lib/             # ProudNet 라이브러리 파일들
+    ├── Sample/          # ProudNet 샘플 프로젝트들
+    └── util/            # ProudNet 유틸리티들</pre>
+            </div>
+
+            <h3 class="heading-3">ProudNet 설치</h3>
+            <ol class="ordered-list">
+                <li class="list-item">공식 웹사이트에서 ProudNet을 다운로드하고 설치합니다</li>
+                <li class="list-item">ProudNet 폴더에 다음 하위 디렉터리들이 포함되어 있는지 확인합니다:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">doc/</code> - 문서 파일들</li>
+                        <li class="list-item"><code class="inline-code">include/</code> - C++ 개발을 위한 헤더 파일들</li>
+                        <li class="list-item"><code class="inline-code">lib/</code> - .NET과 C++ 모두를 위한 라이브러리 파일들</li>
+                        <li class="list-item"><code class="inline-code">Sample/</code> - 예제 프로젝트들</li>
+                        <li class="list-item"><code class="inline-code">util/</code> - 유틸리티 도구들과 라이선스 인증</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">프로젝트 구조</h2>
+            
+            <h3 class="heading-3">📁 Common</h3>
+            <p class="paragraph">서버와 클라이언트 구현 모두에서 사용되는 공유 리소스들을 포함합니다.</p>
+            
+            <p class="paragraph"><strong class="text-strong">내용:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">PIDL 파일들</strong> - RMI (Remote Method Invocation) 함수들을 정의하는 프로토콜 인터페이스 정의 언어 파일들</li>
+                <li class="list-item"><strong class="text-strong">배치 파일들</strong> - PIDL 파일들을 C#과 C++ stub/proxy 클래스로 컴파일하는 스크립트들</li>
+                <li class="list-item"><strong class="text-strong">Vars.cs/Vars.h</strong> - 공유 설정 변수들 (서버 포트, 프로토콜 버전 등)</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">주요 파일들:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Tank.PIDL</code> - 탱크 게임 프로토콜 정의</li>
+                <li class="list-item"><code class="inline-code">CompilePIDL_cs.bat</code> - PIDL 컴파일 스크립트 (C#)</li>
+                <li class="list-item"><code class="inline-code">CompilePIDL_cpp.bat</code> - PIDL 컴파일 스크립트 (C++)</li>
+                <li class="list-item"><code class="inline-code">Vars.cs</code> - C# 설정</li>
+                <li class="list-item"><code class="inline-code">Vars.h</code> - C++ 설정</li>
+            </ul>
+
+            <h3 class="heading-3">🖥️ Server</h3>
+            <p class="paragraph">탱크 게임 서버의 C# 구현입니다.</p>
+            
+            <p class="paragraph"><strong class="text-strong">기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">실시간 멀티플레이어 탱크 게임 서버</li>
+                <li class="list-item">탱크 이동, 발사, 체력 관리</li>
+                <li class="list-item">플레이어 연결/연결 해제 처리</li>
+                <li class="list-item">효율적인 네트워킹을 위한 P2P 그룹 관리</li>
+                <li class="list-item">서버 콘솔 명령어들 (데미지, 치료, 리스폰, 상태)</li>
+                <li class="list-item">Windows/.NET 호환</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">주요 파일들:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">TankServer.cs</code> - 메인 서버 구현</li>
+                <li class="list-item"><code class="inline-code">TankServer.csproj</code> - .NET 프로젝트 파일</li>
+                <li class="list-item"><code class="inline-code">build.bat</code> - DLL 복사 포함 빌드 스크립트</li>
+            </ul>
+
+            <h3 class="heading-3">🎮 Client</h3>
+            <p class="paragraph">탱크 게임을 위한 C# 콘솔 기반 클라이언트입니다.</p>
+            
+            <p class="paragraph"><strong class="text-strong">기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">탱크 게임 클라이언트를 위한 콘솔 인터페이스</li>
+                <li class="list-item">탱크 이동 및 발사 컨트롤</li>
+                <li class="list-item">서버와의 실시간 통신</li>
+                <li class="list-item">P2P 메시징 지원</li>
+                <li class="list-item">Windows/.NET 호환</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">주요 파일들:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">TankClient.cs</code> - 메인 클라이언트 구현</li>
+                <li class="list-item"><code class="inline-code">TankClient.csproj</code> - .NET 프로젝트 파일</li>
+                <li class="list-item"><code class="inline-code">build.bat</code> - DLL 복사 포함 빌드 스크립트</li>
+            </ul>
+
+            <h3 class="heading-3">🐧 Server_CPP</h3>
+            <p class="paragraph">Linux 지원과 함께 제공되는 탱크 게임 서버의 C++ 구현입니다.</p>
+            
+            <p class="paragraph"><strong class="text-strong">기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">크로스 플랫폼 탱크 게임 서버 (Windows/Linux)</li>
+                <li class="list-item">Docker 컨테이너화 지원</li>
+                <li class="list-item">CMake 빌드 시스템</li>
+                <li class="list-item">C# 버전과 동일한 게임 로직</li>
+                <li class="list-item">Linux 프로덕션 배포 준비</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">주요 파일들:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">src/TankServer.cpp</code> - 메인 C++ 서버 구현</li>
+                <li class="list-item"><code class="inline-code">CMakeLists.txt</code> - CMake 설정</li>
+                <li class="list-item"><code class="inline-code">Dockerfile</code> - Docker 컨테이너 설정</li>
+                <li class="list-item"><code class="inline-code">docker-compose.yml</code> - Docker Compose 설정</li>
+                <li class="list-item"><code class="inline-code">run.bat</code> - Windows 실행 스크립트</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">빌드 옵션들:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows</strong>: CMake와 함께 Visual Studio</li>
+                <li class="list-item"><strong class="text-strong">Linux</strong>: CMake와 함께 GCC</li>
+                <li class="list-item"><strong class="text-strong">Docker</strong>: 컨테이너화된 배포</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">개발 노트</h2>
+            <ul class="unordered-list">
+                <li class="list-item">C# 버전은 .NET 9.0이 필요합니다</li>
+                <li class="list-item">C++ 버전은 C++17 표준이 필요합니다</li>
+                <li class="list-item">두 버전 모두 PIDL 파일을 통해 동일한 프로토콜 정의를 공유합니다</li>
+                <li class="list-item">Docker 배포는 자동 ProudNet 라이브러리 감지 및 복사를 지원합니다</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">시작하기</h2>
+            
+            <h3 class="heading-3">사전 요구사항</h3>
+            <ol class="ordered-list">
+                <li class="list-item">ProudNet 설치 위치에서 ProudNet 파일들을 복사하여 <code class="inline-code">tank_server/</code>와 같은 레벨에 <code class="inline-code">ProudNet/</code> 디렉터리를 생성합니다</li>
+                <li class="list-item">프로토콜 컴파일을 위해 <code class="inline-code">ProudNet/util/PIDL.exe</code>가 존재하는지 확인합니다</li>
+            </ol>
+        </section>
+
+        <section id="cs-server-implementation" class="md-section">
+            <h2 class="heading-2">1. C# 서버 구현</h2>
+
+            <h3 class="heading-3">1단계: 프로토콜 정의 이해 (Tank.PIDL)</h3>
+            <p class="paragraph"><code class="inline-code">Tank.PIDL</code> 파일은 서버와 클라이언트 간 통신 프로토콜을 정의합니다:</p>
+
+            <div class="code-block">
+                <pre>// Tank.PIDL - 프로토콜 인터페이스 정의 언어
+global Tank 2000 // 클라이언트-서버 및 서버-클라이언트 RMI, 첫 번째 메시지 ID = 2000
+{
+    // 클라이언트에서 서버로 보내는 함수들
+    SendMove([in] float posX, [in] float posY, [in] float direction);
+    SendFire([in] int shooterId, [in] float direction, [in] float launchForce, ...);
+    SendTankType([in] int tankType);
+    
+    // 서버에서 클라이언트로 보내는 함수들
+    OnPlayerJoined([in] int clientId, [in] float posX, [in] float posY, [in] int tankType);
+    OnTankPositionUpdated([in] int clientId, [in] float posX, [in] float posY, [in] float direction);
+    OnSpawnBullet([in] int clientId, [in] int shooterId, ...);
+    // ... 더 많은 RMI 함수들
+}</pre>
+            </div>
+
+            <p class="paragraph">이 PIDL 파일은 다음을 정의합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">RMI 함수들</strong>이 클라이언트에서 서버로 전송됨 (SendMove, SendFire 등)</li>
+                <li class="list-item"><strong class="text-strong">RMI 함수들</strong>이 서버에서 클라이언트로 전송됨 (OnPlayerJoined, OnTankPositionUpdated 등)</li>
+                <li class="list-item">직접적인 클라이언트 통신을 위한 <strong class="text-strong">P2P 메시징</strong></li>
+            </ul>
+
+            <h3 class="heading-3">2단계: C# Stub 및 Proxy 클래스 생성</h3>
+            <p class="paragraph">PIDL 컴파일러를 실행하여 C# 네트워킹 코드를 생성합니다:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Common
+CompilePIDL_cs.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Common [master +5 ~14 -15 !]> .\CompilePIDL_cs.bat 
+PIDL compile complete!
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">이 스크립트는 다음을 수행합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir ../Server</code> 실행</li>
+                <li class="list-item"><code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir ../Client</code> 실행</li>
+                <li class="list-item">Server와 Client 디렉터리 모두에 파일들을 생성:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">Tank_stub.cs</code> - 들어오는 RMI 호출을 처리</li>
+                        <li class="list-item"><code class="inline-code">Tank_proxy.cs</code> - 나가는 RMI 호출을 전송</li>
+                        <li class="list-item"><code class="inline-code">Tank_common.cs</code> - 공통 정의 및 상수들</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">3단계: 서버 빌드</h3>
+            <p class="paragraph">Server 디렉터리로 이동하여 빌드합니다:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +15 ~13 -15 !]> ./build.bat
+========================================
+Tank Server Build Script
+========================================
+Build configuration: Debug
+Building Tank Server...
+Restore complete (0.2s)
+  TankServer succeeded (1.8s) → bin\Debug\net9.0\TankServer.dll
+
+Build succeeded in 2.3s
+Build completed successfully!
+Using build output path: bin\Debug\net9.0
+Build output directory exists: bin\Debug\net9.0
+ProudNet DotNet directory exists: ..\..\ProudNet\lib\DotNet
+ProudNet x64 directory exists: ..\..\ProudNet\lib\DotNet\x64
+========================================
+Copying ProudNet DLLs...
+========================================
+Copying libcrypto-3-x64.dll...
+        1 file(s) copied.
+Copying libssl-3-x64.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.pdb...
+        1 file(s) copied.
+Copying ProudDotNetServer.dll...
+        1 file(s) copied.
+Copying ProudDotNetServer.pdb...
+        1 file(s) copied.
+Copying ProudNetClient.dll...
+        1 file(s) copied.
+Copying ProudNetClientPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServer.dll...
+        1 file(s) copied.
+Copying ProudNetServerPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServerPlugin.pdb...
+        1 file(s) copied.
+========================================
+Build and DLL copy completed!
+========================================
+
+Output directory: bin\Debug\net9.0
+You can now run the Tank Server executable.
+
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">빌드 스크립트는 다음을 수행합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">dotnet build --configuration Debug</code>를 사용하여 C# 프로젝트를 컴파일</li>
+                <li class="list-item">필요한 ProudNet DLL들을 출력 디렉터리에 복사:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">ProudDotNetServer.dll</code>, <code class="inline-code">ProudDotNetClient.dll</code></li>
+                        <li class="list-item"><code class="inline-code">ProudNetServer.dll</code>, <code class="inline-code">ProudNetServerPlugin.dll</code></li>
+                        <li class="list-item"><code class="inline-code">libcrypto-3-x64.dll</code>, <code class="inline-code">libssl-3-x64.dll</code></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">4단계: 서버 실행</h3>
+            <div class="code-block">
+                <pre>cd tank_server/Server/bin/Debug/net9.0
+TankServer.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe      
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: Quit server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph">서버는 다음을 수행합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item">포트 33334에서 수신 대기 시작</li>
+                <li class="list-item">연결 상태 및 게임 이벤트 표시</li>
+                <li class="list-item">명령어 수용: <code class="inline-code">status</code>, <code class="inline-code">health</code>, <code class="inline-code">damage</code>, <code class="inline-code">heal</code>, <code class="inline-code">respawn</code>, <code class="inline-code">q</code> (종료)</li>
+            </ul>
+        </section>
+
+        <section id="cs-client-implementation" class="md-section">
+            <h2 class="heading-2">2. C# 클라이언트 구현</h2>
+
+            <h3 class="heading-3">1단계: 공유 프로토콜 이해</h3>
+            <p class="paragraph">클라이언트는 서버와 <strong class="text-strong">동일한 Tank.PIDL 파일</strong>을 사용하여 완벽한 프로토콜 호환성을 보장합니다:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">동일한 RMI 정의</strong>: 서버와 클라이언트 모두 동일한 함수 시그니처를 이해</li>
+                <li class="list-item"><strong class="text-strong">공유 stub/proxy 클래스들</strong>: <code class="inline-code">CompilePIDL_cs.bat</code> 스크립트가 두 프로젝트 모두에 동일한 네트워킹 코드 생성</li>
+                <li class="list-item"><strong class="text-strong">프로토콜 동기화</strong>: Tank.PIDL의 모든 변경사항이 재컴파일 시 서버와 클라이언트를 자동으로 업데이트</li>
+            </ul>
+
+            <p class="paragraph">이 접근 방식은 다음을 보장합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item">서버와 클라이언트가 항상 호환되는 네트워크 프로토콜 사용</li>
+                <li class="list-item">RMI 함수 호출이 타입 안전하며 컴파일 타임에 검증됨</li>
+                <li class="list-item">네트워크 메시지 형식이 두 애플리케이션 간에 일관됨</li>
+            </ul>
+
+            <h3 class="heading-3">2단계: 클라이언트 빌드</h3>
+            <p class="paragraph">Client 디렉터리로 이동하여 빌드합니다:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Client  
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +5 ~14 -15 !]> .\build.bat
+========================================
+Tank Client Build Script
+========================================
+Build configuration: Debug
+Building Tank Client...
+Restore complete (0.3s)
+  TankClient succeeded (0.2s) → bin\Debug\net9.0\TankClient.dll
+
+Build succeeded in 0.8s
+Build completed successfully!
+Using build output path: bin\Debug\net9.0
+Build output directory exists: bin\Debug\net9.0
+ProudNet DotNet directory exists: ..\..\ProudNet\lib\DotNet
+ProudNet x64 directory exists: ..\..\ProudNet\lib\DotNet\x64
+========================================
+Copying ProudNet DLLs...
+========================================
+Copying libcrypto-3-x64.dll...
+        1 file(s) copied.
+Copying libssl-3-x64.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.pdb...
+        1 file(s) copied.
+Copying ProudDotNetServer.dll...
+        1 file(s) copied.
+Copying ProudNetClient.dll...
+        1 file(s) copied.
+Copying ProudNetClientPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServer.dll...
+        1 file(s) copied.
+========================================
+Build and DLL copy completed!
+========================================
+
+Output directory: bin\Debug\net9.0
+You can now run the Tank Client executable.
+
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">클라이언트 빌드 스크립트는 서버와 동일한 작업을 수행합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">dotnet build --configuration Debug</code>를 사용하여 C# 프로젝트 컴파일</li>
+                <li class="list-item">런타임 호환성을 보장하기 위해 동일한 ProudNet DLL들을 복사</li>
+                <li class="list-item">PIDL 컴파일에서 생성된 stub/proxy 클래스들을 사용</li>
+            </ul>
+
+            <h3 class="heading-3">3단계: 클라이언트 실행</h3>
+            <div class="code-block">
+                <pre>cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +6 ~14 -15 !]> .\bin\Debug\net9.0\TankClient.exe
+Connecting to server...
+Commands:
+move x y dir : Move tank to position (x,y) with direction dir
+fire dir [force] : Fire in direction dir with optional force (default 25.0)
+tank n       : Select tank type (0-3)
+health h [max]: Update tank health to h with optional max health
+destroy [id] : Send tank destroyed event (id of destroyer, default 0 = environment)
+spawn x y dir type health: Spawn/respawn tank
+msg text     : Send P2P message to other clients
+history      : Show message history
+status       : Show P2P connection status
+auto         : Toggle auto movement
+q            : Quit
+Connected to server. My ID: 3</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">🔍 서버 연결 확인:</strong></p>
+            <p class="paragraph">클라이언트가 성공적으로 연결되면 <strong class="text-strong">서버 콘솔</strong>에서도 연결 메시지를 확인할 수 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">서버 콘솔 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: Quit server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">📝 서버 로그 설명:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Client 3 connected</code> - 새 클라이언트가 성공적으로 연결되어 ID 3이 할당됨</li>
+                <li class="list-item"><code class="inline-code">New tank created for client 3 with tank type -1 and health 100/100</code> - 서버가 새 클라이언트를 위한 탱크 객체를 생성:
+                    <ul class="unordered-list">
+                        <li class="list-item">탱크 타입 <code class="inline-code">-1</code>은 아직 탱크 타입이 선택되지 않았음을 의미</li>
+                        <li class="list-item">초기 체력이 100/100 (현재/최대)으로 설정됨</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">Not enough clients to create P2P group (need at least 2)</code> - P2P 그룹 생성에는 피어투피어 통신을 위해 최소 2개의 클라이언트가 필요함</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">💡 P2P 기능을 테스트하려면:</strong></p>
+            <p class="paragraph">다른 터미널에서 <strong class="text-strong">두 번째 클라이언트</strong>를 실행하면 다음을 확인할 수 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">두 번째 클라이언트 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankClient.exe          
+Connecting to server...                                                                                                                                                                                                                             
+Commands:                                                                                                                                                                                                                                           
+move x y dir : Move tank to position (x,y) with direction dir                                                                                                                                                                                       
+fire dir [force] : Fire in direction dir with optional force (default 25.0)
+tank n       : Select tank type (0-3)
+health h [max]: Update tank health to h with optional max health
+destroy [id] : Send tank destroyed event (id of destroyer, default 0 = environment)
+spawn x y dir type health: Spawn/respawn tank
+msg text     : Send P2P message to other clients
+history      : Show message history
+status       : Show P2P connection status
+auto         : Toggle auto movement
+q            : Quit
+Connected to server. My ID: 4
+P2P: Member 4 joined group 5
+P2P: Member 3 joined group 5
+P2P: Added member 3 to group member list
+OnPlayerJoined: Tank 3 joined at (12.939716,28.795837) with tank type -1
+OnTankHealthUpdated: Tank 3 health: 100/100
+P2P: Received group info, Group ID: 5</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">업데이트된 서버 콘솔 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: Quit server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)
+Client 4 connected
+New tank created for client 4 with tank type -1 and health 100/100
+Sending existing player info to new client: ID=3, Type=-1, Health=100/100
+Notifying existing client 3 about new player: ID=4, Type=-1, Health=100/100
+P2P group created with 2 members, Group ID: 5
+Sent P2P group info to client 3: P2P_GROUP_INFO:5
+Sent P2P group info to client 4: P2P_GROUP_INFO:5</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">📝 다중 클라이언트 연결 분석:</strong></p>
+
+            <p class="paragraph"><strong class="text-strong">두 번째 클라이언트가 연결될 때:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">클라이언트 4 연결</strong> - 서버가 새 ID를 할당하고 탱크 객체 생성</li>
+                <li class="list-item"><strong class="text-strong">플레이어 동기화</strong> - 서버가 플레이어 정보를 교환:
+                    <ul class="unordered-list">
+                        <li class="list-item">기존 플레이어 정보(클라이언트 3)를 새 클라이언트(클라이언트 4)에게 전송</li>
+                        <li class="list-item">기존 클라이언트(클라이언트 3)에게 새 플레이어(클라이언트 4)에 대해 알림</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 생성</strong> - 이제 2개 이상의 클라이언트가 있으므로:
+                    <ul class="unordered-list">
+                        <li class="list-item">서버가 ID 5로 P2P 그룹 생성</li>
+                        <li class="list-item">두 클라이언트 모두 P2P 그룹 정보 수신</li>
+                        <li class="list-item">클라이언트들이 이제 P2P 메시징을 통해 직접 통신 가능</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 측 P2P 이벤트:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">P2P: Member X joined group Y</code> - P2P 그룹 멤버십 알림</li>
+                <li class="list-item"><code class="inline-code">OnPlayerJoined: Tank 3 joined at (x,y)</code> - 기존 플레이어에 대한 정보 수신</li>
+                <li class="list-item"><code class="inline-code">OnTankHealthUpdated: Tank 3 health: 100/100</code> - 다른 탱크의 체력 상태 수신</li>
+                <li class="list-item"><code class="inline-code">P2P: Received group info, Group ID: 5</code> - P2P 그룹 설정 확인</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 이제 멀티플레이어 기능을 테스트할 수 있습니다:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">msg hello</code>를 한 클라이언트에서 사용하여 다른 클라이언트들에게 P2P 메시지 전송</li>
+                <li class="list-item"><code class="inline-code">move x y dir</code>를 사용하여 클라이언트 간 위치 업데이트 확인</li>
+                <li class="list-item"><code class="inline-code">fire dir</code>를 사용하여 발사체 동기화 테스트</li>
+            </ul>
+        </section>
+
+        <section id="cpp-server-implementation" class="md-section">
+            <h2 class="heading-2">3. C++ 서버 구현 (선택사항)</h2>
+
+            <p class="paragraph">C++ 서버 구현은 C# 서버와 <strong class="text-strong">정확히 동일한 기능</strong>을 제공하며, 크로스 플랫폼 지원과 컨테이너 배포 옵션을 제공합니다. 이는 ProudNet의 다중 언어 기능을 보여주는 선택적 고급 구현입니다.</p>
+
+            <h3 class="heading-3">프로토콜 호환성</h3>
+            <p class="paragraph">C#과 C++ 서버 모두 <strong class="text-strong">동일한 Tank.PIDL 파일</strong>을 사용하므로 완전히 호환됩니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">동일한 RMI 함수</strong>: 동일한 네트워크 프로토콜 정의</li>
+                <li class="list-item"><strong class="text-strong">클라이언트 호환성</strong>: C# 클라이언트가 C# 또는 C++ 서버에 원활하게 연결 가능</li>
+                <li class="list-item"><strong class="text-strong">기능 동일성</strong>: 이동, 발사, P2P 메시징 및 모든 게임 메커니즘이 동일하게 작동</li>
+            </ul>
+
+            <h3 class="heading-3">C++ 구현의 주요 장점</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">크로스 플랫폼 지원</strong>: Windows, Linux 및 컨테이너 환경에서 실행</li>
+                <li class="list-item"><strong class="text-strong">성능 최적화</strong>: 고부하 시나리오를 위한 네이티브 C++ 성능</li>
+                <li class="list-item"><strong class="text-strong">프로덕션 배포</strong>: 확장 가능한 서버 인프라를 위한 Docker 컨테이너화</li>
+                <li class="list-item"><strong class="text-strong">Linux 호환성</strong>: .NET 의존성 없이 Ubuntu/Linux 서버에 배포</li>
+            </ul>
+
+            <h3 class="heading-3">단계 1: C++ Stub 및 Proxy 클래스 생성</h3>
+            <p class="paragraph">먼저 PIDL 파일에서 C++ 네트워킹 코드를 생성합니다:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Common
+CompilePIDL_cpp.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Common [master +5 ~14 -15 !]> .\CompilePIDL_cpp.bat
+[INFO] Generating C++ files from Tank.PIDL...
+[INFO] PIDL C++ compilation complete!
+[INFO] Generated files in ..\Server_CPP\include directory.
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">이것은 <code class="inline-code">Server_CPP/include/</code> 디렉토리에 C++ stub/proxy 클래스를 생성합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Tank_stub.cpp/.h</code> - 들어오는 RMI 호출 처리</li>
+                <li class="list-item"><code class="inline-code">Tank_proxy.cpp/.h</code> - 나가는 RMI 호출 전송</li>
+                <li class="list-item"><code class="inline-code">Tank_common.cpp/.h</code> - 공통 정의 및 상수</li>
+            </ul>
+
+            <h3 class="heading-3">단계 2: C++ 서버 빌드 (Windows)</h3>
+
+            <h4 class="heading-4">Windows 빌드 사전 요구사항</h4>
+            <p class="paragraph">C++ 서버를 빌드하기 전에 다음 구성 요소가 설치되어 있는지 확인하세요:</p>
+
+            <p class="paragraph"><strong class="text-strong">필수 소프트웨어:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Visual Studio 2022</strong> (Community/Professional/Enterprise)
+                    <ul class="unordered-list">
+                        <li class="list-item">VS 2019, 2017, 2015도 지원</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">CMake 3.10 이상</strong></li>
+                <li class="list-item"><strong class="text-strong">Windows SDK 10.0</strong> (최신 버전 권장)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">필수 Visual Studio 구성 요소:</strong></p>
+            <p class="paragraph">Visual Studio를 설치할 때 다음 워크로드와 구성 요소를 포함해야 합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">C++를 사용한 데스크톱 개발</strong> 워크로드</li>
+                <li class="list-item"><strong class="text-strong">MSVC v143 - VS 2022 C++ x64/x86 빌드 도구</strong> (최신)</li>
+                <li class="list-item"><strong class="text-strong">Windows 11 SDK</strong> (또는 Windows 10 SDK)</li>
+                <li class="list-item"><strong class="text-strong">v143 빌드 도구용 ATL (x86 및 x64)</strong> - <em class="text-emphasis">ProudNet 링킹에 필수</em></li>
+                <li class="list-item"><strong class="text-strong">C++용 CMake 도구</strong></li>
+                <li class="list-item"><strong class="text-strong">Git for Windows</strong> (선택사항, 버전 관리용)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">ATL에 대한 중요 참고사항:</strong></p>
+            <p class="paragraph">ATL(Active Template Library)은 Windows에서 ProudNet 링킹에 필수적입니다. CMakeLists.txt에서 명시적으로 링크되는 것을 볼 수 있습니다:</p>
+            <div class="code-block">
+                <pre>target_link_libraries(TankGameServer
+    # ... other libraries ...
+    atls       # ATL library addition
+)</pre>
+            </div>
+
+            <h4 class="heading-4">빌드 프로세스</h4>
+            <p class="paragraph">Server_CPP 디렉토리로 이동하여 제공된 스크립트를 사용하여 빌드합니다:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 빌드 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> .\build.bat
+[INFO] =========================================
+[INFO] Starting TankGameServer C++ Build...
+[INFO] =========================================
+[INFO] Detecting Visual Studio installation...
+[INFO] Visual Studio 2022 Community found
+[INFO] Setting up VS2022 environment...
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[INFO] Using Visual Studio 2022 with generator: NMake Makefiles
+[INFO] ProudNet Path: C:\Users\wayne\Documents\proud_tank\ProudNet
+[INFO] Build Type: Release
+[INFO] Using: Visual Studio 2022 with NMake Makefiles
+[INFO] Checking and generating PIDL files...
+[INFO] Compiling PIDL files...
+[INFO] Generating C++ files from Tank.PIDL...
+[INFO] PIDL C++ compilation complete
+[INFO] Generated files in ..\Server_CPP\include directory.
+Press any key to continue . . .
+[INFO] Creating build directory...
+[INFO] Removing existing build directory...
+[INFO] Configuring CMake...
+[INFO] Using NMake Makefiles generator
+-- The C compiler identification is MSVC 19.44.35207.1
+-- The CXX compiler identification is MSVC 19.44.35207.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building on Windows - Using OpenSSL and CURL from ProudNet
+-- System check: Windows
+-- Current working directory: C:/Users/wayne/Documents/proud_tank/tank_server/Server_CPP
+-- Build type: Release
+-- ProudNet Path: C:\Users\wayne\Documents\proud_tank\ProudNet
+-- Operating System: Windows
+-- Using Visual Studio version from command line: 2022
+-- Found Visual Studio installation: C:/Program Files/Microsoft Visual Studio/2022/Community
+-- Visual Studio Path: C:/Program Files/Microsoft Visual Studio/2022/Community
+-- Using Release Library Path: C:\Users\wayne\Documents\proud_tank\ProudNet/lib/x64/v140/Release
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/wayne/Documents/proud_tank/tank_server/Server_CPP/build
+[INFO] Building project...
+[ 33%] Building CXX object CMakeFiles/TankGameServer.dir/src/TankServer.cpp.obj
+TankServer.cpp
+[ 66%] Building CXX object CMakeFiles/TankGameServer.dir/C_/Users/wayne/Documents/proud_tank/tank_server/Common/Vars.cpp.obj
+Vars.cpp
+[100%] Linking CXX executable TankServer.exe
+[100%] Built target TankGameServer
+[INFO] Build successful
+[INFO] Executable: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\Release\TankGameServer.exe
+[INFO] Copying required DLL files...
+[INFO] =========================================
+[INFO] Build completed
+[INFO] Executable: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\TankServer.exe
+[INFO] =========================================
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">빌드 프로세스 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Visual Studio 감지</strong>: VS 2022 Community 설치를 자동으로 감지</li>
+                <li class="list-item"><strong class="text-strong">환경 설정</strong>: x64 도구로 VS 2022 Developer Command Prompt 초기화</li>
+                <li class="list-item"><strong class="text-strong">PIDL 컴파일</strong>: C++ stub/proxy 클래스 자동 생성</li>
+                <li class="list-item"><strong class="text-strong">CMake 구성</strong>: MSVC 컴파일러용 NMake Makefiles 생성기 사용</li>
+                <li class="list-item"><strong class="text-strong">컴파일</strong>: C++17 표준으로 <code class="inline-code">TankServer.cpp</code>와 <code class="inline-code">Vars.cpp</code> 빌드</li>
+                <li class="list-item"><strong class="text-strong">링킹</strong>: ProudNet 라이브러리, Windows 시스템 라이브러리, ATL과 링크</li>
+                <li class="list-item"><strong class="text-strong">DLL 복사</strong>: 필요한 ProudNet DLL을 실행 파일 디렉토리로 복사</li>
+            </ol>
+
+            <p class="paragraph">빌드 스크립트는 다음을 수행합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Visual Studio 설치 감지</strong> 자동 (2015-2022)</li>
+                <li class="list-item"><strong class="text-strong">빌드 환경 설정</strong> vcvarsall.bat 사용</li>
+                <li class="list-item"><strong class="text-strong">PIDL 파일 생성</strong> CMake 구성 전 자동</li>
+                <li class="list-item"><strong class="text-strong">빌드 디렉토리 생성</strong> 및 NMake Makefiles로 CMake 구성</li>
+                <li class="list-item"><strong class="text-strong">C++ 소스 파일 컴파일</strong> MSVC 컴파일러 사용</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 라이브러리와 링크</strong> 및 Windows 시스템 라이브러리:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">ProudNetServer.lib</code>, <code class="inline-code">ProudNetClient.lib</code></li>
+                        <li class="list-item"><code class="inline-code">ws2_32</code> (Windows Sockets), <code class="inline-code">winmm</code> (Multimedia), <code class="inline-code">iphlpapi</code> (IP Helper)</li>
+                        <li class="list-item"><code class="inline-code">atls</code> (Active Template Library)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">필요한 ProudNet DLL 복사</strong> 출력 디렉토리로</li>
+            </ul>
+
+            <h3 class="heading-3">단계 3: C++ 서버 실행 (Windows)</h3>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 서버 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> .\run.bat
+[INFO] Starting TankGameServer C++ Server...
+[INFO] Found executable at build\TankServer.exe (NMake build
+[INFO] Server is starting. Press 'q' to quit.
+[INFO] Running: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\TankServer.exe
+========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: Quit server</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">서버 시작 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">실행 파일 감지</strong>: <code class="inline-code">run.bat</code>이 빌드된 실행 파일을 자동으로 찾음</li>
+                <li class="list-item"><strong class="text-strong">네트워크 바인딩</strong>: 서버가 모든 네트워크 인터페이스에 바인딩 (0.0.0.0)
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">TCP 서버</strong>: 게임 연결용 포트 33334</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket 서버</strong>: 웹 클라이언트 지원용 포트 33335/ws</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">명령 인터페이스</strong>: C# 버전과 동일한 서버 명령</li>
+                <li class="list-item"><strong class="text-strong">준비 상태</strong>: 서버가 클라이언트 연결을 받을 준비 완료</li>
+            </ol>
+
+            <h3 class="heading-3">단계 4: C# 클라이언트 호환성 테스트</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔄 프로토콜 호환성 검증:</strong></p>
+            <p class="paragraph">C++ 서버는 기존 C# 클라이언트와 완전히 호환됩니다. 단계 2의 <strong class="text-strong">동일한 C# 클라이언트</strong>를 수정 없이 이 C++ 서버에 연결할 수 있습니다.</p>
+
+            <p class="paragraph"><strong class="text-strong">C# 클라이언트를 C++ 서버에 연결:</strong></p>
+            <div class="code-block">
+                <pre># 다른 터미널에서 C# 클라이언트 실행
+cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">C++ 서버 콘솔 로그 (클라이언트 연결):</strong></p>
+            <div class="code-block">
+                <pre>Client 3 connected from 127.0.0.1:52341
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">서버 로그 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">동일한 클라이언트 처리</strong>: C++ 서버가 C# 서버와 정확히 동일하게 클라이언트 연결을 처리</li>
+                <li class="list-item"><strong class="text-strong">동일한 탱크 생성</strong>: 동일한 초기 상태(체력 100/100, 타입 -1)로 탱크 객체 생성</li>
+                <li class="list-item"><strong class="text-strong">플레이어 동기화</strong>: 클라이언트 간 플레이어 정보 교환이 동일함</li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 관리</strong>: 동일한 로직과 그룹 ID 할당으로 P2P 그룹 생성</li>
+                <li class="list-item"><strong class="text-strong">프로토콜 호환성</strong>: 모든 RMI 함수와 메시지 형식이 원활하게 작동</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">✅ 완전한 기능 동등성:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">모든 이동, 발사, 메시징 명령이 동일하게 작동</li>
+                <li class="list-item">P2P 그룹 생성 및 관리 기능이 동일함</li>
+                <li class="list-item">서버 명령(<code class="inline-code">status</code>, <code class="inline-code">health</code>, <code class="inline-code">damage</code>, <code class="inline-code">heal</code>, <code class="inline-code">respawn</code>)이 동일하게 작동</li>
+                <li class="list-item">클라이언트 연결 처리와 상태 관리가 동일함</li>
+                <li class="list-item">탱크 생성, 체력 추적, 게임 로직이 정확히 동일함</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎯 이는 C++ 서버가 100% 프로토콜 호환성을 가진 C# 서버의 완전한 대체재임을 보여줍니다.</strong></p>
+
+            <h3 class="heading-3">단계 5: Docker 배포 (Linux/Ubuntu)</h3>
+
+            <p class="paragraph">C++ 서버는 프로덕션 환경을 위해 Ubuntu 24.04에서 Docker 컨테이너로 배포할 수 있습니다.</p>
+
+            <h4 class="heading-4">Docker 배포 사전 요구사항</h4>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Docker Desktop</strong> (Windows) 또는 <strong class="text-strong">Docker Engine</strong> (Linux)</li>
+                <li class="list-item"><strong class="text-strong">Docker Compose</strong> 오케스트레이션용</li>
+            </ul>
+
+            <h4 class="heading-4">Windows Docker 설정</h4>
+            <p class="paragraph">Windows에서 실행하는 경우 Docker가 Linux 컨테이너용으로 구성되어 있는지 확인하세요:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Docker Desktop 설치</strong> 공식 웹사이트에서</li>
+                <li class="list-item"><strong class="text-strong">Linux 컨테이너로 전환</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">시스템 트레이의 Docker Desktop 아이콘 우클릭</li>
+                        <li class="list-item">"Switch to Linux containers..." 선택</li>
+                        <li class="list-item">Docker가 Linux 컨테이너 모드로 재시작될 때까지 기다림</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">ProudNet 라이선스 구성 (선택사항)</h4>
+
+            <p class="paragraph">기본적으로 서버는 라이선스 키 없이 <strong class="text-strong">50 CCU 제한 모드</strong>로 실행됩니다. 무제한 동시 사용자로 프로덕션 배포를 위해서는 ProudNet 라이선스를 구성할 수 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">단계 1: 라이선스 키 설정</strong></p>
+            <p class="paragraph"><code class="inline-code">tank_server/licensekey.txt</code> 파일을 편집합니다:</p>
+
+            <div class="code-block">
+                <pre># 기본 내용 (50 CCU 제한): 실제 ProudNet 라이선스 키로 교체:
+PUT_YOUR_PROUDNET_LICENSE_KEY_HERE</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">단계 2: 라이선스 검증</strong></p>
+            <p class="paragraph">Docker 빌드 프로세스는 자동으로 라이선스를 감지하고 적용합니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">라이선스 있음</strong>: 무제한 CCU, 전체 ProudNet 기능</li>
+                <li class="list-item"><strong class="text-strong">라이선스 없음</strong>: 50 CCU 제한, 개발 모드</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">라이선스 포함 Docker 출력 예상:</strong></p>
+            <div class="code-block">
+                <pre>tank-server-1  | License key found: /app/licensekey.txt
+tank-server-1  | ProudNet license validation successful
+tank-server-1  | Starting server with full license (unlimited CCU)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">라이선스 미포함 Docker 출력 예상 (기본값):</strong></p>
+            <div class="code-block">
+                <pre>tank-server-1  | License key file not found: /app/licensekey.txt
+tank-server-1  | Building without ProudNet license.
+tank-server-1  | Starting server without license (50 CCU limitation mode).</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">🔑 라이선스 혜택:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">CCU 증가</strong>: 라이선스 유형에 따른 높은 동시 연결 제한</li>
+                <li class="list-item"><strong class="text-strong">프로덕션 기능</strong>: 전체 ProudNet 서버 기능</li>
+                <li class="list-item"><strong class="text-strong">기술 지원</strong>: ProudNet 기술 지원 접근</li>
+                <li class="list-item"><strong class="text-strong">성능 최적화</strong>: 향상된 서버 성능 기능</li>
+            </ul>
+
+            <h4 class="heading-4">Docker 배포 명령</h4>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+docker-compose up</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 Docker 출력:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> docker-compose up
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+[+] Building 2.3s (22/22)                                                                                                                                 docker:desktop-linux 
+[+] Building 2.3s (22/23)                                                                                                                                 docker:desktop-linux 
+[+] Building 2.3s (23/23) FINISHED                                                                                                                        docker:desktop-linux 
+ => [tank-server internal] load build definition from Dockerfile                                                                                                          0.0s 
+ => => transferring dockerfile: 6.39kB                                                                                                                                    0.0s 
+ => [tank-server internal] load metadata for docker.io/library/ubuntu:24.04                                                                                               1.9s 
+ => [tank-server auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                 0.0s 
+ => [tank-server internal] load .dockerignore                                                                                                                             0.0s 
+ => => transferring context: 2B                                                                                                                                           0.0s 
+ => [tank-server  1/16] FROM docker.io/library/ubuntu:24.04@sha256:6015f66923d7afbc53558d7ccffd325d43b4e249f41a6e93eef074c9505d2233                                       0.0s 
+ => [tank-server internal] load build context                                                                                                                             0.1s
+ => => transferring context: 106.41kB                                                                                                                                     0.0s
+ => CACHED [tank-server  2/16] RUN apt-get update && apt-get install -y     build-essential     cmake     git     libssl-dev     libssl3     libcurl4-openssl-dev     tz  0.0s
+ => CACHED [tank-server  3/16] WORKDIR /app                                                                                                                               0.0s
+ => CACHED [tank-server  4/16] COPY tank_server/Server_CPP/src /app/src/                                                                                                  0.0s
+ => CACHED [tank-server  5/16] COPY tank_server/Server_CPP/include /app/include/                                                                                          0.0s
+ => CACHED [tank-server  6/16] COPY tank_server/Server_CPP/CMakeLists.txt /app/CMakeLists.txt                                                                             0.0s
+ => CACHED [tank-server  7/16] COPY tank_server/Common/Vars.cpp /app/Common/Vars.cpp                                                                                      0.0s
+ => CACHED [tank-server  8/16] COPY tank_server/Common/Vars.h /app/Common/Vars.h                                                                                          0.0s
+ => CACHED [tank-server  9/16] COPY ProudNet/include /app/ProudNet/include/                                                                                               0.0s
+ => CACHED [tank-server 10/16] COPY ProudNet/lib/x86_x64-linux /app/ProudNet/lib/x86_x64-linux/                                                                           0.0s
+ => CACHED [tank-server 11/16] COPY ProudNet/util/PNLicenseAuth /app/ProudNet/util/                                                                                       0.0s 
+ => CACHED [tank-server 12/16] RUN if [ -f "tank_server/licensekey.txt" ] &&     [ "$(cat tank_server/licensekey.txt)" != "PUT_YOUR_PROUDNET_LICENSE_KEY_HERE" ]; then    0.0s 
+ => CACHED [tank-server 13/16] RUN chmod +x /app/ProudNet/util/PNLicenseAuth &&     echo "System information:" &&     uname -a &&     echo "Current directory:" &&     p  0.0s 
+ => CACHED [tank-server 14/16] RUN echo "Copied file structure:" &&     ls -la /app &&     echo "Common directory:" &&     ls -la /app/Common/ || echo "Failed to copy C  0.0s 
+ => CACHED [tank-server 15/16] RUN echo '#!/bin/bash \necho "Server build starting..." \n\ncheck_file() { \n  if [ ! -f "$1" ]; then \n    echo "File not found: $1" \n   0.0s
+ => CACHED [tank-server 16/16] RUN chmod +x /app/start.sh                                                                                                                 0.0s
+ => [tank-server] exporting to image                                                                                                                                      0.0s 
+ => => exporting layers                                                                                                                                                   0.0s 
+ => => writing image sha256:cf987b1363c26bf89aa7ced6c0eca898573679bc92001c3aedee2ff1fe7c649e                                                                              0.0s 
+ => => naming to docker.io/library/server_cpp-tank-server                                                                                                                 0.0s 
+ => [tank-server] resolving provenance for metadata file                                                                                                                  0.0s 
+[+] Running 2/2
+ ✔ tank-server                         Built                                                                                                                              0.0s 
+ ✔ Container server_cpp-tank-server-1  Created                                                                                                                            0.0s 
+Attaching to tank-server-1
+tank-server-1  | Server build starting...
+tank-server-1  | File found: /app/Common/Vars.cpp
+tank-server-1  | File found: /app/Common/Vars.h                                                                                                                                
+tank-server-1  | Directory found: /app/ProudNet/lib/x86_64-linux                                                                                                              
+tank-server-1  | ProudNet license check in progress...                                                                                                                         
+tank-server-1  | License file information:                                                                                                                                     
+tank-server-1  | total 18560                                                                                                                                                   
+tank-server-1  | drwxr-xr-x 1 root root     4096 Jun  2 15:03 .
+tank-server-1  | drwxr-xr-x 1 root root     4096 Jun  2 15:03 ..                                                                                                               
+tank-server-1  | -rwxr-xr-x 1 root root 18987960 May 20 23:14 PNLicenseAuth                                                                                                    
+tank-server-1  | License key file not found: /app/licensekey.txt                                                                                                               
+tank-server-1  | Building without ProudNet license.                                                                                                                            
+tank-server-1  | ODBC driver information:                                                                                                                                      
+tank-server-1  | /app/start.sh: line 72: odbcinst: command not found                                                                                                           
+tank-server-1  | Could not get ODBC information.
+tank-server-1  | -- OpenSSL found: /usr/include
+tank-server-1  | -- OpenSSL libraries: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so
+tank-server-1  | -- OpenSSL version: 3.0.13                                                                                                                                    
+tank-server-1  | -- CURL found: /usr/include/x86_64-linux-gnu                                                                                                                  
+tank-server-1  | -- CURL libraries: /usr/lib/x86_64-linux-gnu/libcurl.so
+tank-server-1  | -- CURL version: 8.5.0                                                                                                                                        
+tank-server-1  | -- System check: Linux                                                                                                                                        
+tank-server-1  | -- Current working directory: /app                                                                                                                            
+tank-server-1  | -- Build type:                                                                                                                                                
+tank-server-1  | -- ProudNet Path: /app/ProudNet                                                                                                                               
+tank-server-1  | -- Operating System: Linux
+tank-server-1  | -- Library path check: /app/ProudNet/lib/x86_64-linux                                                                                                        
+tank-server-1  | -- Found Linux ProudNet library: /app/ProudNet/lib/x86_64-linux                                                                                              
+tank-server-1  | -- Library file list: /app/ProudNet/lib/x86_64-linux/Debug;/app/ProudNet/lib/x86_64-linux/Release                                                           
+tank-server-1  | -- Found ODBC library: /usr/lib/x86_64-linux-gnu/libodbc.so                                                                                                   
+tank-server-1  | -- Found ODBCINST library: /usr/lib/x86_64-linux-gnu/libodbcinst.so
+tank-server-1  | -- Linking OpenSSL libraries: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so                                                      
+tank-server-1  | -- Linking CURL library: /usr/lib/x86_64-linux-gnu/libcurl.so                                                                                                 
+tank-server-1  | -- Configuring done (0.1s)                                                                                                                                    
+tank-server-1  | -- Generating done (0.0s)                                                                                                                                     
+tank-server-1  | -- Build files have been written to: /app/build                                                                                                               
+tank-server-1  | [100%] Built target TankGameServer
+tank-server-1  | Build completed, attempting to start server...
+tank-server-1  | Starting server without license (50 CCU limitation mode).                                                                                                     
+tank-server-1  | No NIC binding though multiple NIC detected##Process=/app/build                                                                                               
+tank-server-1  | ========== Tank Server Started ==========
+tank-server-1  | TCP Server listening on 0.0.0.0:33334                                                                                                                         
+tank-server-1  | WebSocket Server listening on 0.0.0.0:33335/ws                                                                                                                
+tank-server-1  | Ready to accept connections from all network interfaces                                                                                                       
+tank-server-1  | ==========================================                                                                                                                    
+tank-server-1  | Server is running. Commands:                                                                                                                                  
+tank-server-1  | status: Show connected clients                                                                                                                                
+tank-server-1  | health [id]: Show tank health (all or specific ID)
+tank-server-1  | damage id amount: Apply damage to a tank                                                                                                                      
+tank-server-1  | heal id amount: Heal a tank                                                                                                                                   
+tank-server-1  | respawn id x y: Respawn a tank at position (x,y)                                                                                                              
+tank-server-1  | q: Quit server</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Docker 빌드 프로세스 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">다단계 빌드</strong>: 캐시된 빌드 레이어가 있는 Ubuntu 24.04 기본 이미지 사용</li>
+                <li class="list-item"><strong class="text-strong">의존성 설치</strong>: build-essential, cmake, OpenSSL, CURL 개발 라이브러리 설치</li>
+                <li class="list-item"><strong class="text-strong">파일 구조 복사</strong>: 소스 파일, ProudNet 라이브러리, 빌드 구성 복사</li>
+                <li class="list-item"><strong class="text-strong">라이선스 감지</strong>: ProudNet 라이선스 키 확인 (50 CCU 제한 모드로 대체)</li>
+                <li class="list-item"><strong class="text-strong">라이브러리 감지</strong>: 시스템 라이브러리 자동 검색 및 링크:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">OpenSSL 3.0.13</strong>: SSL/TLS 지원</li>
+                        <li class="list-item"><strong class="text-strong">CURL 8.5.0</strong>: HTTP 클라이언트 지원</li>
+                        <li class="list-item"><strong class="text-strong">ODBC</strong>: 데이터베이스 연결 지원</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">CMake 구성</strong>: Linux 전용 ProudNet 라이브러리로 빌드 구성</li>
+                <li class="list-item"><strong class="text-strong">컴파일</strong>: TankGameServer 실행 파일 성공적으로 빌드</li>
+                <li class="list-item"><strong class="text-strong">서버 시작</strong>: 50 CCU 제한 모드로 시작 (라이선스 키 미제공)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">📋 Docker 컨테이너 세부사항:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">기본 이미지</strong>: Ubuntu 24.04 LTS</li>
+                <li class="list-item"><strong class="text-strong">다단계 빌드</strong>: 최적화된 컨테이너 크기</li>
+                <li class="list-item"><strong class="text-strong">포트 노출</strong>: 33334-33335 호스트 포트로 매핑</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 라이브러리</strong>: 자동 복사 및 링크</li>
+                <li class="list-item"><strong class="text-strong">프로덕션 준비</strong>: 최소 런타임 의존성</li>
+            </ul>
+
+            <h4 class="heading-4">Docker 컨테이너 관리</h4>
+
+            <p class="paragraph"><strong class="text-strong">실행 중인 컨테이너 보기:</strong></p>
+            <div class="code-block">
+                <pre>docker ps</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>CONTAINER ID   IMAGE                    COMMAND                   CREATED       STATUS         PORTS                                  NAMES
+dd96172cd51d   server_cpp-tank-server   "/bin/bash /app/star…"   2 hours ago   Up 7 seconds   0.0.0.0:33334-33335->33334-33335/tcp   server_cpp-tank-server-1</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">서버 로그 보기:</strong></p>
+            <div class="code-block">
+                <pre>docker logs server_cpp-tank-server-1</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">서버 중지:</strong></p>
+            <div class="code-block">
+                <pre>docker-compose down</pre>
+            </div>
+
+            <h3 class="heading-3">단계 6: 크로스 플랫폼 클라이언트 테스트</h3>
+
+            <p class="paragraph"><strong class="text-strong">🌐 C# 클라이언트 → C++ Docker 서버 테스트:</strong></p>
+            <p class="paragraph">C# 클라이언트는 Ubuntu에서 실행되는 Docker화된 C++ 서버에 연결할 수 있습니다:</p>
+
+            <div class="code-block">
+                <pre># 다른 터미널에서 C# 클라이언트 실행
+cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 클라이언트 연결:</strong></p>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 3</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 Docker 서버 로그:</strong></p>
+            <div class="code-block">
+                <pre>tank-server-cpp  | Client 3 connected from 172.17.0.1:52341
+tank-server-cpp  | New tank created for client 3 with tank type -1 and health 100/100</pre>
+            </div>
+
+            <h3 class="heading-3">C++ 구현의 주요 이점:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🚀 성능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">높은 CCU 시나리오를 위한 네이티브 C++ 성능</li>
+                <li class="list-item">최적화된 메모리 관리 및 네트워킹</li>
+                <li class="list-item">프로덕션 게임 서버에 적합</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🐧 크로스 플랫폼:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Visual Studio/CMake를 사용한 Windows 개발</li>
+                <li class="list-item">Docker 컨테이너를 사용한 Linux 배포</li>
+                <li class="list-item">안정적인 프로덕션 환경을 위한 Ubuntu 24.04 LTS</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">📦 컨테이너화:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">클라우드 플랫폼을 위한 Docker화된 배포</li>
+                <li class="list-item">컨테이너 오케스트레이션을 통한 확장 가능한 인프라</li>
+                <li class="list-item">최소 의존성을 가진 격리된 런타임 환경</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🔄 프로토콜 호환성:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">C# 클라이언트와 100% 호환</li>
+                <li class="list-item">동일한 PIDL 프로토콜 정의</li>
+                <li class="list-item">C#과 C++ 서버 간 원활한 마이그레이션</li>
+            </ul>
+
+            <h3 class="heading-3">WebSocket 통합</h3>
+
+            <p class="paragraph"><strong class="text-strong">🌐 추가 WebSocket 서버 (포트 33335):</strong></p>
+            <p class="paragraph">C++ 서버 구현에는 메인 TCP 서버와 함께 실행되는 추가 WebSocket 서버가 포함되어 있습니다:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">TCP 서버</strong>: 포트 33334 (데스크톱 C# 클라이언트용)</li>
+                <li class="list-item"><strong class="text-strong">WebSocket 서버</strong>: 포트 33335/ws (Unity WebGL 클라이언트용)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 Unity WebGL 클라이언트 지원:</strong></p>
+            <p class="paragraph">이 WebSocket 기능은 WebGL 애플리케이션으로 빌드될 Unity 탱크 클라이언트를 위해 특별히 설계되었습니다:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">웹 브라우저 게임</strong>: Unity WebGL 클라이언트는 웹 브라우저를 통해 직접 연결 가능</li>
+                <li class="list-item"><strong class="text-strong">동일한 게임 프로토콜</strong>: WebSocket 전송을 통해 동일한 Tank.PIDL RMI 함수 사용</li>
+                <li class="list-item"><strong class="text-strong">크로스 플랫폼 멀티플레이어</strong>: 데스크톱 클라이언트(TCP)와 웹 클라이언트(WebSocket)가 동일한 게임 세션에서 함께 플레이 가능</li>
+                <li class="list-item"><strong class="text-strong">설치 불필요</strong>: 플레이어는 모든 최신 웹 브라우저를 통해 즉시 게임 참여 가능</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">연결 예시:</strong></p>
+            <div class="code-block">
+                <pre>ws://localhost:33335/ws  // 로컬 개발
+ws://your-server.com:33335/ws  // 프로덕션 배포</pre>
+            </div>
+
+            <p class="paragraph">이 이중 프로토콜 아키텍처는 전통적인 데스크톱 애플리케이션과 현대적인 웹 기반 게임 플랫폼 간의 원활한 통합을 가능하게 합니다.</p>
+        </section>
+
+        <section id="multiplayer-movement-testing" class="md-section">
+            <h2 class="heading-2">4. 멀티플레이어 움직임 테스트</h2>
+
+            <p class="paragraph">이 섹션에서는 두 클라이언트가 동시에 연결하여 탱크 이동 기능을 테스트하는 실제 시나리오를 보여줍니다.</p>
+
+            <h3 class="heading-3">테스트 시나리오</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">클라이언트 1 (ID=3)</strong>: <code class="inline-code">move 1 1 0</code> 명령으로 위치 (1,1)로 이동, 방향 0도</li>
+                <li class="list-item"><strong class="text-strong">클라이언트 2 (ID=4)</strong>: <code class="inline-code">move 2 2 90</code> 명령으로 위치 (2,2)로 이동, 방향 90도</li>
+            </ul>
+
+            <h3 class="heading-3">클라이언트 1 (ID=3) 콘솔 로그:</h3>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 3
+move 1 1 0
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100
+OnPlayerJoined: Tank 4 joined at (64.18131,34.385406) with tank type -1
+P2P: Member 3 joined group 5
+P2P: Member 4 joined group 5
+P2P: Added member 4 to group member list
+OnTankHealthUpdated: Tank 4 health: 100/100
+P2P: Received group info, Group ID: 5
+>>> OTHER TANK 4 MOVED TO (2,2) dir=90</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 1 로그 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">자체 이동 처리</strong>: <code class="inline-code">move 1 1 0</code> 명령 실행 후 자신의 탱크 상태가 업데이트됨</li>
+                <li class="list-item"><strong class="text-strong">새 플레이어 감지</strong>: 클라이언트 4가 서버에 연결될 때 <code class="inline-code">OnPlayerJoined</code> 이벤트를 수신</li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 형성</strong>: 2개 이상의 클라이언트가 연결되면 P2P 그룹(ID: 5)이 생성됨</li>
+                <li class="list-item"><strong class="text-strong">다른 탱크 이동 알림</strong>: 클라이언트 4의 이동을 실시간으로 수신하여 표시</li>
+            </ol>
+
+            <h3 class="heading-3">클라이언트 2 (ID=4) 콘솔 로그:</h3>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 4
+P2P: Member 4 joined group 5
+P2P: Member 3 joined group 5
+P2P: Added member 3 to group member list
+OnPlayerJoined: Tank 3 joined at (1,1) with tank type -1
+OnTankHealthUpdated: Tank 3 health: 100/100
+P2P: Received group info, Group ID: 5
+move 2 2 90
+Status: Tank ID=4, Position=(2,2), Type=0, Health=100/100</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 2 로그 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">서버 연결</strong>: 서버에 성공적으로 연결되어 ID 4가 할당됨</li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 참여</strong>: 기존 클라이언트 3과 함께 P2P 그룹 5에 참여</li>
+                <li class="list-item"><strong class="text-strong">기존 플레이어 정보 수신</strong>: 이미 연결된 클라이언트 3의 탱크 정보(위치, 체력)를 수신</li>
+                <li class="list-item"><strong class="text-strong">자체 이동 실행</strong>: <code class="inline-code">move 2 2 90</code> 명령을 사용하여 탱크를 위치 (2,2)로 90도 방향으로 이동</li>
+            </ol>
+
+            <h3 class="heading-3">서버 콘솔 로그:</h3>
+            <div class="code-block">
+                <pre>New tank created for client 4 with tank type -1 and health 100/100
+Sending existing player info to new client: ID=3, Type=-1, Health=100/100
+Notifying existing client 3 about new player: ID=4, Type=-1, Health=100/100
+P2P group created with 2 members, Group ID: 5
+Sent P2P group info to client 3: P2P_GROUP_INFO:5
+Sent P2P group info to client 4: P2P_GROUP_INFO:5
+SendMove from client 4: pos=(2,2), direction=90</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">서버 로그 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">새 클라이언트 처리</strong>: 클라이언트 4를 위한 새 탱크 객체 생성 (초기 체력 100/100)</li>
+                <li class="list-item"><strong class="text-strong">플레이어 정보 동기화</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">기존 플레이어(ID=3) 정보를 새 클라이언트(ID=4)에게 전송</li>
+                        <li class="list-item">기존 클라이언트(ID=3)에게 새 플레이어(ID=4)에 대해 알림</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 관리</strong>: 2개 이상의 클라이언트가 있을 때 P2P 그룹(ID: 5)을 생성하고 그룹 정보를 배포</li>
+                <li class="list-item"><strong class="text-strong">이동 명령 처리</strong>: 클라이언트 4의 <code class="inline-code">SendMove</code> RMI 호출을 수신하고 처리</li>
+            </ol>
+
+            <h3 class="heading-3">핵심 멀티플레이어 기능 검증:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔄 실시간 동기화:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">한 클라이언트의 이동이 다른 모든 클라이언트에게 즉시 전파됨</li>
+                <li class="list-item">서버가 상태를 중앙에서 관리하고 모든 클라이언트에게 브로드캐스트</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🌐 P2P 네트워킹:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">2개 이상의 클라이언트가 연결되면 P2P 그룹이 자동으로 형성됨</li>
+                <li class="list-item">클라이언트 간 직접 통신으로 네트워크 효율성 향상</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">📊 상태 관리:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">각 탱크의 위치, 방향, 체력이 모든 클라이언트에서 동기화됨</li>
+                <li class="list-item">새로 연결된 클라이언트는 기존 게임 상태를 자동으로 수신</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 게임 로직:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">탱크 타입, 위치, 방향이 정확하게 전송되고 표시됨</li>
+                <li class="list-item">각 플레이어의 행동이 멀티플레이어 환경에서 실시간으로 반영됨</li>
+            </ul>
+        </section>
+
+        <section id="fire-and-messaging-testing" class="md-section">
+            <h2 class="heading-2">5. 발사 및 메시징 테스트</h2>
+
+            <p class="paragraph">이동 외에도 클라이언트는 발사체 발사 및 P2P 메시징 기능을 테스트할 수 있습니다.</p>
+
+            <h3 class="heading-3">확장 테스트 명령어</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">발사 명령</strong>: <code class="inline-code">fire 180 10</code> - 180도 방향으로 힘 10으로 발사체 발사</li>
+                <li class="list-item"><strong class="text-strong">메시지 명령</strong>: <code class="inline-code">msg hi</code> - 다른 연결된 클라이언트에게 P2P 메시지 "hi" 전송</li>
+            </ul>
+
+            <h3 class="heading-3">클라이언트 1 (ID=3) 발사 및 메시지 명령:</h3>
+            <div class="code-block">
+                <pre>fire 180 10
+Fire request sent: direction=180, force=10, position=(1, 1, 1)
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100
+msg hi
+P2P message sent via server: hi
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 1 명령 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">발사 명령 실행</strong>: <code class="inline-code">fire 180 10</code>으로 180도 방향과 힘 값 10으로 발사체 전송</li>
+                <li class="list-item"><strong class="text-strong">발사 확인</strong>: 클라이언트가 발사 위치 및 매개변수 확인을 수신</li>
+                <li class="list-item"><strong class="text-strong">메시지 명령 실행</strong>: <code class="inline-code">msg hi</code>로 모든 연결된 클라이언트에게 P2P 메시지 전송</li>
+                <li class="list-item"><strong class="text-strong">메시지 확인</strong>: 클라이언트가 서버 릴레이를 통해 메시지가 전송되었다는 확인을 수신</li>
+            </ol>
+
+            <h3 class="heading-3">클라이언트 2 (ID=4) 발사 및 메시지 이벤트 수신:</h3>
+            <div class="code-block">
+                <pre>OnSpawnBullet: Tank 3 fired from (1,1) dir=180, force=10
+Fire position: (1, 1, 1), shooter ID=3
+P2P Message from Client ID 3 (relayed): hi</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 2 수신 분석:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">총알 생성 이벤트</strong>: 발사 탱크의 위치 및 발사체 매개변수와 함께 <code class="inline-code">OnSpawnBullet</code> RMI 호출을 수신</li>
+                <li class="list-item"><strong class="text-strong">발사 세부사항</strong>: 사수 ID, 위치, 방향, 힘에 대한 완전한 정보를 얻음</li>
+                <li class="list-item"><strong class="text-strong">P2P 메시지 수신</strong>: 서버를 통해 릴레이된 클라이언트 3의 P2P 메시지를 수신</li>
+            </ol>
+
+            <h3 class="heading-3">주요 멀티플레이어 통신 기능:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔫 발사체 시스템:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">발사 명령이 모든 클라이언트에서 실시간으로 동기화됨</li>
+                <li class="list-item">각 클라이언트는 완전한 발사체 정보(위치, 방향, 힘, 사수 ID)를 수신</li>
+                <li class="list-item">게임 상태 일관성을 유지하기 위해 발사체 생성 이벤트가 적절히 브로드캐스트됨</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">💬 P2P 메시징:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">배송을 보장하기 위해 서버 릴레이를 통해 메시지가 전송됨</li>
+                <li class="list-item">모든 연결된 클라이언트가 모든 발신자로부터 메시지를 수신</li>
+                <li class="list-item">메시지 소스 식별(발신자 클라이언트 ID)이 보존됨</li>
+                <li class="list-item">ProudNet의 P2P 인프라를 통한 안정적인 메시지 배송</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🔄 이벤트 브로드캐스팅:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">모든 게임 액션(이동, 발사, 메시징)이 즉시 전파됨</li>
+                <li class="list-item">모든 연결된 클라이언트에서 일관된 게임 상태 유지</li>
+                <li class="list-item">눈에 띄는 지연 없이 실시간 멀티플레이어 상호작용</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">문제 해결</h2>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">빌드 오류</strong>: ProudNet DLL이 올바른 경로에 있는지 확인</li>
+                <li class="list-item"><strong class="text-strong">연결 실패</strong>: 서버가 실행 중인지 및 방화벽 설정 확인</li>
+                <li class="list-item"><strong class="text-strong">PIDL 컴파일 오류</strong>: <code class="inline-code">ProudNet/util/PIDL.exe</code>가 존재하고 접근 가능한지 확인</li>
+                <li class="list-item"><strong class="text-strong">런타임 예외</strong>: 모든 ProudNet DLL이 출력 디렉토리로 복사되었는지 확인</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html>
+ 

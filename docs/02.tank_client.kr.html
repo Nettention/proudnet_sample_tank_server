@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탱크 게임 Unity 클라이언트 프로젝트 문서</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/webgl-embed.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/webgl-embed.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>탱크 게임 Unity 클라이언트 프로젝트</h1>
+            <p class="paragraph">ProudNet 네트워킹 라이브러리를 사용한 멀티플레이어 탱크 게임 Unity 클라이언트 구현으로, Unity 공식 탱크 튜토리얼 템플릿을 기반으로 향상된 멀티플레이어 및 채팅 기능을 제공합니다.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 목차</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">사전 요구사항</a></li>
+                <li class="list-item"><a href="#webgl-demo" class="link">게임 WebGL 빌드 데모</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">프로젝트 구조</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">개발 노트</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">시작하기</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Unity 프로젝트 생성 및 설정</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. ProudNet Unity 통합</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. PIDL 통합 워크플로</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. 탱크 멀티플레이어 통합</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. 멀티플레이어 기능 테스트</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. 멀티플레이어 기능 테스트</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. WebGL 배포 (선택사항)</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">문제 해결</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">사전 요구사항</h2>
+            <p class="paragraph">이 Unity 클라이언트 프로젝트를 구축하기 전에 이전 문서의 <strong class="text-strong">탱크 서버 설정</strong>을 완료하고 다음 구성 요소가 설치되어 있어야 합니다.</p>
+
+            <h3 class="heading-3">필수 디렉토리 구조</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # Server project (from previous setup)
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # Required: Files from ProudNet installation
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # This Unity project (to be created)
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">필수 소프트웨어 설치</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong> 및 <strong class="text-strong">Unity Editor</strong> (2021.3 LTS 이상 권장)</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity 탱크 클라이언트 샘플 패키지</strong> - GitHub https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99 에서 다운로드 가능</li>
+                <li class="list-item"><strong class="text-strong">완료된 탱크 서버</strong> - 이전 서버 설정 문서에서 진행</li>
+            </ol>
+
+            <h3 class="heading-3">ProudNet Unity 탱크 클라이언트 샘플 패키지 위치</h3>
+            <p class="paragraph">ProudNet Unity 탱크 클라이언트 샘플 패키지는 다음에서 다운로드할 수 있습니다:</p>
+            <div class="code-block">
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+File: tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <h3 class="heading-3">완료된 Unity 6 샘플 리포지토리</h3>
+            <p class="paragraph">수동 설정 과정을 건너뛰고 싶은 분들을 위해, 모든 통합 단계가 이미 완료된 Unity 6 샘플 프로젝트를 제공합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">GitHub 리포지토리:</strong> <a href="https://github.com/Nettention/proudnet_sample_tank_unity_client" class="link">https://github.com/Nettention/proudnet_sample_tank_unity_client</a></p>
+
+            <p class="paragraph">이 완료된 샘플 리포지토리에는 다음이 포함되어 있습니다:</p>
+            <ul class="unordered-list">
+                <li class="list-item">모든 ProudNet 구성 요소가 사전 통합된 Unity 6 프로젝트</li>
+                <li class="list-item">사전 구성된 네트워킹 씬 및 스크립트</li>
+                <li class="list-item">바로 실행 가능한 멀티플레이어 탱크 게임</li>
+                <li class="list-item">필요한 모든 DLL 및 플랫폼 설정이 구성됨</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">완료된 샘플로 빠른 시작:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">리포지토리 클론: <code class="inline-code">git clone https://github.com/Nettention/proudnet_sample_tank_unity_client.git</code></li>
+                <li class="list-item">Unity 6 (또는 Unity 2021.3 LTS+)에서 프로젝트 열기</li>
+                <li class="list-item">씬 열기: <code class="inline-code">Assets/Proundnet_Demo/DemoScene/Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">탱크 서버가 실행 중인지 확인</li>
+                <li class="list-item">Play를 클릭하여 즉시 테스트</li>
+            </ol>
+
+            <p class="paragraph">이 옵션은 이 문서에 설명된 완전한 통합 과정을 거치지 않고 멀티플레이어 기능을 빠르게 테스트하고 싶은 개발자들에게 권장됩니다.</p>
+        </section>
+
+        <section id="webgl-demo" class="md-section">
+            <h2 class="heading-2">게임 WebGL 빌드 데모</h2>
+            <p class="paragraph">ProudNet 탱크 게임을 브라우저에서 바로 체험해보세요! 이는 AWS에 호스팅된 실제 멀티플레이어 서버에 연결되는 Unity 클라이언트의 라이브 WebGL 빌드입니다.</p>
+            
+            <div id="webgl-game-demo" class="webgl-game-container">
+                <!-- 게임이 JavaScript에 의해 여기에 로드됩니다 -->
+            </div>
+            
+            <p class="paragraph"><strong class="text-strong">게임 기능 데모:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">실시간 멀티플레이어</strong>: 이 페이지를 방문한 다른 사용자들과 연결하여 플레이</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 네트워킹</strong>: WebSocket 기반 네트워킹 실제 체험</li>
+                <li class="list-item"><strong class="text-strong">탱크 전투</strong>: WASD로 이동, 마우스로 조준, 클릭/스페이스로 발사</li>
+                <li class="list-item"><strong class="text-strong">P2P 채팅</strong>: Enter 키를 눌러 다른 플레이어와 채팅</li>
+                <li class="list-item"><strong class="text-strong">크로스 플랫폼 플레이</strong>: 독립 실행형 빌드의 플레이어들도 같은 게임에 참여 가능</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">기술적 세부사항:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Unity 6으로 구축되어 WebGL로 컴파일됨</li>
+                <li class="list-item">브라우저 호환성을 위해 ProudNet WebSocket 전송 사용</li>
+                <li class="list-item">AWS S3에 CloudFront CDN으로 호스팅</li>
+                <li class="list-item">Docker를 사용한 AWS EC2에서 실행되는 서버 백엔드</li>
+                <li class="list-item">다운로드 가능한 Unity 프로젝트와 동일한 코드베이스</li>
+            </ul>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">프로젝트 구조</h2>
+
+            <h3 class="heading-3">🎮 Unity 프로젝트 에셋</h3>
+            <p class="paragraph">Unity 전용 게임 에셋과 ProudNet 통합 구성 요소를 포함합니다.</p>
+
+            <p class="paragraph"><strong class="text-strong">내용:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">탱크 템플릿</strong> - Unity 공식 탱크 튜토리얼 프로젝트 (싱글플레이어 기반)</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 통합</strong> - 네트워킹 스크립트 및 DLL 플러그인</li>
+                <li class="list-item"><strong class="text-strong">멀티플레이어 스크립트</strong> - 네트워크 동기화가 포함된 향상된 탱크 게임 로직</li>
+                <li class="list-item"><strong class="text-strong">채팅 시스템</strong> - P2P 메시징 기능</li>
+                <li class="list-item"><strong class="text-strong">네트워크 매니저</strong> - 서버 연결 및 P2P 그룹 관리</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">주요 구성 요소:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - Unity용 ProudNet DLL 파일</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - ProudNet 통합 스크립트</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - 멀티플레이어 지원이 포함된 샘플 게임 씬</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 네트워크 기능</h3>
+            <p class="paragraph">ProudNet 네트워킹을 사용한 Unity 클라이언트 구현입니다.</p>
+
+            <p class="paragraph"><strong class="text-strong">기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">실시간 멀티플레이어 탱크 게임 클라이언트</li>
+                <li class="list-item">탱크 이동, 발사, 체력 동기화</li>
+                <li class="list-item">효율적인 네트워킹을 위한 P2P 그룹 참여</li>
+                <li class="list-item">P2P 메시징이 포함된 게임 내 채팅 시스템</li>
+                <li class="list-item">서버 연결 관리</li>
+                <li class="list-item">크로스 플랫폼 호환성 (Windows, Mac, Linux 빌드)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">지원 플랫폼:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows Standalone</strong> - 데스크톱 애플리케이션</li>
+                <li class="list-item"><strong class="text-strong">Mac Standalone</strong> - macOS 애플리케이션</li>
+                <li class="list-item"><strong class="text-strong">Linux Standalone</strong> - Linux 애플리케이션</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - 웹 브라우저 배포 (WebSocket 통해)</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 프로토콜 호환성</h3>
+            <p class="paragraph">탱크 서버 프로젝트와 동일한 프로토콜 정의를 사용합니다.</p>
+
+            <p class="paragraph"><strong class="text-strong">공유 구성 요소:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">동일한 Tank.PIDL</strong> - 동일한 RMI 함수 정의</li>
+                <li class="list-item"><strong class="text-strong">호환 메시지 형식</strong> - C# 및 C++ 서버와 동일한 네트워크 프로토콜</li>
+                <li class="list-item"><strong class="text-strong">동기화된 게임 로직</strong> - 이동, 발사, 체력 시스템이 서버 구현과 일치</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">개발 노트</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Unity 버전: 2021.3 LTS 이상 권장</li>
+                <li class="list-item">ProudNet Unity 패키지는 네이티브 DLL 통합을 제공</li>
+                <li class="list-item">모든 탱크 서버 구현(C# 및 C++)과 호환</li>
+                <li class="list-item">WebGL 빌드는 웹 브라우저 호환성을 위해 WebSocket 전송 사용</li>
+                <li class="list-item">데스크톱 빌드는 최적 성능을 위해 TCP 전송 사용</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">시작하기</h2>
+
+            <h3 class="heading-3">사전 요구사항 확인</h3>
+            <p class="paragraph">시작하기 전에 다음 사항을 확인하세요:</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">탱크 서버 설정 완료</strong> - 서버 문서를 따라 C# 또는 C++ 서버 설정</li>
+                <li class="list-item"><strong class="text-strong">탱크 서버 실행</strong> - 탱크 서버가 실행 중이고 액세스 가능한 상태</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 설치</strong> - Unity 패키지가 사용 가능한 ProudNet 폴더</li>
+                <li class="list-item"><strong class="text-strong">Unity Hub 및 Editor</strong> - Unity 2021.3 LTS 이상 설치</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Unity 프로젝트 생성 및 설정</h2>
+
+            <h3 class="heading-3">단계 1: 새 Unity 프로젝트 생성</h3>
+            <p class="paragraph">탱크 클라이언트용 새 Unity 프로젝트를 생성합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Hub 사용:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong> 열기</li>
+                <li class="list-item"><strong class="text-strong">"새 프로젝트"</strong> 클릭</li>
+                <li class="list-item"><strong class="text-strong">"3D"</strong> 템플릿 선택</li>
+                <li class="list-item"><strong class="text-strong">프로젝트 이름</strong> 설정: <code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item"><strong class="text-strong">위치</strong> 설정: <code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item"><strong class="text-strong">"프로젝트 생성"</strong> 클릭</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">예상 프로젝트 구조:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">단계 2: Unity 탱크 템플릿 가져오기</h3>
+            <p class="paragraph">Unity 공식 탱크 튜토리얼 프로젝트를 기본 템플릿으로 가져옵니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Asset Store를 통해:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Unity Editor에서 <strong class="text-strong">Window > Asset Store</strong> 열기</li>
+                <li class="list-item"><strong class="text-strong">"Tanks! Complete Project"</strong> 검색</li>
+                <li class="list-item">다음으로 이동: https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item"><strong class="text-strong">"내 에셋에 추가"</strong> 클릭 (이미 소유하지 않은 경우)</li>
+                <li class="list-item">Unity Editor에서 <strong class="text-strong">Window > Package Manager</strong> 열기</li>
+                <li class="list-item">드롭다운에서 <strong class="text-strong">"My Assets"</strong> 선택</li>
+                <li class="list-item"><strong class="text-strong">"Tanks! Complete Project"</strong> 찾기</li>
+                <li class="list-item"><strong class="text-strong">"다운로드"</strong> 후 <strong class="text-strong">"가져오기"</strong> 클릭</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">가져오기 옵션:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">완전한 프로젝트를 가져오려면 <strong class="text-strong">"All"</strong> 선택</li>
+                <li class="list-item">모든 탱크 게임 에셋을 추가하려면 <strong class="text-strong">"Import"</strong> 클릭</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">단계 3: 싱글플레이어 템플릿 테스트</h3>
+            <p class="paragraph">가져온 탱크 템플릿이 올바르게 작동하는지 확인합니다:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">메인 씬 열기</strong>: <code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code>로 이동</li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Unity 탱크 데모 씬</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">플레이 모드 진입</strong>: Unity Editor에서 <strong class="text-strong">Play</strong> 버튼 클릭</li>
+                <li class="list-item"><strong class="text-strong">컨트롤 테스트</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>: 탱크 이동</li>
+                        <li class="list-item"><strong class="text-strong">Space</strong>: 누르고 있으면 발사 파워 충전, 놓으면 포탄 발사</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">예상 싱글플레이어 동작:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">WASD 컨트롤로 탱크가 부드럽게 이동</li>
+                <li class="list-item">대포가 마우스 위치를 향해 조준</li>
+                <li class="list-item">포탄 발사 및 충돌 시 폭발 생성</li>
+                <li class="list-item">포탄에 맞으면 탱크 체력 감소</li>
+                <li class="list-item">탱크 체력이 0에 도달하면 게임 종료</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. ProudNet Unity 통합</h2>
+
+            <h3 class="heading-3">단계 1: ProudNet Unity 탱크 클라이언트 샘플 패키지 가져오기</h3>
+            <p class="paragraph">네트워킹 기능을 추가하기 위해 ProudNet Unity 탱크 클라이언트 샘플 패키지를 가져옵니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">예상 패키지 파일:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity에서 패키지 가져오기:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">GitHub 릴리즈에서 <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> 다운로드</li>
+                <li class="list-item">Unity Editor에서 <strong class="text-strong">Assets > Import Package > Custom Package...</strong>로 이동</li>
+                <li class="list-item">다운로드한 <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code>로 이동</li>
+                <li class="list-item">패키지 파일을 선택하고 <strong class="text-strong">"열기"</strong> 클릭</li>
+                <li class="list-item">가져오기 대화상자에서 모든 구성 요소를 가져오려면 <strong class="text-strong">"All"</strong> 선택</li>
+                <li class="list-item">프로젝트에 ProudNet을 추가하려면 <strong class="text-strong">"Import"</strong> 클릭</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">ProudNet Unity 탱크 클라이언트 샘플 패키지 가져오기</p>
+
+            <h3 class="heading-3">단계 2: ProudNet 설치 확인</h3>
+            <p class="paragraph">ProudNet 구성 요소가 올바르게 통합되었는지 확인합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">샘플 에셋 설치 확인:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">다음 폴더 구조가 존재하는지 확인합니다:
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # Contains ProudNet DLLs
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # Demo scene and scripts
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # Network-related scripts</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">플랫폼 설정 확인:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/</code>에서 각 DLL 선택</li>
+                <li class="list-item">Inspector에서 <strong class="text-strong">플랫폼 설정</strong> 확인:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>: x86_64 (Standalone Windows)에 대해 활성화</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">단계 3: 네트워크 설정 구성</h3>
+            <p class="paragraph">탱크 게임을 위한 기본 네트워크 구성을 설정합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">네트워크 구성 생성:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Project 창에서 마우스 오른쪽 버튼 클릭</li>
+                <li class="list-item"><strong class="text-strong">Create > ProudNet > Network Config</strong> 선택</li>
+                <li class="list-item">이름을 <code class="inline-code">TankNetworkConfig</code>로 지정</li>
+                <li class="list-item">다음 설정을 구성:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (테스트용 localhost)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (탱크 서버 포트와 일치)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">네트워크 구성 세부사항:</strong></p>
+            <p class="paragraph">TankNetworkConfig 연결 설정:</p>
+            <ul class="unordered-list">
+                <li class="list-item">서버 IP: 127.0.0.1</li>
+                <li class="list-item">TCP 포트: 33334 (standalone 빌드용)</li>
+                <li class="list-item">WebSocket 포트: 33335 (WebGL 빌드용, C++ 서버에서만 지원)</li>
+            </ul>
+
+            <p class="paragraph">참고: 처음에는 standalone 빌드를 위해 포트 33334를 사용합니다. 나중에 WebGL 빌드의 경우 C++ 서버 구현에서만 사용 가능한 WebSocket 포트 33335를 사용합니다(C# 서버는 WebSocket 연결을 지원하지 않음).</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. PIDL 통합 워크플로 (선택사항이지만 권장)</h2>
+
+            <p class="paragraph">이전 문서에서 서버 설정을 완료했다면 생성된 PIDL 파일을 재사용할 수 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">옵션 A: 서버 프로젝트에서 복사 (권장)</strong></p>
+            <p class="paragraph">탱크 서버 프로젝트를 사용할 수 있다면 편의 배치 스크립트를 사용하세요:</p>
+
+            <div class="code-block">
+                <pre># Navigate to tank_server directory
+cd tank_server
+
+# Run the copy script
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">스크립트 수행 작업:</strong></p>
+            <div class="code-block">
+                <pre>Copies from tank_server/:
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 출력:</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+Copy completed! The following files have been copied to Unity project:
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+Press any key to continue...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">옵션 B: 수동 PIDL 생성 (서버 프로젝트가 없는 경우)</strong></p>
+            <p class="paragraph">서버 프로젝트가 없다면 다음이 필요합니다:</p>
+            <ol class="ordered-list">
+                <li class="list-item">Common 폴더의 <code class="inline-code">Tank.PIDL</code> 파일에 대한 액세스</li>
+                <li class="list-item"><code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code> 실행</li>
+                <li class="list-item">생성된 파일을 Unity 디렉토리에 수동으로 복사</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">프로토콜 호환성 이점:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">동일한 메시지 ID</strong>: Unity 클라이언트가 서버와 동일한 RMI ID 사용</li>
+                <li class="list-item"><strong class="text-strong">타입 안전성</strong>: 네트워크 메시지 매개변수의 컴파일 타임 검사</li>
+                <li class="list-item"><strong class="text-strong">버전 동기화</strong>: 프로토콜 버전이 자동으로 서버와 일치</li>
+                <li class="list-item"><strong class="text-strong">제로 구성</strong>: 추가 네트워크 설정 불필요</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. 탱크 멀티플레이어 통합</h2>
+
+            <h3 class="heading-3">단계 1: 네트워크 스크립트 개요</h3>
+            <p class="paragraph">탱크 Unity 클라이언트는 ProudNet RMI(Remote Method Invocation)를 기반으로 구축된 포괄적인 네트워킹 시스템을 사용합니다. 실제 스크립트 구조는 다음과 같습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">핵심 네트워크 스크립트:</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # Main network manager (Singleton)
+│   └── NetworkTank.cs           # Individual tank network synchronization
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # Protocol version and server configuration
+│   └── Generated/               # Auto-generated from Tank.PIDL
+│       ├── Tank_common.cs       # RMI message IDs and constants
+│       ├── Tank_proxy.cs        # Client-to-server RMI calls
+│       └── Tank_stub.cs         # Server-to-client RMI handlers</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - 주요 기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">서버 연결 관리</strong>: 탱크 서버에 대한 연결 처리 (TCP/WebSocket)</li>
+                <li class="list-item"><strong class="text-strong">P2P 그룹 관리</strong>: 피어 투 피어 통신 그룹 관리</li>
+                <li class="list-item"><strong class="text-strong">탱크 생명주기</strong>: 로컬 및 원격 탱크 생성/파괴</li>
+                <li class="list-item"><strong class="text-strong">RMI 통신</strong>: 탱크 이동, 발사, 체력 업데이트 송수신</li>
+                <li class="list-item"><strong class="text-strong">채팅 시스템</strong>: 다른 플레이어와의 P2P 메시징</li>
+                <li class="list-item"><strong class="text-strong">멀티플랫폼 지원</strong>: 자동 TCP (standalone) vs WebSocket (WebGL) 선택</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - 개별 탱크 기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">위치 보간</strong>: 원격 탱크의 부드러운 이동 동기화</li>
+                <li class="list-item"><strong class="text-strong">로컬 플레이어 제어</strong>: 자신의 탱크에 대한 WASD 이동 및 발사</li>
+                <li class="list-item"><strong class="text-strong">원격 플레이어 렌더링</strong>: 네트워크 데이터로 다른 플레이어의 탱크 표시</li>
+                <li class="list-item"><strong class="text-strong">체력 동기화</strong>: 모든 클라이언트에서 실시간 체력 업데이트</li>
+                <li class="list-item"><strong class="text-strong">발사체 동기화</strong>: 포탄 발사 및 충돌 효과 처리</li>
+                <li class="list-item"><strong class="text-strong">충돌 감지</strong>: 포탄 폭발로 인한 피해 추적</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">생성된 RMI 클래스 (Tank.PIDL에서):</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>: 서버로 데이터를 보내는 메서드 (<code class="inline-code">SendMove</code>, <code class="inline-code">SendFire</code>, <code class="inline-code">SendTankHealthUpdated</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>: 서버로부터 데이터를 받는 핸들러 (<code class="inline-code">OnTankPositionUpdated</code>, <code class="inline-code">OnSpawnBullet</code>, <code class="inline-code">OnPlayerJoined</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>: 클라이언트와 서버 간 공유되는 메시지 ID 및 RMI 상수</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">중요 참고사항:</strong> <code class="inline-code">Generated/</code> 폴더의 파일들은 이전 문서의 C# 서버 구현 중에 생성된 <strong class="text-strong">정확히 동일한 파일</strong>입니다. 이는 서버와 Unity 클라이언트 간의 100% 프로토콜 호환성을 보장합니다. Unity 클라이언트는 동일한 PIDL 생성 네트워킹 코드를 재사용합니다.</p>
+
+            <p class="paragraph"><strong class="text-strong">구현된 주요 네트워크 기능:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">실시간 이동 동기화</strong>: 보간이 포함된 20Hz 위치 업데이트</li>
+                <li class="list-item"><strong class="text-strong">발사체 동기화</strong>: 다른 플레이어가 발사한 포탄이 즉시 표시</li>
+                <li class="list-item"><strong class="text-strong">체력 관리</strong>: 모든 클라이언트에서 피해 및 치유 동기화</li>
+                <li class="list-item"><strong class="text-strong">P2P 채팅 시스템</strong>: 같은 그룹 내 플레이어 간 직접 메시징</li>
+                <li class="list-item"><strong class="text-strong">탱크 타입 선택</strong>: 클라이언트 간 다양한 탱크 모델 동기화</li>
+                <li class="list-item"><strong class="text-strong">자동 재연결</strong>: 네트워크 연결 해제를 우아하게 처리</li>
+            </ul>
+
+            <h3 class="heading-3">단계 2: 사전 구성된 멀티플레이어 씬 열기</h3>
+            <p class="paragraph">Unity 탱크 클라이언트에는 ProudNet 통합이 포함된 사전 구성된 멀티플레이어 씬이 포함되어 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">네트워크 준비 씬 열기:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code>로 이동</li>
+                <li class="list-item"><code class="inline-code">Demo_Networkd_Game_Desert.unity</code> 씬 열기</li>
+                <li class="list-item">이 씬은 필요한 모든 네트워킹 구성 요소로 <strong class="text-strong">이미 구성</strong>되어 있습니다</li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">ProudNet 네트워크 데모 씬</p>
+
+            <h3 class="heading-3">단계 3: 네트워크 구성 확인 (선택사항)</h3>
+            <p class="paragraph">씬은 사전 구성되어 있지만 필요한 경우 네트워크 설정을 확인하거나 수정할 수 있습니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager 설정 (이미 구성됨):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">계층 구조에서 <strong class="text-strong">GameNetworkManager</strong> GameObject 선택</li>
+                <li class="list-item">Inspector에서 <strong class="text-strong">GameNetworkManager</strong> 구성 요소 설정 확인:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (테스트용 localhost)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (standalone 빌드용 TCP)</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Port</strong>: <code class="inline-code">33335</code> (WebGL 빌드 전용) [참고: 이 설정은 standalone 빌드에서는 inspector에 숨겨져 있지만 나중에 WebGL용으로 빌드할 때 사용됩니다]</li>
+                        <li class="list-item"><strong class="text-strong">Auto Connect On Start</strong>: 자동 연결을 위해 활성화</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">GameNetworkManager Inspector</p>
+
+            <p class="paragraph"><strong class="text-strong">사용자 정의 옵션:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server IP</strong>: 서버가 다른 머신에서 실행되는 경우 변경</li>
+                <li class="list-item"><strong class="text-strong">Ports</strong>: 서버가 다른 포트를 사용하는 경우 수정</li>
+                <li class="list-item"><strong class="text-strong">Auto Connect</strong>: 수동 연결 제어를 원하는 경우 비활성화</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. 멀티플레이어 기능 테스트</h2>
+
+            <h3 class="heading-3">단계 1: 탱크 서버 시작</h3>
+            <p class="paragraph">Unity 클라이언트를 테스트하기 전에 탱크 서버가 실행 중인지 확인하세요:</p>
+
+            <p class="paragraph"><strong class="text-strong">C++ 서버</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 서버 출력:</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">단계 2: Unity 클라이언트 연결 테스트</h3>
+            <p class="paragraph">탱크 서버에 대한 Unity 클라이언트 연결을 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity 에디터 테스트:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Unity 에디터에서 <strong class="text-strong">Play</strong> 버튼 클릭</li>
+                <li class="list-item">Unity 콘솔 및 게임 뷰에서 연결 상태 확인</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">예상 서버 응답:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity 게임 뷰:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">연결 상태</strong>: "Connected to Server" 표시기</li>
+                <li class="list-item"><strong class="text-strong">탱크 선택</strong>: 생성할 수 있는 4가지 탱크 타입 중 선택</li>
+                <li class="list-item"><strong class="text-strong">플레이어 탱크</strong>: 선택한 탱크가 게임 월드에 생성</li>
+                <li class="list-item"><strong class="text-strong">채팅 인터페이스</strong>: Enter 키를 눌러 P2P 메시징용 채팅 창 열기</li>
+                <li class="list-item"><strong class="text-strong">탱크 조작</strong>: WASD 이동, 마우스 조준, 클릭/스페이스 발사</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Unity 게임 초기 화면</p>
+
+            <h3 class="heading-3">단계 3: 멀티 클라이언트 테스트</h3>
+            <p class="paragraph">여러 Unity 클라이언트로 멀티플레이어 기능을 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">두 번째 Unity 인스턴스:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity 프로젝트 빌드</strong>: <strong class="text-strong">File > Build and Run</strong>으로 이동</li>
+                <li class="list-item"><strong class="text-strong">빌드 설정 구성</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">대상 플랫폼</strong>: PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">아키텍처</strong>: x86_64</li>
+                        <li class="list-item"><strong class="text-strong">씬</strong>: <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> 씬 추가</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">빌드</strong>: "Build and Run"을 클릭하여 standalone 실행 파일 생성</li>
+                <li class="list-item"><strong class="text-strong">Standalone 실행</strong>: 이것은 두 번째 클라이언트 인스턴스를 생성합니다. 빌드가 성공한 후 빌드 위치에서 직접 게임을 실행할 수 있습니다 (예: <code class="inline-code">Build/unity_tank_client.exe</code>)</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows Standalone 빌드 설정</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">빌드 완료</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">멀티 클라이언트 게임플레이</p>
+
+            <p class="paragraph"><strong class="text-strong">대안 테스트 방법:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong> (Unity Asset): 여러 Unity 에디터 인스턴스 허용</li>
+                <li class="list-item"><strong class="text-strong">프로젝트 복제</strong>: 동시 테스트를 위한 프로젝트 복제 생성</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">예상 멀티 클라이언트 동작:</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">여러 클라이언트가 있는 서버 로그:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. 멀티플레이어 기능 테스트</h2>
+
+            <h3 class="heading-3">이동 동기화 테스트</h3>
+            <p class="paragraph">여러 클라이언트에서 실시간 탱크 이동을 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 1 동작:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WASD</strong>를 사용하여 맵 주변에서 탱크 이동</li>
+                <li class="list-item">로컬 클라이언트에서 부드러운 이동 관찰</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 2 관찰:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">클라이언트 1의 탱크가 실시간으로 이동하는 것을 확인</li>
+                <li class="list-item">이동이 부드럽고 동기화됨</li>
+                <li class="list-item">위치 업데이트가 20Hz로 발생 (구성 가능)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">예상 네트워크 메시지:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Client 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">발사 및 발사체 테스트</h3>
+            <p class="paragraph">포탄 발사 동기화를 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 1 동작:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">마우스</strong>로 목표물을 향해 조준</li>
+                <li class="list-item"><strong class="text-strong">왼쪽 마우스 버튼</strong> 클릭 또는 <strong class="text-strong">스페이스</strong> 키를 눌러 발사</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 2 관찰:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">클라이언트 1의 탱크에서 포탄이 생성되는 것을 확인</li>
+                <li class="list-item">포탄 궤적이 물리학적으로 정확하게 따라감</li>
+                <li class="list-item">충돌 위치에서 폭발 효과 발생</li>
+                <li class="list-item">포탄이 클라이언트 2의 탱크에 맞으면 체력 감소</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">예상 네트워크 메시지:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Client 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → All: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">P2P 채팅 시스템 테스트</h3>
+            <p class="paragraph">플레이어 간 실시간 메시징을 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 1 동작:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">화면 하단의 <strong class="text-strong">채팅 입력 필드</strong> 클릭</li>
+                <li class="list-item">메시지 입력: <code class="inline-code">"Hello from Client 1!"</code></li>
+                <li class="list-item"><strong class="text-strong">Enter</strong> 키를 눌러 전송</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">클라이언트 2 관찰:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">채팅 로그에 메시지 표시: <code class="inline-code">"Player: Hello from Client 1!"</code></li>
+                <li class="list-item">채팅 로그가 자동으로 스크롤</li>
+                <li class="list-item">메시지 타임스탬프 표시</li>
+            </ul>
+
+            <h3 class="heading-3">체력 및 피해 테스트</h3>
+            <p class="paragraph">체력 동기화 및 피해 효과를 테스트합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">피해 시나리오:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">클라이언트 1이 클라이언트 2의 탱크에 포탄 발사</li>
+                <li class="list-item">포탄이 맞아서 피해 발생</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">예상 결과:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">클라이언트 2</strong>: 체력 감소 (예: 100 → 75)</li>
+                <li class="list-item"><strong class="text-strong">클라이언트 1</strong>: 클라이언트 2의 체력 업데이트 확인</li>
+                <li class="list-item"><strong class="text-strong">체력 UI</strong>: 두 클라이언트 모두 업데이트된 체력 값 표시</li>
+                <li class="list-item"><strong class="text-strong">시각 효과</strong>: 피해 효과 및 파티클 표시</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. WebGL 배포 (선택사항)</h2>
+
+            <h3 class="heading-3">WebGL 빌드 구성</h3>
+            <p class="paragraph">Unity 탱크 클라이언트를 웹 애플리케이션으로 배포합니다:</p>
+
+            <p class="paragraph"><strong class="text-strong">빌드 설정:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">File > Build Settings</strong>로 이동</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> 플랫폼 선택</li>
+                <li class="list-item"><strong class="text-strong">"Switch Platform"</strong> 클릭</li>
+                <li class="list-item"><strong class="text-strong">씬 추가</strong>: <code class="inline-code">Demo_Networkd_Game_Desert.unity</code>가 포함되어 있는지 확인</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 플러그인 설정 구성</strong> (중요!)</li>
+                <li class="list-item"><strong class="text-strong">WebGL 플레이어 설정 구성</strong> (중요!)</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">WebGL 빌드 설정</p>
+
+            <h3 class="heading-3">WebGL용 ProudNet 플러그인 구성</h3>
+            <p class="paragraph">WebGL 플랫폼으로 전환한 후 ProudNet 플러그인 설정을 구성해야 합니다:</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">중요한 WebGL 제한사항</strong>: ProudNet은 WebGL 플랫폼이 선택되었을 때 에디터 내 플레이 모드를 지원하지 않습니다. 네트워킹 기능을 테스트하려면 WebGL 버전을 빌드하고 배포해야 합니다. WebGL 플랫폼에서는 네트워크 테스트를 위한 에디터 플레이 모드가 작동하지 않습니다.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">단계 1: .NET DLL에 대한 에디터 비활성화</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/</code>로 이동</li>
+                <li class="list-item"><code class="inline-code">ProudDotNetClientUnity.dll</code> 선택</li>
+                <li class="list-item">Inspector → <strong class="text-strong">플랫폼 설정</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (체크 해제)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet .NET DLL 플랫폼 설정</p>
+
+            <p class="paragraph"><strong class="text-strong">단계 2: x86_64 DLL에 대한 에디터 비활성화</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code>로 이동</li>
+                <li class="list-item"><code class="inline-code">ProudNetClient.dll</code> 선택:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (체크 해제)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">ProudNetClientPlugin.dll</code> 선택:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (체크 해제)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet x86_64 DLL 플랫폼 설정</p>
+
+            <p class="paragraph"><strong class="text-strong">단계 3: WebGL 파일에 대한 에디터 활성화</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code>로 이동</li>
+                <li class="list-item"><code class="inline-code">JSClient.jslib</code> 선택:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (체크)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (체크)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">NewJSClient.jslib</code> 선택:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (체크)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (체크)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">ProudNetClientPlugin-webgl.dll</code> 선택:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (체크)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (체크)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">ProudNet WebGL Files Platform Settings</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Critical</strong>: If these settings are not configured correctly, the WebGL build will fail or the networking will not function properly.</p>
+            </div>
+
+            <h3 class="heading-3">WebGL Player Settings Configuration</h3>
+            <p class="paragraph">Configure Unity's WebGL-specific settings for optimal local testing:</p>
+
+            <p class="paragraph"><strong class="text-strong">Publishing Settings (Critical for Local Testing):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Go to <strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">Expand <strong class="text-strong">Publishing Settings</strong> section</li>
+                <li class="list-item">Set <strong class="text-strong">Compression Format</strong>: <strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">This is essential for local web server testing</li>
+                        <li class="list-item">Compressed builds may not work with simple HTTP servers</li>
+                        <li class="list-item">Can be re-enabled for production deployment</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">WebGL Publishing Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Recommended WebGL Settings:</strong></p>
+            <div class="code-block">
+                <pre>Publishing Settings:
+├── Compression Format: Disabled (for local testing)
+├── Name Files As Hashes: ❌ (unchecked)
+├── Data Caching: ❌ (unchecked)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Memory Settings:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">팁</strong>: 프로덕션 배포 시 다운로드 크기를 줄이기 위해 <strong class="text-strong">Gzip</strong> 압축 형식을 활성화할 수 있지만, 서버 호환성 문제를 피하기 위해 로컬 테스트에서는 비활성화하세요.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">WebGL 네트워크 구성:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">전송 방식</strong>: WebSocket (WebGL에서 자동으로 사용됨)</li>
+                <li class="list-item"><strong class="text-strong">서버 URL</strong>: <code class="inline-code">ws://localhost:33335/ws</code> (로컬 테스트)</li>
+                <li class="list-item"><strong class="text-strong">프로덕션 URL</strong>: <code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL 네트워크 구성" class="image">
+            <p class="image-caption">WebGL 네트워크 구성</p>
+
+            <h3 class="heading-3">WebGL 테스트</h3>
+            <p class="paragraph">탱크 클라이언트의 웹 버전을 테스트합니다:</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">주의</strong>: WebGL 플랫폼이 선택된 상태에서는 Unity 에디터 플레이 모드에서 ProudNet 네트워킹이 작동하지 않습니다. 네트워킹 기능을 테스트하려면 전체 빌드 프로세스를 완료해야 합니다.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">빌드 프로세스:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Build Settings에서 <strong class="text-strong">"Build"</strong> 클릭</li>
+                <li class="list-item">출력 폴더로 사용할 폴더 생성 또는 선택: 예 - <code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">빌드 완료 대기 (몇 분 소요될 수 있음)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">로컬 웹 서버 설정:</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">중요</strong>: WebGL 빌드는 웹 서버에서 호스팅해야 하며 HTML 파일을 로컬에서 직접 열어서는 플레이할 수 없습니다.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">방법 1: Python HTTP 서버</strong></p>
+            <div class="code-block">
+                <pre># WebGL 빌드 폴더로 이동
+cd WebGL_Build/
+
+# Python 3 (권장)
+python -m http.server 8000
+
+# Python 2 (Python 3을 사용할 수 없는 경우)
+python -m SimpleHTTPServer 8000
+
+# 사용자 정의 포트 예제
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">예상 Python 출력:</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">방법 2: VS Code Live Server 확장</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">확장 설치</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">VS Code 열기</li>
+                        <li class="list-item">확장으로 이동 (Ctrl+Shift+X)</li>
+                        <li class="list-item">Ritwick Dey의 "Live Server" 검색</li>
+                        <li class="list-item">"설치" 클릭</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">WebGL 빌드 호스팅</strong>:
+                    <div class="code-block">
+                        <pre>1. VS Code에서 WebGL_Build/ 폴더 열기
+2. index.html 우클릭
+3. "Open with Live Server" 선택
+4. 브라우저가 자동으로 http://127.0.0.1:5500에서 열림</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">방법 3: Node.js http-server (대안)</strong></p>
+            <div class="code-block">
+                <pre># 전역 설치 (일회성 설정)
+npm install -g http-server
+
+# 빌드 폴더로 이동하여 서버 실행
+cd WebGL_Build/
+http-server -p 8000
+
+# CORS 활성화 (필요한 경우)
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">접속 URL:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>: http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>: http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>: http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">웹 브라우저 테스트:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">웹 브라우저 열기</li>
+                <li class="list-item"><code class="inline-code">http://localhost:8000</code>으로 이동</li>
+                <li class="list-item">게임이 WebGL로 브라우저에서 로드됨</li>
+                <li class="list-item">데스크톱 버전과 동일한 멀티플레이어 기능</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">예상 WebGL 동작:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WebSocket 연결</strong>: WebSocket을 통해 탱크 서버에 연결 (포트 33335)</li>
+                <li class="list-item"><strong class="text-strong">크로스 플랫폼 플레이</strong>: WebGL 클라이언트가 데스크톱 클라이언트와 함께 플레이 가능</li>
+                <li class="list-item"><strong class="text-strong">동일한 게임 로직</strong>: 동일한 이동, 발사, 채팅 기능</li>
+                <li class="list-item"><strong class="text-strong">브라우저 호환성</strong>: Chrome, Firefox, Safari, Edge에서 작동</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL 브라우저 게임플레이" class="image">
+            <p class="image-caption">WebGL 브라우저 게임플레이</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">문제 해결</h2>
+
+            <p class="paragraph"><strong class="text-strong">일반적인 문제 및 해결 방법:</strong></p>
+
+            <h3 class="heading-3">연결 문제</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"서버에 연결하지 못했습니다"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">탱크 서버가 실행 중이고 접근 가능한지 확인</li>
+                        <li class="list-item">포트 33334-33335에 대한 방화벽 설정 확인</li>
+                        <li class="list-item">NetworkManager 설정에서 서버 IP 주소 확인</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ProudNet 통합 문제</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"ProudNet DLL을 찾을 수 없음"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">DLL이 <code class="inline-code">Assets/Plugins/</code> 폴더에 있는지 확인</li>
+                        <li class="list-item">각 DLL 파일의 플랫폼 설정 확인</li>
+                        <li class="list-item">DLL 변경 후 Unity 에디터 재시작</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">빌드 문제</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"네트워킹 오류로 빌드 실패"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">모든 ProudNet 스크립트가 오류 없이 컴파일되는지 확인</li>
+                        <li class="list-item">Unity 콘솔에서 구체적인 오류 메시지 확인</li>
+                        <li class="list-item">Plugins 폴더의 ProudNet DLL에 대한 플랫폼 설정 확인:
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows: 독립 실행형 빌드에 대해 x86_64 활성화</li>
+                                <li class="list-item">WebGL: 브라우저 빌드에 대해 WebGL 플랫폼 활성화</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">WebGL 문제</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"WebSocket 연결 실패"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">탱크 서버가 WebSocket을 지원하는지 확인 (포트 33335)</li>
+                        <li class="list-item">브라우저 콘솔에서 구체적인 오류 메시지 확인</li>
+                        <li class="list-item">서버에서 CORS 헤더가 올바르게 구성되어 있는지 확인</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"WebGL 플랫폼 선택 시 Unity 에디터에서 네트워킹이 작동하지 않음"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">예상 동작</strong>: ProudNet은 WebGL 플랫폼에 대한 에디터 내 플레이 모드를 지원하지 않음</li>
+                        <li class="list-item"><strong class="text-strong">해결 방법</strong>: 프로젝트를 WebGL로 빌드하고 대신 웹 브라우저에서 테스트</li>
+                        <li class="list-item"><strong class="text-strong">대안</strong>: 에디터 테스트를 위해 Windows/Mac/Linux 독립 실행형 플랫폼으로 다시 전환</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">디버깅 도구:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Console</strong>: 네트워크 연결 및 오류 메시지</li>
+                <li class="list-item"><strong class="text-strong">Server Console</strong>: 클라이언트 연결 및 게임 상태 로그</li>
+                <li class="list-item"><strong class="text-strong">Network Profiler</strong>: Unity의 내장 네트워크 성능 분석</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Monitor</strong>: 실시간 네트워크 통계 (사용 가능한 경우)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">도움말:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity 문서</strong>: https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">ProudNet 문서</strong>: <code class="inline-code">ProudNet/doc/</code> 폴더에서 제공</li>
+                <li class="list-item"><strong class="text-strong">Unity 포럼</strong>: Unity 개발을 위한 커뮤니티 지원</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>: 버그 신고 및 기능 요청 (해당하는 경우)</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 

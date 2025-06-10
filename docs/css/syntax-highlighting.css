@@ -1,0 +1,122 @@
+/* Code block dark theme */
+.code-block {
+    background-color: #1e1e1e !important;
+    border: 1px solid #3e3e3e;
+    border-radius: 6px;
+    margin: 16px 0;
+    overflow-x: auto;
+}
+
+.code-block pre {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+    margin: 0;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+/* Diff syntax highlighting */
+.diff-line {
+    display: block;
+    margin: 0;
+    padding: 2px 8px;
+    white-space: pre;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    line-height: 1.5;
+}
+
+.diff-added {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #85e89d;
+    border-left: 3px solid #28a745;
+}
+
+.diff-removed {
+    background-color: rgba(215, 58, 73, 0.2);
+    color: #f97583;
+    border-left: 3px solid #d73a49;
+}
+
+.diff-context {
+    background-color: transparent;
+    color: #d4d4d4;
+}
+
+.diff-header {
+    background-color: rgba(3, 102, 214, 0.2);
+    color: #79b8ff;
+    font-weight: bold;
+}
+
+/* Regular code highlighting for non-diff blocks */
+pre:not(.diff-processed) {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+    border: 1px solid #3e3e3e;
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+/* Inline code */
+code {
+    background-color: #2d2d2d !important;
+    color: #f8f8f2 !important;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* Ensure code blocks have proper scrolling */
+.code-block {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* C++ Syntax highlighting */
+.cpp-keyword {
+    color: #569cd6; /* Blue */
+    font-weight: bold;
+}
+
+.cpp-type {
+    color: #4ec9b0; /* Teal */
+}
+
+.cpp-string {
+    color: #ce9178; /* Orange */
+}
+
+.cpp-comment {
+    color: #6a9955; /* Green */
+    font-style: italic;
+}
+
+.cpp-preprocessor {
+    color: #9b9b9b; /* Gray */
+}
+
+.cpp-number {
+    color: #b5cea8; /* Light green */
+}
+
+.cpp-function {
+    color: #dcdcaa; /* Yellow */
+}
+
+.cpp-operator {
+    color: #d4d4d4; /* Light gray */
+}
+
+.cpp-namespace {
+    color: #4fc1ff; /* Light blue */
+} 

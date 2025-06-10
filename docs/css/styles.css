@@ -25,6 +25,107 @@ body {
     border: 1px solid #334155;
 }
 
+/* Language Selector */
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.language-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.language-toggle {
+    background: #334155;
+    color: #cbd5e1;
+    border: 1px solid #475569;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    justify-content: space-between;
+}
+
+.language-toggle:hover {
+    background: #475569;
+    border-color: #64748b;
+}
+
+.language-toggle.active {
+    background: #475569;
+    border-color: #a78bfa;
+}
+
+.language-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #334155;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    margin-top: 4px;
+    min-width: 120px;
+    z-index: 101;
+}
+
+.language-dropdown.active .language-dropdown-content {
+    display: block;
+}
+
+.language-option {
+    display: block;
+    padding: 10px 12px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    border-bottom: 1px solid #475569;
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background: #475569;
+    color: #f1f5f9;
+}
+
+.language-option.current {
+    background: #a78bfa;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.language-option.current:hover {
+    background: #c4b5fd;
+}
+
+.language-flag {
+    margin-right: 6px;
+    font-size: 16px;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.language-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
 /* Header Styles */
 .header {
     text-align: center;
@@ -35,6 +136,7 @@ body {
     border-radius: 12px 12px 0 0;
     margin: 0;
     border-bottom: 1px solid #475569;
+    position: relative;
 }
 
 .header h1 {
@@ -567,6 +669,7 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     border: 1px solid #334155;
     overflow: hidden;
+    position: relative;
 }
 
 .md-header {
@@ -576,6 +679,7 @@ body {
     color: #f1f5f9;
     margin: 0;
     border-bottom: 1px solid #475569;
+    position: relative;
 }
 
 .md-nav {
@@ -703,5 +807,30 @@ body {
     .unordered-list .unordered-list,
     .ordered-list .ordered-list {
         margin-left: 18px; /* Reduced nested indentation */
+    }
+    
+    /* 모바일용 언어 선택기 */
+    .language-selector {
+        top: 15px;
+        right: 15px;
+    }
+
+    .language-toggle {
+        padding: 6px 10px;
+        font-size: 13px;
+        min-width: 85px;
+    }
+
+    .language-flag {
+        font-size: 14px;
+    }
+
+    .language-dropdown-content {
+        min-width: 100px;
+    }
+
+    .language-option {
+        padding: 8px 10px;
+        font-size: 13px;
     }
 }

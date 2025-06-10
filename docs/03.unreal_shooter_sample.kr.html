@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProudNet UE5 예제</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/syntax-highlighting.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/syntax-highlighting.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>ProudNet UE5 예제</h1>
+            <p class="paragraph">ProudNet 네트워킹 라이브러리와 Unreal Engine 5를 사용하여 멀티플레이어 게임을 구현하는 종합 가이드입니다. 채팅 시스템, 캐릭터 네트워킹, 고급 멀티플레이어 기능을 다룹니다.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 목차</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#project-setup" class="link">1. 프로젝트 준비하기</a>
+                    <p class="paragraph">ProudNet 통합을 위한 Unreal Engine 5 프로젝트 준비 및 구성</p>
+                </li>
+                <li class="list-item"><a href="#local-chat" class="link">2. 로컬 채팅창 만들기</a>
+                    <p class="paragraph">테스트 및 기반을 위한 기본 로컬 채팅 시스템 생성</p>
+                </li>
+                <li class="list-item"><a href="#online-chat" class="link">3. 온라인 채팅창 만들기</a>
+                    <p class="paragraph">ProudNet을 사용한 네트워크 채팅 기능 구현</p>
+                </li>
+                <li class="list-item"><a href="#mirage-character" class="link">4. 미라지 캐릭터 구현하기</a>
+                    <p class="paragraph">향상된 게임플레이 기능을 가진 미라지 캐릭터 구축</p>
+                </li>
+                <li class="list-item"><a href="#mirage-online" class="link">5. 미라지 캐릭터 온라인 연동하기</a>
+                    <p class="paragraph">멀티플레이어 게임플레이를 위한 미라지 캐릭터와 ProudNet 네트워킹 통합</p>
+                </li>
+                <li class="list-item"><a href="#project-build" class="link">6. 마무리 후 프로젝트 빌드 및 테스트</a>
+                    <p class="paragraph">프로젝트 마무리, 빌드 및 종합 테스트 절차</p>
+                    <ul class="unordered-list">
+                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. 테스트 코드 수정</a></li>
+                        <li class="list-item"><a href="#project-build-section" class="link">6.2. 프로젝트 빌드</a></li>
+                        <li class="list-item"><a href="#testing" class="link">6.3. 테스트</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <section id="project-setup" class="md-section">
+            <h2 class="heading-2">1. 프로젝트 준비하기</h2>
+            <p class="paragraph">이 섹션에서는 ProudNet이 활성화된 Unreal Engine 5 프로젝트를 생성하는 데 필요한 초기 설정 및 구성을 다룹니다.</p>
+
+            <h3 class="heading-3">1.1. ProudNet 설치</h3>
+            <ol class="ordered-list">
+                <li class="list-item">https://github.com/Nettention/ProudNet 저장소에서 최신 릴리즈를 설치합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">기본 설치 경로는 "C:\Program Files (x86)\Nettention\ProudNet"입니다. 해당 가이드와 UE5 플러그인은 이 경로에 맞추어져 있으므로, 설치 경로 변경 시 플러그인의 소스 코드 수정 및 가이드 확인에 주의가 필요합니다.</li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">1.2. Visual Studio 프로젝트 구성</h3>
+            <ol class="ordered-list">
+                <li class="list-item">VisualStudio에서 빈 프로젝트를 생성합니다
+                    <ul class="unordered-list">
+                        <li class="list-item">이 가이드에서는 아래와 같은 경로/이름을 사용합니다.</li>
+                    </ul>
+                    <img src="img/image_017-1.png" alt="Visual Studio 프로젝트 생성" class="image">
+                    <p class="image-caption">Visual Studio 프로젝트 생성</p>
+                </li>
+                <li class="list-item">chat_server프로젝트에 3개의 새 항목 main.cpp, setting.cpp, setting.h 을 추가합니다.
+                    <img src="img/image_017.png" alt="프로젝트 파일 추가" class="image">
+                    <p class="image-caption">프로젝트 파일 추가</p>
+                    
+                    <img src="img/image_018.png" alt="프로젝트 구조" class="image">
+                    <p class="image-caption">프로젝트 구조</p>
+                </li>
+                <li class="list-item">chat_server 프로젝트의 속성을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">"C/C++ - 언어 - C++ 언어 표준"
+                            <ol class="ordered-list">
+                                <li class="list-item">드롭다운에서 "ISO C++20 표준 (/std:C++20)" 선택</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">"C/C++ - 일반 - 추가 포함 디렉터리"
+                            <ol class="ordered-list">
+                                <li class="list-item">드롭다운에서 &lt;편집…&gt; 선택</li>
+                                <li class="list-item">팝업 창에 아래 경로 추가</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"링커 - 일반 - 추가 라이브러리 디렉터리"
+                            <ol class="ordered-list">
+                                <li class="list-item">드롭다운에서 &lt;편집…&gt; 선택</li>
+                                <li class="list-item">팝업 창에 아래 경로 추가</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"링커 - 입력 - 추가 종속성"
+                            <ol class="ordered-list">
+                                <li class="list-item">드롭다운에서 &lt;편집…&gt; 선택</li>
+                                <li class="list-item">팝업 창에 아래 파일명 추가</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>ProudNetServer.lib
+ProudNetClient.lib</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"빌드 이벤트 - 빌드 후 이벤트 - 명령줄"
+                            <ol class="ordered-list">
+                                <li class="list-item">드롭다운에서 &lt;편집…&gt; 선택</li>
+                                <li class="list-item">팝업 창에 아래 명령 추가</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
+xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libssl-3-x64.dll" "$(OutDir)"</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">각 소스 파일에 코드를 입력합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">setting.h (diff)
+                            <div class="code-block">
+                                <pre>+ #pragma once
++ 
++ namespace ProudSetting
++ {
++     namespace CHAT
++     {
++         extern const ::Proud::Guid version;
++         extern const int server_port;
++     }
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">setting.cpp (diff)
+                            <div class="code-block">
+                                <pre>+ #include &lt;ProudNetClient.h&gt;
++ #include "setting.h"
++ 
++ namespace ProudSetting
++ {
++     namespace CHAT
++     {
++         const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
++         const ::Proud::Guid version = ::Proud::Guid(guid);
++         const int server_port = 33337;
++     }
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">main.cpp (diff)
+                            <div class="code-block">
+                                <pre>+ #include &lt;iostream&gt;
++ #include &lt;format&gt;
++ #include &lt;memory&gt;
++ 
++ #include &lt;ProudNetServer.h&gt;
++ #include "setting.h"
++ 
++ std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
++ 
++ int main()
++ {
++ 	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
++ 
++ 	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
++ 		{
++ 			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
++ 		};
++ 	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
++ 		{
++ 			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
++ 		};
++ 
++ 	Proud::CStartServerParameter start_param;
++ 	start_param.m_protocolVersion = ProudSetting::CHAT::version;
++ 	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
++ 
++ 	try
++ 	{
++ 		net_server-&gt;Start(start_param);
++ 	}
++ 	catch (Proud::Exception&amp; error)
++ 	{
++ 		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
++ 		return 0;
++ 	}
++ 
++ 	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
++ 	std::cout &lt;&lt; ("-q : Quit.\n");
++ 	std::string input;
++ 	while (true)
++ 	{
++ 		std::cin &gt;&gt; input;
++ 		if (input[0] == '-')
++ 		{
++ 			if (input == "-q")
++ 				break;
++ 		}
++ 	}
++ 
++ 	std::cout &lt;&lt; "Stopping server...\n";
++ 	net_server-&gt;Stop();
++ 	net_server = nullptr;
++ 	std::cout &lt;&lt; "Server stopped.\n";
++ 	return 0;
++ }</pre>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <p class="paragraph"><strong class="text-strong">전체 코드</strong></p>
+                    <ul class="unordered-list">
+                        <li class="list-item">setting.h
+                            <div class="code-block">
+                                <pre>#pragma once
+
+namespace ProudSetting
+{
+    namespace CHAT
+    {
+        extern const ::Proud::Guid version;
+        extern const int server_port;
+    }
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">setting.cpp
+                            <div class="code-block">
+                                <pre>#include &lt;ProudNetClient.h&gt;
+#include "setting.h"
+
+namespace ProudSetting
+{
+    namespace CHAT
+    {
+        const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
+        const ::Proud::Guid version = ::Proud::Guid(guid);
+        const int server_port = 33337;
+    }
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">main.cpp
+                            <div class="code-block">
+                                <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+		};
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">프로젝트를 빌드 및 실행(F5) 하면 아래와 같은 화면을 볼 수 있습니다.
+                    <img src="img/image_018-1.png" alt="서버 실행 화면" class="image">
+                    <p class="image-caption">서버 실행 화면</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">1.3. Unreal Engine 프로젝트 구성</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games의 Free FPS Template</a>를 라이브러리에 추가합니다.</li>
+                <li class="list-item">아래 절차에 따라 템플릿 프로젝트를 생성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">에픽게임즈 런처 실행</li>
+                        <li class="list-item">언리얼 엔진 탭으로 이동</li>
+                        <li class="list-item">라이브러리 탭으로 이동</li>
+                        <li class="list-item">팹 라이브러리 목록에서 "Free FPS Template & Tutorial"의 프로젝트 생성 클릭</li>
+                        <li class="list-item">이름 및 폴더를 변경하고 생성 클릭
+                            <ul class="unordered-list">
+                                <li class="list-item">가이드에서는 아래와 같은 이름과 경로를 사용합니다.</li>
+                            </ul>
+                            <img src="img/image_019-0.png" alt="언리얼 프로젝트 생성" class="image">
+                            <p class="image-caption">언리얼 프로젝트 생성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 C++ 클래스를 생성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">상단 툴바 - 틀 - 새로운 C++ 클래스
+                            <img src="img/image_019.png" alt="C++ 클래스 생성 메뉴" class="image">
+                            <p class="image-caption">C++ 클래스 생성 메뉴</p>
+                        </li>
+                        <li class="list-item">모든 클래스 지정 후 GameInstanceSubsystem 선택
+                            <img src="img/image_020.png" alt="GameInstanceSubsystem 선택" class="image">
+                            <p class="image-caption">GameInstanceSubsystem 선택</p>
+                        </li>
+                        <li class="list-item">클래스 타입 - 퍼블릭 선택 및 클래스 이름 입력 후 클래스 생성
+                            <ol class="ordered-list">
+                                <li class="list-item">가이드에서는 GissChatNet을 사용합니다.
+                                    <img src="img/image_021.png" alt="클래스 이름 입력" class="image">
+                                    <p class="image-caption">클래스 이름 입력</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 언리얼 프로젝트의 VS 솔루션을 생성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">언리얼 엔진 에디터를 닫습니다.</li>
+                        <li class="list-item">언리얼 프로젝트 폴더로 이동합니다.</li>
+                        <li class="list-item">PdnUE5ExampleClient.uproject 우클릭 후 Generate Visual Studio project files 선택</li>
+                    </ol>
+                </li>
+                <li class="list-item">시작 프로젝트를 변경합니다 (권장)
+                    <ul class="unordered-list">
+                        <li class="list-item">가이드 이미지</li>
+                    </ul>
+                    <img src="img/image_022.png" alt="시작 프로젝트 변경" class="image">
+                    <p class="image-caption">시작 프로젝트 변경</p>
+                </li>
+                <li class="list-item">아래 절차에 따라 UE5 ProudNet 플러그인을 적용합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">언리얼 프로젝트 폴더를 엽니다.
+                            <p class="paragraph">숏컷 : 에픽게임즈 런처 → 내 프로젝트 목록 → 프로젝트 우클릭 → 폴더 보기</p>
+                        </li>
+                        <li class="list-item">아래 파일을 압축 해제한 뒤 Plugins 폴더에 넣습니다.
+                            <p class="paragraph">Plugins 폴더가 없다면 새로 만듭니다.</p>
+                            <p class="paragraph"><strong class="text-strong">ProudNet UE5 Lib Linker Plugin.zip</strong></p>
+                            <img src="img/image_023.png" alt="플러그인 폴더 구조" class="image">
+                            <p class="image-caption">플러그인 폴더 구조</p>
+                        </li>
+                        <li class="list-item">Visual Project 솔루션을 다시 생성 합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">VisualStudio IDE를 닫습니다.</li>
+                                <li class="list-item">PdnUE5ExampleClient.uproject 우클릭 후 Generate Visual Studio project files 선택</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">PdnUE5ExampleClient.Build.cs의 코드를 수정합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">가이드 이미지
+                                    <img src="img/image_023-0.png" alt="Build.cs 파일 위치" class="image">
+                                    <p class="image-caption">Build.cs 파일 위치</p>
+                                </li>
+                                <li class="list-item">수정 사항
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+using UnrealBuildTool;
+
+public class PdnUE5ExampleClient : ModuleRules
+{
+	public PdnUE5ExampleClient(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+	
+-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
++		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProudNet" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+		// Uncomment if you are using Slate UI
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		// Uncomment if you are using online features
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+	}
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">전체 코드
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+using UnrealBuildTool;
+
+public class PdnUE5ExampleClient : ModuleRules
+{
+	public PdnUE5ExampleClient(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+	
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProudNet" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+		// Uncomment if you are using Slate UI
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		// Uncomment if you are using online features
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+	}
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">GissChatNet.h와 .cpp의 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">가이드 이미지
+                            <img src="img/image_023-1.png" alt="GissChatNet 파일들" class="image">
+                            <p class="image-caption">GissChatNet 파일들</p>
+                        </li>
+                        <li class="list-item">GissChatNet.h (diff)
+                            <div class="code-block">
+                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
++ private:
++	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
++	virtual void Deinitialize() override;
+};</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">GissChatNet.cpp (diff)
+                            <div class="code-block">
+                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GissChatNet.h"
+
++ #include &lt;format&gt;
++ #include &lt;functional&gt;
++ 
++ #include &lt;ProudNetClient.h&gt;
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.cpp"
++ 
++ static void LogPrint(const std::string& str)
++ {
++ 	UE_LOG(LogTemp, Log, TEXT("%s"), UTF8_TO_TCHAR(str.c_str()));
++ }
++ 
++ static Proud::CriticalSection global_critical_section;
++ static std::shared_ptr&lt;Proud::CNetClient&gt; net_client;
++ static FDelegateHandle update_handle;
++ 
++ void UGissChatNet::Initialize(FSubsystemCollectionBase& Collection)
++ {
++ 	net_client = std::shared_ptr&lt;Proud::CNetClient&gt;(Proud::CNetClient::Create());
++ 
++ 	bool connected = false;
++ 
++ 	net_client-&gt;OnJoinServerComplete = [&](Proud::ErrorInfo* info, const Proud::ByteArray& replyFromServer)
++ 		{
++ 			Proud::CriticalSectionLock lock(global_critical_section, true);
++ 
++ 			if (info-&gt;m_errorType == Proud::ErrorType::Ok)
++ 			{
++ 				auto log = std::format("Succeed to connect server. Allocated hostID={}\n", (int)net_client-&gt;GetLocalHostID());
++ 				LogPrint(log);
++ 
++ 				connected = true;
++ 			}
++ 			else
++ 			{
++ 				auto log = "Failed to connect to server.\n";
++ 				LogPrint(log);
++ 			}
++ 		};
++ 
++ 	net_client-&gt;OnLeaveServer = [&](Proud::ErrorInfo* errorInfo)
++ 		{
++ 			Proud::CriticalSectionLock lock(global_critical_section, true);
++ 
++ 			auto log = std::format("OnLeaveServer. {}  \n", StringT2A(errorInfo-&gt;m_comment).GetString());
++ 			LogPrint(log);
++ 
++ 			connected = false;
++ 			if (update_handle.IsValid())
++ 			{
++ 				FCoreDelegates::OnEndFrame.Remove(update_handle);
++ 				update_handle.Reset();
++ 			}
++ 		};
++ 
++ 	Proud::CNetConnectionParam connection_param;
++ 	connection_param.m_protocolVersion = ProudSetting::CHAT::version;
++ 	connection_param.m_serverIP = _PNT("localhost");
++ 	connection_param.m_serverPort = ProudSetting::CHAT::server_port;
++ 	connection_param.m_closeNoPingPongTcpConnections = false;
++ 
++ 	net_client-&gt;Connect(connection_param);
++ 
++ 	update_handle = FCoreDelegates::OnEndFrame.AddStatic([]()
++ 		{
++ 			if (net_client)
++ 				net_client-&gt;FrameMove();
++ 		}
++ 	);
++ }
++ 
++ void UGissChatNet::Deinitialize()
++ {
++ 	net_client-&gt;Disconnect();
++ 	net_client = nullptr;
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">GissChatNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">GissChatNet.cpp
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GissChatNet.h"
+
+#include &lt;format&gt;
+#include &lt;functional&gt;
+
+#include &lt;ProudNetClient.h&gt;
+#include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.h"
+#include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.cpp"
+
+static void LogPrint(const std::string& str)
+{
+	UE_LOG(LogTemp, Log, TEXT("%s"), UTF8_TO_TCHAR(str.c_str()));
+}
+
+static Proud::CriticalSection global_critical_section;
+static std::shared_ptr&lt;Proud::CNetClient&gt; net_client;
+static FDelegateHandle update_handle;
+
+void UGissChatNet::Initialize(FSubsystemCollectionBase& Collection)
+{
+	net_client = std::shared_ptr&lt;Proud::CNetClient&gt;(Proud::CNetClient::Create());
+
+	bool connected = false;
+
+	net_client-&gt;OnJoinServerComplete = [&](Proud::ErrorInfo* info, const Proud::ByteArray& replyFromServer)
+		{
+			Proud::CriticalSectionLock lock(global_critical_section, true);
+
+			if (info-&gt;m_errorType == Proud::ErrorType::Ok)
+			{
+				auto log = std::format("Succeed to connect server. Allocated hostID={}\n", (int)net_client-&gt;GetLocalHostID());
+				LogPrint(log);
+
+				connected = true;
+			}
+			else
+			{
+				auto log = "Failed to connect to server.\n";
+				LogPrint(log);
+			}
+		};
+
+	net_client-&gt;OnLeaveServer = [&](Proud::ErrorInfo* errorInfo)
+		{
+			Proud::CriticalSectionLock lock(global_critical_section, true);
+
+			auto log = std::format("OnLeaveServer. {}  \n", StringT2A(errorInfo-&gt;m_comment).GetString());
+			LogPrint(log);
+
+			connected = false;
+			if (update_handle.IsValid())
+			{
+				FCoreDelegates::OnEndFrame.Remove(update_handle);
+				update_handle.Reset();
+			}
+		};
+
+	Proud::CNetConnectionParam connection_param;
+	connection_param.m_protocolVersion = ProudSetting::CHAT::version;
+	connection_param.m_serverIP = _PNT("localhost");
+	connection_param.m_serverPort = ProudSetting::CHAT::server_port;
+	connection_param.m_closeNoPingPongTcpConnections = false;
+
+	net_client-&gt;Connect(connection_param);
+
+	update_handle = FCoreDelegates::OnEndFrame.AddStatic([]()
+		{
+			if (net_client)
+				net_client-&gt;FrameMove();
+		}
+	);
+}
+
+void UGissChatNet::Deinitialize()
+{
+	net_client-&gt;Disconnect();
+	net_client = nullptr;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">테스트
+                    <ol class="ordered-list">
+                        <li class="list-item">PdnUE5ExampleServer의 chat_server를 빌드 및 실행합니다.
+                            <img src="img/image_024.png" alt="chat_server 실행" class="image">
+                            <p class="image-caption">chat_server 실행</p>
+                        </li>
+                        <li class="list-item">PdnUE5ExampleClient를 빌드하고 언리얼 엔진 에디터에서 레벨을 실행합니다.
+                            <img src="img/image_025.png" alt="언리얼 에디터 실행" class="image">
+                            <p class="image-caption">언리얼 에디터 실행</p>
+                        </li>
+                        <li class="list-item">아래와 같이 클라이언트와 서버가 연결되면 성공입니다.
+                            <img src="img/image_026.png" alt="서버 연결 성공" class="image">
+                            <p class="image-caption">서버 연결 성공</p>
+                            
+                            <img src="img/image_027.png" alt="클라이언트 연결 성공" class="image">
+                            <p class="image-caption">클라이언트 연결 성공</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+        </section>
+
+        <section id="local-chat" class="md-section">
+            <h2 class="heading-2">2. 로컬 채팅창 만들기</h2>
+            <p class="paragraph">이 섹션에서는 Unreal Engine 5에서 로컬 채팅창을 만들고 기본적인 채팅 기능을 구현합니다.</p>
+
+            <h3 class="heading-3">2.1. 채팅창 위젯 만들기</h3>
+            <ol class="ordered-list">
+                <li class="list-item">아래 절차에 따라 BP_ChatWidget 위젯 블루프린트를 생성합니다
+                    <ol class="ordered-list">
+                        <li class="list-item">콘텐츠 브라우저의 빈 곳을 우클릭 하여 콘텍스트 메뉴를 엽니다.</li>
+                        <li class="list-item">"고급 애셋 생성 - 유저 인터페이스 - 위젯 블루프린트"를 선택합니다.
+                            <img src="img/image_028.png" alt="위젯 블루프린트 생성" class="image">
+                            <p class="image-caption">위젯 블루프린트 생성</p>
+                        </li>
+                        <li class="list-item">"사용자 위젯"을 선택합니다</li>
+                        <li class="list-item">이름을 BP_ChatWidget 으로 변경합니다
+                            <img src="img/image_029.png" alt="위젯 이름 변경" class="image">
+                            <p class="image-caption">위젯 이름 변경</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 BP_ChatWidget 위젯의 모습을 구성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">BP_ChatWidget 를 더블클릭하여 블루프린트 에디터를 엽니다.</li>
+                        <li class="list-item">아래의 구조에 맞게 위젯을 구성합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">위젯 요소 구조
+                                    <div class="directory-tree">
+                                        <pre>&gt;&gt; 캔버스 패널
+	&gt;&gt; 캔버스 패널
+		- 앵커: 좌하단
+		- 위치: [x: 100, y: -200]
+		- 크기: [x: 640, y: 360]
+		- 정렬: [x: 0, y: 1]
+		&gt;&gt; 스크롤 박스
+			- 앵커: 상단
+			- 위치: [x: 0, y: 0]
+			- 크기: [x: 640, y: 300]
+			- 정렬: [x: 0.5, y: 0]
+		&gt;&gt; 캔버스 패널
+			- 앵커: 하단
+			- 위치: [x: 0, y: 0]
+			- 크기: [x: 640, y: 48]
+			- 정렬: [x: 0.5, y: 1]
+			&gt;&gt; 텍스트 박스
+				- 앵커: 왼쪽
+				- 위치: [x: 0, y: 0]
+				- 크기: [x: 520, y: 48]
+				- 정렬: [x: 0, y: 0.5]
+			&gt;&gt; 버튼
+				- 앵커: 오른쪽
+				- 위치: [x: 0, y: 0]
+				- 크기: [x: 100, y: 48]
+				- 정렬: [x: 1, y: 0.5]
+				&gt;&gt; 텍스트
+					- 텍스트: "전송"</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">구성 완료 시 모습은 아래와 같습니다.</p>
+                            <img src="img/image_030.png" alt="채팅창 위젯 구성" class="image">
+                            <p class="image-caption">채팅창 위젯 구성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 BP_ChatWidget을 뷰포트에 추가합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">레벨 블루프린트 에디터를 엽니다.
+                            <img src="img/image_031.png" alt="레벨 블루프린트 에디터 열기" class="image">
+                            <p class="image-caption">레벨 블루프린트 에디터 열기</p>
+                        </li>
+                        <li class="list-item">Create Widget 노드를 추가하고, 클래스를 BP_ChatWidget으로 변경합니다.
+                            <img src="img/image_032.png" alt="Create Widget 노드 추가" class="image">
+                            <p class="image-caption">Create Widget 노드 추가</p>
+                            
+                            <img src="img/image_033.png" alt="클래스 설정" class="image">
+                            <p class="image-caption">클래스 설정</p>
+                        </li>
+                        <li class="list-item">Add to Viewport 노드를 추가하고 연결합니다.
+                            <img src="img/image_034.png" alt="Add to Viewport 노드 추가" class="image">
+                            <p class="image-caption">Add to Viewport 노드 추가</p>
+                            
+                            <img src="img/image_035.png" alt="노드 연결" class="image">
+                            <p class="image-caption">노드 연결</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 채팅창이 추가된 것을 확인합니다.
+                    <img src="img/image_036.png" alt="채팅창이 추가된 화면" class="image">
+                    <p class="image-caption">채팅창이 추가된 화면</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">2.2. 채팅 기능 구현하기</h3>
+            <ol class="ordered-list">
+                <li class="list-item">새로운 위젯 블루프린트 BP_ChatBlock을 만들고 모습을 구성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">아래의 구조에 맞게 위젯을 구성합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">위젯 요소 구조
+                                    <div class="directory-tree">
+                                        <pre>&gt;&gt; 캔버스 패널
+	&gt;&gt; 보더
+		- 앵커: 좌상단
+		- 위치: [x: 0, y: 0]
+		- 크기: [x: 640, y: 40]
+		- 정렬: [x: 0, y: 0]
+		- 브러시 컬러: [R: 1, G: 1, B: 1, A: 0.5]
+		&gt;&gt; 텍스트
+			&gt; 이름: ChatText
+			&gt; 변수 여부 체크
+			- 가로정렬: 왼쪽
+			- 세로정렬: 중앙
+			- 폰트-크기: 20</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">구성 완료 시 모습은 아래와 같습니다.</p>
+                            <img src="img/image_037.png" alt="BP_ChatBlock 구성" class="image">
+                            <p class="image-caption">BP_ChatBlock 구성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 BP_ChatBlock 위젯의 블루프린트를 구성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">블루프린트 그래프 모드로 전환합니다.
+                            <img src="img/image_038.png" alt="블루프린트 그래프 모드" class="image">
+                            <p class="image-caption">블루프린트 그래프 모드</p>
+                        </li>
+                        <li class="list-item">SetChatText 함수를 구성합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">블루프린트 창에서 함수를 생성합니다.
+                                    <img src="img/image_039.png" alt="함수 생성" class="image">
+                                    <p class="image-caption">함수 생성</p>
+                                </li>
+                                <li class="list-item">디테일 창에서 함수 인자를 설정합니다.
+                                    <img src="img/image_040.png" alt="함수 인자 설정" class="image">
+                                    <p class="image-caption">함수 인자 설정</p>
+                                </li>
+                                <li class="list-item">블루프린트 창의 변수 목록에서 ChatText를 드래그 하여 Get ChatText를 선택합니다.</li>
+                                <li class="list-item">SetText (Text) 노드를 생성하고 연결합니다. 다른 항목을 착각하여 선택하지 않도록 주의해야 합니다.
+                                    <img src="img/image_041.png" alt="SetText 노드 추가" class="image">
+                                    <p class="image-caption">SetText 노드 추가</p>
+                                    
+                                    <img src="img/image_042.png" alt="노드 연결 완료" class="image">
+                                    <p class="image-caption">노드 연결 완료</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래 절차에 따라 BP_ChatWidget 위젯을 구성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">BP_ChatWidget 블루프린트 에디터를 열고, 디자이너 모드로 전환합니다.</li>
+                        <li class="list-item">아래를 참고하여 위젯을 수정합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">위젯 요소 구조
+                                    <div class="directory-tree">
+                                        <pre>-&gt; 캔버스 패널
+	-&gt; 캔버스 패널
+		-&gt; 스크롤 박스
+			&gt; 이름: ChatBlockArea
+			&gt; 변수 여부 체크
+		-&gt; 캔버스 패널
+			-&gt; 버튼
+				&gt; 이름: SendButton
+				&gt; 변수 여부 체크
+			-&gt; 텍스트 박스
+				&gt; 이름: ChatTextBox
+				&gt; 변수 여부 체크</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">수정 후 모습은 아래와 같습니다.</p>
+                            <img src="img/image_043.png" alt="BP_ChatWidget 수정 완료" class="image">
+                            <p class="image-caption">BP_ChatWidget 수정 완료</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">블루프린트 에디터를 그래프 모드로 전환합니다.</li>
+                <li class="list-item">PrintChat 함수를 구성합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">함수를 추가합니다.
+                            <img src="img/image_044.png" alt="PrintChat 함수 추가" class="image">
+                            <p class="image-caption">PrintChat 함수 추가</p>
+                        </li>
+                        <li class="list-item">Create Widget 노드를 추가하고 클래스에 BP_ChatBlock을 지정합니다.</li>
+                        <li class="list-item">BP_ChatBlock의 SetChatText 노드를 추가하고 연결합니다.</li>
+                        <li class="list-item">변수의 ChatBlockArea를 드래그하여 추가합니다.</li>
+                        <li class="list-item">Add Child 노드를 추가하고 연결합니다.
+                            <img src="img/image_045.png" alt="PrintChat 함수 구성" class="image">
+                            <p class="image-caption">PrintChat 함수 구성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">채팅 메세지 전송 이벤트를 구현합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">변수에서 SendButton를 선택하고 클릭 시 이벤트를 추가합니다.
+                            <img src="img/image_046.png" alt="버튼 클릭 이벤트 추가" class="image">
+                            <p class="image-caption">버튼 클릭 이벤트 추가</p>
+                        </li>
+                        <li class="list-item">변수 ChatTextBox와 함수 PrintChat를 드래그 하여 추가합니다.</li>
+                        <li class="list-item">Get Text (Text Box) 노드를 추가하고 모두 연결합니다.
+                            <img src="img/image_047.png" alt="채팅 전송 이벤트 완성" class="image">
+                            <p class="image-caption">채팅 전송 이벤트 완성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">아래와 같이 블루프린트 그래프를 수정하여 추가 기능 구현이 가능합니다. (선택 사항)
+                    <img src="img/image_048.png" alt="추가 기능 구현 1" class="image">
+                    <p class="image-caption">추가 기능 구현 1</p>
+                    
+                    <img src="img/image_049.png" alt="추가 기능 구현 2" class="image">
+                    <p class="image-caption">추가 기능 구현 2</p>
+                    
+                    <ol class="ordered-list">
+                        <li class="list-item">입력된 메세지가 없으면 전송 무시</li>
+                        <li class="list-item">메세지 전송 후 입력한 메세지 자동 삭제</li>
+                        <li class="list-item">새로운 채팅이 있으면 채팅창이 맨 아래로 자동 스크롤</li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 채팅 기능이 추가된 것을 확인합니다.
+                    <img src="img/image_050.png" alt="채팅 기능 확인" class="image">
+                    <p class="image-caption">채팅 기능 확인</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="online-chat" class="md-section">
+            <h2 class="heading-2">3. 온라인 채팅창 만들기</h2>
+            <p class="paragraph">이 섹션에서는 ProudNet을 사용하여 네트워크 채팅 기능을 구현합니다.</p>
+
+            <h3 class="heading-3">3.1. Visual Studio 프로젝트 작업</h3>
+            <ol class="ordered-list">
+                <li class="list-item">PdnUE5ExampleServer에서 새로운 빈 프로젝트 chat_pidl을 추가합니다.</li>
+                <li class="list-item">두 개의 파일 C2S.PIDL, S2C.PIDL을 추가하고, 속성을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">"일반 - 항목 형식" 드롭다운에서 "사용자 지정 빌드 도구" 선택</li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 명령줄" 텍스트 입력
+                            <div class="code-block">
+                                <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 설명" 텍스트 입력
+                            <div class="code-block">
+                                <pre>%(Filename).PIDL Compiling...</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 출력" 드롭다운에서 &lt;편집…&gt; 선택하고 팝업 창에 아래 경로 추가
+                            <div class="code-block">
+                                <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
+%(RootDir)%(Directory)\%(Filename)_common.h
+%(RootDir)%(Directory)\%(Filename)_proxy.cpp
+%(RootDir)%(Directory)\%(Filename)_proxy.h
+%(RootDir)%(Directory)\%(Filename)_stub.cpp
+%(RootDir)%(Directory)\%(Filename)_stub.h</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">각 파일에 코드를 입력합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">C2S.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global CHAT_C2S 3000
+{
+    Chat([in] Proud::String message);
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">S2C.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global CHAT_S2C 4000
+{
+    SystemChat([in] Proud::String message);
+    BroadcastChat([in] int sender_id, [in] Proud::String message);
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">chat_pidl 프로젝트를 빌드합니다. chat_pidl 프로젝트 폴더에서 빌드된 소스 코드 파일들을 확인할 수 있습니다.
+                    <img src="img/image_051.png" alt="PIDL 빌드 결과" class="image">
+                    <p class="image-caption">PIDL 빌드 결과</p>
+                </li>
+                <li class="list-item">chat_server 프로젝트의 main.cpp 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <div class="code-block">
+                                <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
++ #include "../chat_pidl/S2C_common.h"
++ #include "../chat_pidl/S2C_common.cpp"
++ #include "../chat_pidl/S2C_proxy.h"
++ #include "../chat_pidl/S2C_proxy.cpp"
++ 
++ #include "../chat_pidl/C2S_common.h"
++ #include "../chat_pidl/C2S_common.cpp"
++ #include "../chat_pidl/C2S_stub.h"
++ #include "../chat_pidl/C2S_stub.cpp"
++ 
++ 
++ Proud::HostID group_host_id = Proud::HostID_None;
++ CHAT_S2C::Proxy s2c_proxy;
++ 
++ struct CHAT_C2S_Stub : public CHAT_C2S::Stub
++ {
++ public:
++ 	DECRMI_CHAT_C2S_Chat;
++ };
++ 
++ DEFRMI_CHAT_C2S_Chat(CHAT_C2S_Stub)
++ {
++ 	Proud::RmiContext rmi_context;
++ 	rmi_context.m_enableLoopback = false;
++ 	s2c_proxy.BroadcastChat(group_host_id, rmi_context, (int)remote, message);
++ 	std::cout &lt;&lt; std::format("Player[{}] say {}\n", (int)remote, StringT2A(message).GetString());
++ 	return true;
++ }
++ 
++ CHAT_C2S_Stub c2s_stub;
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
++ 
++ 			Proud::HostID list[100];
++ 			int listCount = net_server-&gt;GetClientHostIDs(list, 100);
++ 			group_host_id = net_server-&gt;CreateP2PGroup(list, listCount, Proud::ByteArray());
++ 
++ 			auto message = std::format("Player[{}] has joined.", (int)clientInfo-&gt;m_HostID);
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
++ 
++ 			auto message = std::format("Player[{}] has left the game.", (int)clientInfo-&gt;m_HostID);
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+
++ 	net_server-&gt;AttachProxy(&amp;s2c_proxy);
++ 	net_server-&gt;AttachStub(&amp;c2s_stub);
++ 
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
++ 		else
++ 		{
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, input);
++ 		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">main.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+#include "../chat_pidl/S2C_common.h"
+#include "../chat_pidl/S2C_common.cpp"
+#include "../chat_pidl/S2C_proxy.h"
+#include "../chat_pidl/S2C_proxy.cpp"
+
+#include "../chat_pidl/C2S_common.h"
+#include "../chat_pidl/C2S_common.cpp"
+#include "../chat_pidl/C2S_stub.h"
+#include "../chat_pidl/C2S_stub.cpp"
+
+Proud::HostID group_host_id = Proud::HostID_None;
+CHAT_S2C::Proxy s2c_proxy;
+
+struct CHAT_C2S_Stub : public CHAT_C2S::Stub
+{
+public:
+	DECRMI_CHAT_C2S_Chat;
+};
+
+DEFRMI_CHAT_C2S_Chat(CHAT_C2S_Stub)
+{
+	Proud::RmiContext rmi_context;
+	rmi_context.m_enableLoopback = false;
+	s2c_proxy.BroadcastChat(group_host_id, rmi_context, (int)remote, message);
+	std::cout &lt;&lt; std::format("Player[{}] say {}\n", (int)remote, StringT2A(message).GetString());
+	return true;
+}
+
+CHAT_C2S_Stub c2s_stub;
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+
+			Proud::HostID list[100];
+			int listCount = net_server-&gt;GetClientHostIDs(list, 100);
+			group_host_id = net_server-&gt;CreateP2PGroup(list, listCount, Proud::ByteArray());
+
+			auto message = std::format("Player[{}] has joined.", (int)clientInfo-&gt;m_HostID);
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+
+			auto message = std::format("Player[{}] has left the game.", (int)clientInfo-&gt;m_HostID);
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+
+	net_server-&gt;AttachProxy(&amp;s2c_proxy);
+	net_server-&gt;AttachStub(&amp;c2s_stub);
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+		else
+		{
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, input);
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">3.2. 언리얼 프로젝트 작업</h3>
+            <ol class="ordered-list">
+                <li class="list-item">언리얼 엔진 에디터에서 UserWidget을 상속받는 C++ 클래스 BaseChatWidget을 생성합니다.</li>
+                <li class="list-item">생성된 BaseChatWidget 클래스의 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseChatWidget.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "BaseChatWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
+{
+	GENERATED_BODY()
+
++ public:
++ 	UFUNCTION(BlueprintImplementableEvent)
++ 	void PrintChat(const FText&amp; message);
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseChatWidget.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "BaseChatWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
+{
+	GENERATED_BODY()
+	
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrintChat(const FText&amp; message);
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">GissChatNet 클래스의 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역 (주요 부분만 표시)
+                            <ul class="unordered-list">
+                                <li class="list-item">GissChatNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
++ public:
++ 	UFUNCTION(BlueprintCallable)
++ 	void SendChat(const FText&amp; message);
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase&amp; Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">GissChatNet.cpp (주요 추가 부분)
+                                    <div class="code-block">
+                                        <pre>+ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.cpp"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_proxy.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_proxy.cpp"
++ 
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_common.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_common.cpp"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_stub.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_stub.cpp"
++ 
++ static Proud::HostID pop_group_host_id = Proud::HostID_None;
++ static CHAT_C2S::Proxy c2s_proxy;
++ 
++ void UGissChatNet::SendChat(const FText&amp; message)
++ {
++ 	Proud::String message_pstr(*message.ToString());
++ 	Proud::RmiContext context;
++ 	context.m_enableLoopback = true;
++ 	c2s_proxy.Chat(Proud::HostID_Server, context, message_pstr);
++ }</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_ChatWidget의 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">PrintChat 함수를 이벤트로 변환합니다.
+                            <img src="img/image_052.png" alt="PrintChat 이벤트 변환" class="image">
+                            <p class="image-caption">PrintChat 이벤트 변환</p>
+                        </li>
+                        <li class="list-item">BP_ChatWidget의 부모 클래스를 BaseChatWidget으로 변경합니다.
+                            <img src="img/image_053.png" alt="부모 클래스 변경" class="image">
+                            <p class="image-caption">부모 클래스 변경</p>
+                        </li>
+                        <li class="list-item">SendButton 클릭 시 이벤트 그래프를 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">Get GissChatNet 노드와 Send Chat 노드를 추가합니다
+                                    <img src="img/image_054.png" alt="GissChatNet 노드 추가" class="image">
+                                    <p class="image-caption">GissChatNet 노드 추가</p>
+                                </li>
+                                <li class="list-item">기존의 Print Chat 노드를 Send Chat 노드로 대체합니다.</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">BP_ChatWidget 블루프린트 그래프의 최종 모습은 다음과 같습니다.
+                            <img src="img/image_055.png" alt="BP_ChatWidget 최종 모습" class="image">
+                            <p class="image-caption">BP_ChatWidget 최종 모습</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">3.3. 채팅창 테스트</h3>
+            <ol class="ordered-list">
+                <li class="list-item">chat_server 프로젝트를 빌드하고 실행합니다.</li>
+                <li class="list-item">언리얼 엔진 프로젝트 레벨을 실행하고 채팅 기능을 확인합니다.
+                    <img src="img/image_056.png" alt="채팅 기능 테스트 1" class="image">
+                    <p class="image-caption">채팅 기능 테스트 1</p>
+                    
+                    <img src="img/image_057.png" alt="채팅 기능 테스트 2" class="image">
+                    <p class="image-caption">채팅 기능 테스트 2</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="mirage-character" class="md-section">
+            <h2 class="heading-2">4. 미라지 캐릭터 구현하기</h2>
+            <p class="paragraph">이 섹션에서는 향상된 게임플레이 기능을 가진 미라지 캐릭터를 구축합니다.</p>
+
+            <h3 class="heading-3">4.1. 미라지 블루프린트 캐릭터 추가</h3>
+            <ol class="ordered-list">
+                <li class="list-item">두 개의 블루프린트 클래스를 복제합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">콘텐츠 브라우저에서 "All - 콘텐츠 - InfimaGames - FreeFPSTemplate - Core"로 이동합니다.</li>
+                        <li class="list-item">두 개의 블루프린트 클래스 BP_Character, ABP_Character를 복제합니다.</li>
+                        <li class="list-item">각각 BP_MirageCharacter, ABP_MirageCharacter로 이름을 변경합니다.</li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 에디터를 열고 아래 절차를 진행합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">컴포넌트 창에서 CharacterArms를 선택합니다.</li>
+                        <li class="list-item">애니메이션의 애님 클래스를 ABP_MirageCharacter로 변경합니다.</li>
+                        <li class="list-item">메시의 스켈레탈 메시 에셋을 SKM_Manny_Simple로 지정합니다.
+                            <img src="img/image_058.png" alt="BP_MirageCharacter 설정" class="image">
+                            <p class="image-caption">BP_MirageCharacter 설정</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter를 레벨에 배치하고 실행하여 확인합니다.
+                    <p class="paragraph">아래와 같은 모습으로 배치되면 현 시점 기준 정상입니다.</p>
+                    <img src="img/image_059.png" alt="미라지 캐릭터 배치 확인" class="image">
+                    <p class="image-caption">미라지 캐릭터 배치 확인</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.2. 이동 애니메이션 미러링</h3>
+
+            <h4 class="heading-4">4.2.1. 애니메이션 변수 복제</h4>
+            <ol class="ordered-list">
+                <li class="list-item">C++ 클래스 BaseMirageCharacter를 구현합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Character를 상속받는 BaseMirageCharacter 클래스를 생성합니다</li>
+                        <li class="list-item">생성된 클래스의 소스 코드를 수정합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">수정 내역
+                                    <ul class="unordered-list">
+                                        <li class="list-item">BaseMirageCharacter.h
+                                            <div class="code-block">
+                                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+};</pre>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="list-item">전체 코드
+                                    <ul class="unordered-list">
+                                        <li class="list-item">BaseMirageCharacter.h
+                                            <div class="code-block">
+                                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+};</pre>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter의 부모 클래스로 BaseMirageCharacter를 지정합니다</li>
+                <li class="list-item">이벤트 함수를 사용한 애니메이션 변수 복제를 구현합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">ABP_Character 블루프린트를 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">ABP_Character 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
+                                <li class="list-item">BlueprintUpdateAnimation 이벤트 실행 흐름의 끝 부분으로 이동합니다.
+                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation 이벤트" class="image">
+                                    <p class="image-caption">BlueprintUpdateAnimation 이벤트</p>
+                                </li>
+                                <li class="list-item">Get Actor Of Class 노드를 생성 및 연결하고 Class에 BP_MirageCharacter를 지정합니다.</li>
+                                <li class="list-item">Update Animation Parameter 노드를 생성 및 연결하고 모든 변수를 연결합니다. 모든 변수는 블루프린트의 변수 목록에서 가져올 수 있습니다.
+                                    <img src="img/image_061.png" alt="Update Animation Parameter 노드" class="image">
+                                    <p class="image-caption">Update Animation Parameter 노드</p>
+                                    
+                                    <img src="img/image_062.png" alt="변수 연결 완료" class="image">
+                                    <p class="image-caption">변수 연결 완료</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">BP_MirageCharacter 블루프린트를 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">BP_MirageCharacter 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
+                                <li class="list-item">4개 변수를 추가합니다.
+                                    <img src="img/image_063.png" alt="변수 추가" class="image">
+                                    <p class="image-caption">변수 추가</p>
+                                </li>
+                                <li class="list-item">Event UpdateAnimationParameter 노드를 추가합니다.</li>
+                                <li class="list-item">이벤트의 파라미터를 블루프린트 변수에 저장합니다.
+                                    <img src="img/image_064.png" alt="파라미터 저장" class="image">
+                                    <p class="image-caption">파라미터 저장</p>
+                                </li>
+                                <li class="list-item">Event Tick 노드의 연결을 끊습니다.
+                                    <img src="img/image_065.png" alt="Event Tick 연결 해제" class="image">
+                                    <p class="image-caption">Event Tick 연결 해제</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">ABP_MirageCharacter 블루프린트를 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">ABP_MirageCharacter 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
+                                <li class="list-item">Try Get Pawn Owner 노드를 추가합니다.</li>
+                                <li class="list-item">Cast To BP_MirageCharacter 노드를 추가하고 연결합니다.</li>
+                                <li class="list-item">형변환된 캐릭터로부터 변수를 가져와 애니메이션 블루프린트 변수에 저장합니다.
+                                    <img src="img/image_066.png" alt="애니메이션 변수 연결" class="image">
+                                    <p class="image-caption">애니메이션 변수 연결</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨 실행 및 애니메이션 복제 동작 확인
+                    <p class="paragraph">달리기, 점프, 조준 등의 동작 시 모션을 따라하는 미라지 캐릭터의 모습을 관찰 가능합니다.</p>
+                    <img src="img/image_067.png" alt="애니메이션 복제 확인" class="image">
+                    <p class="image-caption">애니메이션 복제 확인</p>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">4.2.2. 보정 애니메이션 적용</h4>
+            <ol class="ordered-list">
+                <li class="list-item">보정 애니메이션 준비
+                    <ol class="ordered-list">
+                        <li class="list-item">애니메이션 파일을 다운로드 받습니다.
+                            <p class="paragraph"><strong>Invert.fbx</strong> (파일 다운로드 필요)</p>
+                        </li>
+                        <li class="list-item">다운로드 받은 파일을 언리얼 에디터의 콘텐츠 브라우저로 드래그 합니다.</li>
+                        <li class="list-item">Animations 탭의 스켈레톤 항목에 SKEL_UE5_Mannequin을 지정합니다.
+                            <img src="img/image_068.png" alt="스켈레톤 지정" class="image">
+                            <p class="image-caption">스켈레톤 지정</p>
+                        </li>
+                        <li class="list-item">임포트 버튼을 클릭합니다.</li>
+                        <li class="list-item">생성된 두 개의 애니메이션 중 하나를 삭제합니다. (선택 사항)
+                            <img src="img/image_069.png" alt="애니메이션 삭제" class="image">
+                            <p class="image-caption">애니메이션 삭제</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">보정 애니메이션을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Inver_Anim_Scene 애니메이션 시퀀스의 블루프린트 에디터를 엽니다.</li>
+                        <li class="list-item">에셋 디테일 창의 애디티브 세팅을 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">애디티브 애님 타입 - Mesh Space 선택</li>
+                                <li class="list-item">베이스 포즈 타입 - Selected animation frame 선택</li>
+                                <li class="list-item">베이스 포즈 애니메이션 - A_FP_AssaultRifle_Idle_Loop 선택
+                                    <img src="img/image_070.png" alt="애디티브 세팅" class="image">
+                                    <p class="image-caption">애디티브 세팅</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">ABP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Apply Additive 노드와 Invert_Anim_Scene 애니메이션 노드를 추가합니다.</li>
+                        <li class="list-item">A_FP_AssaultRifle_Idle_Loop 애니메이션 노드와 연결합니다.
+                            <img src="img/image_071.png" alt="Apply Additive 노드 연결" class="image">
+                            <p class="image-caption">Apply Additive 노드 연결</p>
+                        </li>
+                        <li class="list-item">나머지 4개의 애니메이션 노드에 대해 같은 작업을 진행합니다. 모두 동일하게 Inver_Anim_Scene, Apply Additive를 사용합니다.
+                            <img src="img/image_072.png" alt="모든 애니메이션 노드 수정" class="image">
+                            <p class="image-caption">모든 애니메이션 노드 수정</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨 실행 및 애니메이션 보정 결과 확인
+                    <p class="paragraph">팔 골격의 위치가 정상 범위 내로 보정 된 것을 확인할 수 있습니다.</p>
+                    <img src="img/image_073.png" alt="애니메이션 보정 결과" class="image">
+                    <p class="image-caption">애니메이션 보정 결과</p>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">4.2.3. 이동 시 다리 애니메이션 적용</h4>
+            <ol class="ordered-list">
+                <li class="list-item">ABP_MirageCharacter - AnimGraph 블루프린트 그래프의 A_FP_AssaultRifle_Run_Loop와 연결된 부분을 아래의 절차에 따라 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Layered blend per bone 노드를 추가합니다.</li>
+                        <li class="list-item">추가한 노드의 디테일을 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">설정 - 레이어 설정 - 인덱스[0]에 두 개의 분기 필터를 추가합니다.</li>
+                                <li class="list-item">각각 본 이름을 thigh_l, thigh_r로 지정합니다.
+                                    <img src="img/image_074.png" alt="Layered blend per bone 설정" class="image">
+                                    <p class="image-caption">Layered blend per bone 설정</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">기존 Apply Additive 노드를 위 노드의 Base Pose에 연결합니다.</li>
+                        <li class="list-item">MM_Run_Fwd 애니메이션 노드를 추가하고 위 노드의 Blend Poses 0에 연결합니다.</li>
+                        <li class="list-item">MM_Run_Fwd 노드의 디테일 창에서 애니메이션 루프를 활성화 합니다.
+                            <img src="img/image_075.png" alt="애니메이션 루프 활성화" class="image">
+                            <p class="image-caption">애니메이션 루프 활성화</p>
+                        </li>
+                        <li class="list-item">최종 모습은 다음과 같습니다. 코멘트 노드의 크기 조절은 선택 사항입니다.
+                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop 최종 모습" class="image">
+                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop 최종 모습</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">위 과정을 나머지 4개의 애니메이션 노드에도 유사하게 적용합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Layered blend per bone 노드의 설정은 동일하므로 복사하여 사용할 수 있습니다.</li>
+                        <li class="list-item">MM_Run_Fwd 노드 대신 경우에 MM_Walk_Fwd 또는 MM_Idle을 사용해야 합니다.</li>
+                        <li class="list-item">모든 과정을 마친 후 그래프는 다음과 같습니다.
+                            <img src="img/image_077.png" alt="전체 그래프 1" class="image">
+                            <p class="image-caption">전체 그래프 1</p>
+                            
+                            <img src="img/image_078.png" alt="전체 그래프 2" class="image">
+                            <p class="image-caption">전체 그래프 2</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨 실행 및 다리 애니메이션 적용 확인
+                    <p class="paragraph">걷기와 달리기 애니메이션이 재생됨을 확인할 수 있습니다.</p>
+                    <img src="img/image_079.png" alt="다리 애니메이션 확인" class="image">
+                    <p class="image-caption">다리 애니메이션 확인</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.3. 액션 애니메이션 및 동작 복제</h3>
+            <ol class="ordered-list">
+                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void OnFired();
++ 
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">재장전 시 미라지 캐릭터의 재장전 이벤트를 호출하는 그래프를 작성합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.
+                                    <img src="img/image_080.png" alt="Reload 관련 구역" class="image">
+                                    <p class="image-caption">Reload 관련 구역</p>
+                                </li>
+                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                <li class="list-item">On Reloaded 함수 노드로 연계합니다.
+                                    <img src="img/image_081.png" alt="On Reloaded 노드 추가" class="image">
+                                    <p class="image-caption">On Reloaded 노드 추가</p>
+                                </li>
+                                <li class="list-item">Reload와 Delay 함수 사이로 연결합니다.
+                                    <img src="img/image_082.png" alt="Reload 이벤트 연결" class="image">
+                                    <p class="image-caption">Reload 이벤트 연결</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">발사 시 미라지 캐릭터의 발사 이벤트를 호출하는 그래프를 작성합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">그래프 우측에서 Shoot과 관련된 구역의 종단부로 이동합니다.
+                                    <img src="img/image_083.png" alt="Shoot 관련 구역" class="image">
+                                    <p class="image-caption">Shoot 관련 구역</p>
+                                </li>
+                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                <li class="list-item">On Fired 함수 노드로 연계합니다.</li>
+                                <li class="list-item">(Current Ammunition) Set 과 Delay 함수 사이로 연결합니다.
+                                    <img src="img/image_084.png" alt="Shoot 이벤트 연결" class="image">
+                                    <p class="image-caption">Shoot 이벤트 연결</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.</li>
+                        <li class="list-item">Play Montage 노드의 앞에 On Reloaded 이벤트 노드를 연결합니다
+                            <img src="img/image_085.png" alt="On Reloaded 이벤트 연결" class="image">
+                            <p class="image-caption">On Reloaded 이벤트 연결</p>
+                        </li>
+                        <li class="list-item">그래프 우측에서 Shoot과 관련된 구역으로 이동합니다.</li>
+                        <li class="list-item">Shoot 노드의 앞에 On Fired 이벤트 노드를 연결합니다
+                            <img src="img/image_086.png" alt="On Fired 이벤트 연결" class="image">
+                            <p class="image-caption">On Fired 이벤트 연결</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 미라지 캐릭터가 장전과 발사를 따라하는 모습을 볼 수 있습니다.
+                    <img src="img/image_087.png" alt="액션 애니메이션 테스트" class="image">
+                    <p class="image-caption">액션 애니메이션 테스트</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.4. 위치, 회전 등 기타 복제</h3>
+            <ol class="ordered-list">
+                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void UpdateTransform(FVector3f position, FQuat4f orientation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnFired();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateTransform(FVector3f position, FQuat4f orientation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnFired();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 타입의 AimPitch 변수를 추가합니다.
+                            <img src="img/image_088.png" alt="AimPitch 변수 추가" class="image">
+                            <p class="image-caption">AimPitch 변수 추가</p>
+                        </li>
+                        <li class="list-item">Tick 이벤트의 코드가 끝나는 부분으로 이동합니다.</li>
+                        <li class="list-item">두 개의 라우트 노드를 생성하고 Branch 노드의 False, Stop Running 두 노드를 연결합니다.
+                            <img src="img/image_089.png" alt="라우트 노드 1" class="image">
+                            <p class="image-caption">라우트 노드 1</p>
+                            
+                            <img src="img/image_090.png" alt="라우트 노드 2" class="image">
+                            <p class="image-caption">라우트 노드 2</p>
+                        </li>
+                        <li class="list-item">라우트 노드를 이동합니다.
+                            <img src="img/image_091.png" alt="라우트 노드 이동" class="image">
+                            <p class="image-caption">라우트 노드 이동</p>
+                        </li>
+                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 작성합니다
+                            
+                            그래프 작성이 끝난 모습은 다음과 같으며, 아래에서 과정을 확인할 수 있습니다.
+                            
+                            <img src="img/image_092.png" alt="Update Transform 그래프 완성" class="image">
+                            <p class="image-caption">Update Transform 그래프 완성</p>
+                            
+                            <details class="expandable-section">
+                                <summary>과정 보기</summary>
+                                <ol class="ordered-list">
+                                    <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                    <li class="list-item">Update Transform 함수 노드로 연계합니다.
+                                        <img src="img/image_093.png" alt="Update Transform 노드 추가" class="image">
+                                        <p class="image-caption">Update Transform 노드 추가</p>
+                                    </li>
+                                    <li class="list-item">Get Actor Location, Get Actor Rotation으로 이동/회전 값을 얻는 노드를 생성합니다.
+                                        <img src="img/image_094.png" alt="위치/회전 노드 추가" class="image">
+                                        <p class="image-caption">위치/회전 노드 추가</p>
+                                    </li>
+                                    <li class="list-item">Get Actor Rotation은 To Quaternion 노드로 연계합니다.
+                                        <img src="img/image_095.png" alt="To Quaternion 연결" class="image">
+                                        <p class="image-caption">To Quaternion 연결</p>
+                                    </li>
+                                    <li class="list-item">Get Character Arms 노드를 생성하고, 속도와 각속도를 얻는 노드로 연계합니다.
+                                        <img src="img/image_096.png" alt="Character Arms 노드" class="image">
+                                        <p class="image-caption">Character Arms 노드</p>
+                                        
+                                        <img src="img/image_097.png" alt="속도/각속도 노드" class="image">
+                                        <p class="image-caption">속도/각속도 노드</p>
+                                    </li>
+                                    <li class="list-item">Get Control Rotation 노드를 생성하고, 반환값으로 부터 Pitch 회전 값을 연산합니다.
+                                        모든 노드는 노드 이름을 통해 연계 가능합니다.
+                                        중간의 곱셉 노드는 Multiply로 생성 가능합니다.
+                                        
+                                        <img src="img/image_098.png" alt="Control Rotation과 Pitch 계산" class="image">
+                                        <p class="image-caption">Control Rotation과 Pitch 계산</p>
+                                    </li>
+                                    <li class="list-item">추가된 모든 노드를 Update Transform의 알맞은 인자와 연결합니다.
+                                        Get Physics Linear Velocity 노드는 실행 핀이 연결되어야 합니다.</li>
+                                </ol>
+                            </details>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
+                        <li class="list-item">UpdateTransform 이벤트 노드를 추가합니다.</li>
+                        <li class="list-item">이벤트 노드에 맞는 각 노드를 추가하고 연결합니다.
+                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 구현" class="image">
+                            <p class="image-caption">BP_MirageCharacter UpdateTransform 구현</p>
+                        </li>
+                        <li class="list-item">Position 노드의 연결을 끊고, Make Vector노드를 추가하여 연결합니다.
+                            
+                            싱글 테스트 환경에서의 버그동작을 방지하기 위한 조치입니다.
+                            
+                            <img src="img/image_100.png" alt="Position Make Vector 연결" class="image">
+                            <p class="image-caption">Position Make Vector 연결</p>
+                        </li>
+                        <li class="list-item">Shoot과 관련된 부분으로 이동합니다.</li>
+                        <li class="list-item">아래와 같이 그래프를 구성하고 연결합니다.
+                            <img src="img/image_101.png" alt="Shoot 관련 그래프 구성" class="image">
+                            <p class="image-caption">Shoot 관련 그래프 구성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">ABP_MirageCharacter 블루프린트의 이벤트그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
+                        <li class="list-item">형변환된 BP_MirageCharacter로부터 값을 불러와 저장합니다.
+                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 변수" class="image">
+                            <p class="image-caption">ABP_MirageCharacter AimPitch 변수</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">ABP_MirageCharacter 블루프린트의 AnimGraph를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Mouse Sway 관련 부분으로 이동합니다.
+                            <img src="img/image_103.png" alt="Mouse Sway 관련 부분" class="image">
+                            <p class="image-caption">Mouse Sway 관련 부분</p>
+                        </li>
+                        <li class="list-item">Trasnform (Modify) Bone 노드를 추가하고 Mouse Sway 코멘트 노드의 앞에 연결합니다.</li>
+                        <li class="list-item">AimPitch 변수값으로 Rotator를 만들고 노드의 Rotation에 적용합니다.
+                            <img src="img/image_104.png" alt="Transform Bone 노드 적용" class="image">
+                            <p class="image-caption">Transform Bone 노드 적용</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 기능을 테스트합니다.
+                    
+                    미라지 캐릭터가 플레이어 캐릭터와 같은 방향을 조준하며 발사하게 되었습니다.
+
+                    <img src="img/image_105.png" alt="위치 회전 복제 테스트" class="image">
+                    <p class="image-caption">위치 회전 복제 테스트</p>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 섹션 5: 미라지 캐릭터 온라인 연동하기 -->
+        <section id="section-5" class="section">
+            <h2 class="heading-2">5. 미라지 캐릭터 온라인 연동하기</h2>
+            <p class="description">이 섹션에서는 멀티플레이어 게임플레이를 위한 미라지 캐릭터와 ProudNet 네트워킹 통합을 다룹니다.</p>
+
+            <h3 class="heading-3">5.1. Visual Studio 프로젝트 작업</h3>
+
+            <h4 class="heading-4">5.1.1. game_server 프로젝트 생성</h4>
+            <ol class="ordered-list">
+                <li class="list-item">VisualStudio에서 빈 프로젝트 game_server를 생성합니다</li>
+                
+                <li class="list-item">game_server프로젝트에 3개의 새 항목 main.cpp, setting.cpp, setting.h을 추가합니다.</li>
+                
+                <li class="list-item">game_server 프로젝트의 속성을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">"C/C++ - 언어 - C++ 언어 표준"
+                            드롭다운에서 "ISO C++20 표준 (/std:C++20)" 선택</li>
+                        <li class="list-item">"C/C++ - 일반 - 추가 포함 디렉터리"
+                            드롭다운에서 &lt;편집…&gt; 선택
+                            팝업 창에 아래 경로 추가
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"링커 - 일반 - 추가 라이브러리 디렉터리"
+                            드롭다운에서 &lt;편집…&gt; 선택
+                            팝업 창에 아래 경로 추가
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"링커 - 입력 - 추가 종속성"
+                            드롭다운에서 &lt;편집…&gt; 선택
+                            팝업 창에 아래 파일명 추가
+                            <div class="code-block">
+                                <pre>ProudNetServer.lib
+ProudNetClient.lib</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"빌드 이벤트 - 빌드 후 이벤트 - 명령줄"
+                            드롭다운에서 &lt;편집…&gt; 선택
+                            팝업 창에 아래 명령 추가
+                            <div class="code-block">
+                                <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
+xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libssl-3-x64.dll" "$(OutDir)"</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">각 소스 파일에 코드를 입력합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">setting.h
+                                    <div class="code-block">
+                                        <pre>#pragma once
+
+namespace ProudSetting
+{
+    namespace GAME
+    {
+        extern const ::Proud::Guid version;
+        extern const int server_port;
+    }
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">setting.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;ProudNetClient.h&gt;
+#include "setting.h"
+
+namespace ProudSetting
+{
+    namespace GAME
+    {
+        const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
+        const ::Proud::Guid version = ::Proud::Guid(guid);
+        const int server_port = 33338;
+    }
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">main.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+		};
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::GAME::version;
+	start_param.m_tcpPorts.Add(ProudSetting::GAME::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">5.1.2. game_pidl 프로젝트 생성</h4>
+            <ol class="ordered-list">
+                <li class="list-item">PdnUE5ExampleServer에서 새로운 빈 프로젝트 game_pidl을 추가합니다.</li>
+
+                <li class="list-item">파일 P2P.PIDL을 추가하고, 속성을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">"일반 - 항목 형식"
+                            드롭다운에서 "사용자 지정 빌드 도구" 선택</li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 명령줄"
+                            텍스트 입력
+                            <div class="code-block">
+                                <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 설명"
+                            텍스트 입력
+                            <div class="code-block">
+                                <pre>%(Filename).PIDL Compiling...</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 출력"
+                            드롭다운에서 &lt;편집…&gt; 선택
+                            팝업 창에 아래 경로 추가
+                            <div class="code-block">
+                                <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
+%(RootDir)%(Directory)\%(Filename)_common.h
+%(RootDir)%(Directory)\%(Filename)_proxy.cpp
+%(RootDir)%(Directory)\%(Filename)_proxy.h
+%(RootDir)%(Directory)\%(Filename)_stub.cpp
+%(RootDir)%(Directory)\%(Filename)_stub.h</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">파일에 코드를 입력합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">P2P.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global GAME_P2P 3000
+{
+    Transform([in] Proud::CharacterTransformData transformData);
+    AnimationParams([in] Proud::CharacterAnimationParams animationParams);
+    Action([in] Proud::CharacterAction actionId);
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="list-item">game_pidl 프로젝트를 빌드합니다.</li>
+            </ol>
+
+            <h4 class="heading-4">5.1.3. game_server 프로젝트 소스 코드 수정</h4>
+            <ol class="ordered-list">
+                <li class="list-item">game_server 프로젝트의 소스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역을 적용하여 P2P 그룹 관리 기능을 추가합니다.</li>
+                        <li class="list-item">데이터 구조체와 직렬화 함수들을 setting.h와 setting.cpp에 추가합니다.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">5.2. 언리얼 프로젝트 작업</h3>
+            <ol class="ordered-list">
+                <li class="list-item">GissGameNet C++ 클래스 생성
+                    <ol class="ordered-list">
+                        <li class="list-item">GameInstanceSubsystem을 상속받는 C++ 클래스 GissGameNet을 생성합니다.</li>
+                        <li class="list-item">GissGameNet 클래스의 소스 코드를 수정합니다.
+                            <ul class="unordered-list">
+                                <li class="list-item">GissGameNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissGameNet.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissGameNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UpdateCharacterTransform(FVector3f position, FQuat4f rotation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateCharacterAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void SendCharacterFired();
+
+	UFUNCTION(BlueprintCallable)
+	void SendCharacterReloaded();
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 GissGameNet의 Update Character Transform을 호출하는 그래프로 대체합니다.
+                            <img src="img/image_106.png" alt="Update Character Transform 변경" class="image">
+                            <p class="image-caption">Update Character Transform 변경</p>
+                        </li>
+                        <li class="list-item">BP_MirageCharacter의 On Fired를 호출하는 그래프를 GissGameNet의 Send Character Fired를 호출하는 그래프로 대체합니다.
+                            <img src="img/image_107.png" alt="Send Character Fired 변경" class="image">
+                            <p class="image-caption">Send Character Fired 변경</p>
+                        </li>
+                        <li class="list-item">BP_MirageCharacter의 On Reloaded를 호출하는 그래프를 GissGameNet의 Send Character Reloaded를 호출하는 그래프로 대체합니다.
+                            <img src="img/image_108.png" alt="Send Character Reloaded 변경" class="image">
+                            <p class="image-caption">Send Character Reloaded 변경</p>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">ABP_Character 블루프린트의 이벤트그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">BP_MirageCharacter의 Update Animation Parameter를 호출하는 그래프를 GissGameNet의 Update Character Animation Parameter를 호출하는 그래프로 대체합니다.
+                            <img src="img/image_109.png" alt="Update Character Animation Parameter 변경" class="image">
+                            <p class="image-caption">Update Character Animation Parameter 변경</p>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">서버 빌드 및 실행 후 레벨 실행 시, 연동 작업 이전과 동일한 결과를 확인할 수 있습니다.</li>
+            </ol>
+        </section>
+
+        <!-- 섹션 6: 마무리 후 프로젝트 빌드 및 테스트 -->
+        <section id="section-6" class="section">
+            <h2 class="heading-2">6. 마무리 후 프로젝트 빌드 및 테스트</h2>
+            <p class="description">이 섹션에서는 프로젝트 마무리, 빌드 및 종합 테스트 절차를 다룹니다.</p>
+
+            <h3 class="heading-3">6.1. 테스트 코드 수정</h3>
+            <ol class="ordered-list">
+                <li class="list-item">BaseMirageCharacter 클래스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">캐릭터 ID 관리를 위한 SetId와 GetId 함수를 추가합니다.</li>
+                    </ul>
+                </li>
+                <li class="list-item">GissGameNet 클래스 코드를 수정합니다.
+                    <ul class="unordered-list">
+                        <li class="list-item">멀티플레이어 환경에서 캐릭터별 식별을 위한 ID 기반 관리 시스템을 구현합니다.</li>
+                        <li class="list-item">P2P 멤버 조인 시 자동으로 미라지 캐릭터를 생성하는 기능을 추가합니다.</li>
+                        <li class="list-item">루프백 비활성화로 자신의 동작이 자신에게 다시 전송되지 않도록 수정합니다.</li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 클래스를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Update Transform 이벤트의 Position을 Set Actor Location에 다시 직접 연결합니다.
+                            <img src="img/image_110.png" alt="Position 직접 연결" class="image">
+                            <p class="image-caption">Position 직접 연결</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨 에디터의 아웃라이너 창에서 BP_MirageCharacter 인스턴스를 제거합니다.
+                    <img src="img/image_111.png" alt="MirageCharacter 인스턴스 제거" class="image">
+                    <p class="image-caption">MirageCharacter 인스턴스 제거</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">6.2. 프로젝트 빌드</h3>
+            <ol class="ordered-list">
+                <li class="list-item">서버 실행 파일 빌드
+                    <ol class="ordered-list">
+                        <li class="list-item">비주얼 스튜디오 상단의 드롭다운을 통해 빌드 구성을 변경합니다.
+                            <img src="img/image_112.png" alt="빌드 구성 변경" class="image">
+                            <p class="image-caption">빌드 구성 변경</p>
+                        </li>
+                        <li class="list-item">chat_server와 game_server 프로젝트를 각각 빌드합니다.</li>
+                        <li class="list-item">솔루션의 하위 폴더에서 빌드된 실행파일을 확인할 수 있습니다.
+                            <img src="img/image_113.png" alt="빌드된 실행파일" class="image">
+                            <p class="image-caption">빌드된 실행파일</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">클라이언트 실행 파일 빌드
+                    <ol class="ordered-list">
+                        <li class="list-item">언리얼 에디터의 레벨 실행 옆 버튼을 통해 언리얼 프로젝트를 빌드할 수 있습니다.
+                            <img src="img/image_114.png" alt="언리얼 프로젝트 빌드" class="image">
+                            <p class="image-caption">언리얼 프로젝트 빌드</p>
+                        </li>
+                        <li class="list-item">지정한 경로를 통해 빌드된 파일을 확인할 수 있습니다.
+                            <img src="img/image_115.png" alt="빌드된 클라이언트 파일" class="image">
+                            <p class="image-caption">빌드된 클라이언트 파일</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">6.3. 테스트</h3>
+            <ol class="ordered-list">
+                <li class="list-item">서버 프로젝트에서 빌드 된 chat_server.exe와 game_server.exe를 실행합니다.</li>
+                <li class="list-item">언리얼 프로젝트에서 빌드 된 Windows 폴더의 PdnUE5ExampleClient.exe를 실행합니다.
+                    
+                    PC의 사양에 따라 컴퓨터에 심한 부하가 걸릴 수 있으므로 주의해야합니다.
+                </li>
+                <li class="list-item">채팅 서버와 게임 서버를 이용하는 두 클라이언트의 모습을 확인할 수 있습니다.
+                    <img src="img/image_116.png" alt="최종 테스트 결과" class="image">
+                    <p class="image-caption">최종 테스트 결과</p>
+                </li>
+            </ol>
+        </section>
+
+    </div>
+
+    
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js와 js/syntax-highlighting.js에서 자동 로드됨 -->
+</body>
+</html> 
