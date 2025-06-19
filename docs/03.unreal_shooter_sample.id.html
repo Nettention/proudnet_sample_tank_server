@@ -13,79 +13,79 @@
 <body>
     <div class="md-container">
         <div class="md-header">
-            <h1>ProudNet UE5 Example</h1>
-            <p class="paragraph">A comprehensive guide for implementing multiplayer games using ProudNet networking library and Unreal Engine 5. Covers chat systems, character networking, and advanced multiplayer features.</p>
+            <h1>Contoh ProudNet UE5</h1>
+            <p class="paragraph">Panduan komprehensif untuk mengimplementasikan game multiplayer menggunakan library networking ProudNet dan Unreal Engine 5. Mencakup sistem chat, networking karakter, dan fitur multiplayer lanjutan.</p>
         </div>
 
         <div class="md-nav">
-            <h3 class="heading-3">📋 Table of Contents</h3>
+            <h3 class="heading-3">📋 Daftar Isi</h3>
             <ul class="unordered-list">
-                <li class="list-item"><a href="#project-setup" class="link">1. Project Setup</a>
-                    <p class="paragraph">Prepare and configure Unreal Engine 5 project for ProudNet integration</p>
+                <li class="list-item"><a href="#project-setup" class="link">1. Pengaturan Proyek</a>
+                    <p class="paragraph">Mempersiapkan dan mengkonfigurasi proyek Unreal Engine 5 untuk integrasi ProudNet</p>
                 </li>
-                <li class="list-item"><a href="#local-chat" class="link">2. Creating Local Chat</a>
-                    <p class="paragraph">Create a basic local chat system for testing and foundation</p>
+                <li class="list-item"><a href="#local-chat" class="link">2. Membuat Chat Lokal</a>
+                    <p class="paragraph">Membuat sistem chat lokal dasar untuk pengujian dan fondasi</p>
                 </li>
-                <li class="list-item"><a href="#online-chat" class="link">3. Creating Online Chat</a>
-                    <p class="paragraph">Implement network chat functionality using ProudNet</p>
+                <li class="list-item"><a href="#online-chat" class="link">3. Membuat Chat Online</a>
+                    <p class="paragraph">Mengimplementasikan fungsionalitas chat jaringan menggunakan ProudNet</p>
                 </li>
-                <li class="list-item"><a href="#mirage-character" class="link">4. Implementing Mirage Character</a>
-                    <p class="paragraph">Build a mirage character with enhanced gameplay features</p>
+                <li class="list-item"><a href="#mirage-character" class="link">4. Mengimplementasikan Karakter Mirage</a>
+                    <p class="paragraph">Membangun karakter mirage dengan fitur gameplay yang ditingkatkan</p>
                 </li>
-                <li class="list-item"><a href="#mirage-online" class="link">5. Mirage Character Online Integration</a>
-                    <p class="paragraph">Integrate mirage character with ProudNet networking for multiplayer gameplay</p>
+                <li class="list-item"><a href="#mirage-online" class="link">5. Integrasi Online Karakter Mirage</a>
+                    <p class="paragraph">Mengintegrasikan karakter mirage dengan networking ProudNet untuk gameplay multiplayer</p>
                 </li>
-                <li class="list-item"><a href="#project-build" class="link">6. Final Project Build and Testing</a>
-                    <p class="paragraph">Project finalization, build, and comprehensive testing procedures</p>
+                <li class="list-item"><a href="#project-build" class="link">6. Build dan Pengujian Proyek Akhir</a>
+                    <p class="paragraph">Finalisasi proyek, build, dan prosedur pengujian komprehensif</p>
                     <ul class="unordered-list">
-                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. Test Code Modification</a></li>
-                        <li class="list-item"><a href="#project-build-section" class="link">6.2. Project Build</a></li>
-                        <li class="list-item"><a href="#testing" class="link">6.3. Testing</a></li>
+                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. Modifikasi Kode Tes</a></li>
+                        <li class="list-item"><a href="#project-build-section" class="link">6.2. Build Proyek</a></li>
+                        <li class="list-item"><a href="#testing" class="link">6.3. Pengujian</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
 
         <section id="project-setup" class="md-section">
-            <h2 class="heading-2">1. Project Setup</h2>
-            <p class="paragraph">This section covers the initial setup and configuration needed to create an Unreal Engine 5 project with ProudNet enabled.</p>
+            <h2 class="heading-2">1. Pengaturan Proyek</h2>
+            <p class="paragraph">Bagian ini mencakup pengaturan awal dan konfigurasi yang diperlukan untuk membuat proyek Unreal Engine 5 dengan ProudNet yang diaktifkan.</p>
 
-            <h3 class="heading-3">1.1. ProudNet Installation</h3>
+            <h3 class="heading-3">1.1. Instalasi ProudNet</h3>
             <ol class="ordered-list">
-                <li class="list-item">Install the latest release from the https://github.com/Nettention/ProudNet repository.
+                <li class="list-item">Instal rilis terbaru dari repositori https://github.com/Nettention/ProudNet.
                     <ol class="ordered-list">
-                        <li class="list-item">The default installation path is "C:\Program Files (x86)\Nettention\ProudNet". This guide and the UE5 plugin are configured for this path, so if you change the installation path, you'll need to modify the plugin source code and carefully review the guide.</li>
+                        <li class="list-item">Path instalasi default adalah "C:\Program Files (x86)\Nettention\ProudNet". Panduan ini dan plugin UE5 dikonfigurasi untuk path ini, jadi jika Anda mengubah path instalasi, Anda perlu memodifikasi kode sumber plugin dan meninjau panduan dengan hati-hati.</li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">1.2. Visual Studio Project Configuration</h3>
+            <h3 class="heading-3">1.2. Konfigurasi Proyek Visual Studio</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a blank project in Visual Studio
+                <li class="list-item">Buat proyek kosong di Visual Studio
                     <ul class="unordered-list">
-                        <li class="list-item">This guide uses the following path/name.</li>
+                        <li class="list-item">Panduan ini menggunakan path/nama berikut.</li>
                     </ul>
-                    <img src="img/image_017-1.png" alt="Visual Studio Project Creation" class="image">
-                    <p class="image-caption">Visual Studio Project Creation</p>
+                    <img src="img/image_017-1.png" alt="Pembuatan Proyek Visual Studio" class="image">
+                    <p class="image-caption">Pembuatan Proyek Visual Studio</p>
                 </li>
-                <li class="list-item">Add 3 new items to the chat_server project: main.cpp, setting.cpp, setting.h.
-                    <img src="img/image_017.png" alt="Adding Project Files" class="image">
-                    <p class="image-caption">Adding Project Files</p>
+                <li class="list-item">Tambahkan 3 item baru ke proyek chat_server: main.cpp, setting.cpp, setting.h.
+                    <img src="img/image_017.png" alt="Menambahkan File Proyek" class="image">
+                    <p class="image-caption">Menambahkan File Proyek</p>
                     
-                    <img src="img/image_018.png" alt="Project Structure" class="image">
-                    <p class="image-caption">Project Structure</p>
+                    <img src="img/image_018.png" alt="Struktur Proyek" class="image">
+                    <p class="image-caption">Struktur Proyek</p>
                 </li>
-                <li class="list-item">Modify the properties of the chat_server project.
+                <li class="list-item">Modifikasi properti proyek chat_server.
                     <ol class="ordered-list">
                         <li class="list-item">"C/C++ - Language - C++ Language Standard"
                             <ol class="ordered-list">
-                                <li class="list-item">Select "ISO C++20 Standard (/std:C++20)" from the dropdown</li>
+                                <li class="list-item">Pilih "ISO C++20 Standard (/std:C++20)" dari dropdown</li>
                             </ol>
                         </li>
                         <li class="list-item">"C/C++ - General - Additional Include Directories"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following path in the popup window</li>
+                                <li class="list-item">Pilih &lt;Edit…&gt; dari dropdown</li>
+                                <li class="list-item">Tambahkan path berikut di jendela popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
@@ -93,8 +93,8 @@
                         </li>
                         <li class="list-item">"Linker - General - Additional Library Directories"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following path in the popup window</li>
+                                <li class="list-item">Pilih &lt;Edit…&gt; dari dropdown</li>
+                                <li class="list-item">Tambahkan path berikut di jendela popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
@@ -102,8 +102,8 @@
                         </li>
                         <li class="list-item">"Linker - Input - Additional Dependencies"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following filenames in the popup window</li>
+                                <li class="list-item">Pilih &lt;Edit…&gt; dari dropdown</li>
+                                <li class="list-item">Tambahkan nama file berikut di jendela popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>ProudNetServer.lib
@@ -112,8 +112,8 @@ ProudNetClient.lib</pre>
                         </li>
                         <li class="list-item">"Build Events - Post-Build Event - Command Line"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following commands in the popup window</li>
+                                <li class="list-item">Pilih &lt;Edit…&gt; dari dropdown</li>
+                                <li class="list-item">Tambahkan perintah berikut di jendela popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
@@ -122,7 +122,7 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Enter code into each source file.
+                <li class="list-item">Masukkan kode ke setiap file sumber.
                     <ul class="unordered-list">
                         <li class="list-item">setting.h (diff)
                             <div class="code-block">
@@ -215,7 +215,7 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ul>
                     
-                    <p class="paragraph"><strong class="text-strong">Complete Code</strong></p>
+                    <p class="paragraph"><strong class="text-strong">Kode Lengkap</strong></p>
                     <ul class="unordered-list">
                         <li class="list-item">setting.h
                             <div class="code-block">
@@ -308,88 +308,88 @@ int main()
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Build and run the project (F5) to see the following screen.
-                    <img src="img/image_018-1.png" alt="Server Running Screen" class="image">
-                    <p class="image-caption">Server Running Screen</p>
+                <li class="list-item">Build dan jalankan proyek (F5) untuk melihat layar berikut.
+                    <img src="img/image_018-1.png" alt="Layar Server Berjalan" class="image">
+                    <p class="image-caption">Layar Server Berjalan</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">1.3. Unreal Engine Project Configuration</h3>
+            <h3 class="heading-3">1.3. Konfigurasi Proyek Unreal Engine</h3>
             <ol class="ordered-list">
-                <li class="list-item">Add <a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games' Free FPS Template</a> to your library.</li>
-                <li class="list-item">Create a template project following the procedure below.
+                <li class="list-item">Tambahkan <a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games' Free FPS Template</a> ke perpustakaan Anda.</li>
+                <li class="list-item">Buat proyek template mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Launch Epic Games Launcher</li>
-                        <li class="list-item">Navigate to the Unreal Engine tab</li>
-                        <li class="list-item">Navigate to the Library tab</li>
-                        <li class="list-item">Click "Create Project" for "Free FPS Template & Tutorial" in the Fab library list</li>
-                        <li class="list-item">Change the name and folder, then click Create
+                        <li class="list-item">Luncurkan Epic Games Launcher</li>
+                        <li class="list-item">Navigasi ke tab Unreal Engine</li>
+                        <li class="list-item">Navigasi ke tab Library</li>
+                        <li class="list-item">Klik "Create Project" untuk "Free FPS Template & Tutorial" dalam daftar perpustakaan Fab</li>
+                        <li class="list-item">Ubah nama dan folder, lalu klik Create
                             <ul class="unordered-list">
-                                <li class="list-item">This guide uses the following name and path.</li>
+                                <li class="list-item">Panduan ini menggunakan nama dan path berikut.</li>
                             </ul>
-                            <img src="img/image_019-0.png" alt="Unreal Project Creation" class="image">
-                            <p class="image-caption">Unreal Project Creation</p>
+                            <img src="img/image_019-0.png" alt="Pembuatan Proyek Unreal" class="image">
+                            <p class="image-caption">Pembuatan Proyek Unreal</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Create a C++ class following the procedure below.
+                <li class="list-item">Buat kelas C++ mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
                         <li class="list-item">Top Toolbar - Tools - New C++ Class
-                            <img src="img/image_019.png" alt="C++ Class Creation Menu" class="image">
-                            <p class="image-caption">C++ Class Creation Menu</p>
+                            <img src="img/image_019.png" alt="Menu Pembuatan Kelas C++" class="image">
+                            <p class="image-caption">Menu Pembuatan Kelas C++</p>
                         </li>
-                        <li class="list-item">Show All Classes, then select GameInstanceSubsystem
-                            <img src="img/image_020.png" alt="GameInstanceSubsystem Selection" class="image">
-                            <p class="image-caption">GameInstanceSubsystem Selection</p>
+                        <li class="list-item">Show All Classes, lalu pilih GameInstanceSubsystem
+                            <img src="img/image_020.png" alt="Pemilihan GameInstanceSubsystem" class="image">
+                            <p class="image-caption">Pemilihan GameInstanceSubsystem</p>
                         </li>
-                        <li class="list-item">Class Type - Select Public and enter class name, then create class
+                        <li class="list-item">Class Type - Pilih Public dan masukkan nama kelas, lalu buat kelas
                             <ol class="ordered-list">
-                                <li class="list-item">This guide uses GissChatNet.
-                                    <img src="img/image_021.png" alt="Enter Class Name" class="image">
-                                    <p class="image-caption">Enter Class Name</p>
+                                <li class="list-item">Panduan ini menggunakan GissChatNet.
+                                    <img src="img/image_021.png" alt="Masukkan Nama Kelas" class="image">
+                                    <p class="image-caption">Masukkan Nama Kelas</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Generate the VS solution for the Unreal project following the procedure below.
+                <li class="list-item">Generate solusi VS untuk proyek Unreal mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Close the Unreal Engine editor.</li>
-                        <li class="list-item">Navigate to the Unreal project folder.</li>
-                        <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                        <li class="list-item">Tutup editor Unreal Engine.</li>
+                        <li class="list-item">Navigasi ke folder proyek Unreal.</li>
+                        <li class="list-item">Klik kanan PdnUE5ExampleClient.uproject dan pilih Generate Visual Studio project files</li>
                     </ol>
                 </li>
-                <li class="list-item">Change the startup project (recommended)
+                <li class="list-item">Ubah proyek startup (disarankan)
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image</li>
+                        <li class="list-item">Gambar panduan</li>
                     </ul>
-                    <img src="img/image_022.png" alt="Change Startup Project" class="image">
-                    <p class="image-caption">Change Startup Project</p>
+                    <img src="img/image_022.png" alt="Ubah Proyek Startup" class="image">
+                    <p class="image-caption">Ubah Proyek Startup</p>
                 </li>
-                <li class="list-item">Apply the UE5 ProudNet plugin following the procedure below.
+                <li class="list-item">Terapkan plugin UE5 ProudNet mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Unreal project folder.
-                            <p class="paragraph">Shortcut: Epic Games Launcher → My Projects → Right-click project → Show in Folder</p>
+                        <li class="list-item">Buka folder proyek Unreal.
+                            <p class="paragraph">Shortcut: Epic Games Launcher → My Projects → Klik kanan proyek → Show in Folder</p>
                         </li>
-                        <li class="list-item">Extract the following file and place it in the Plugins folder.
-                            <p class="paragraph">Create a new Plugins folder if it doesn't exist.</p>
+                        <li class="list-item">Ekstrak file berikut dan tempatkan di folder Plugins.
+                            <p class="paragraph">Buat folder Plugins baru jika tidak ada.</p>
                             <p class="paragraph"><strong class="text-strong"><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample/ProudNet.UE5.Linker.Plugin.zip">ProudNet UE5 Lib Linker Plugin.zip</a></strong></p>
-                            <img src="img/image_023.png" alt="Plugin Folder Structure" class="image">
-                            <p class="image-caption">Plugin Folder Structure</p>
+                            <img src="img/image_023.png" alt="Struktur Folder Plugin" class="image">
+                            <p class="image-caption">Struktur Folder Plugin</p>
                         </li>
-                        <li class="list-item">Regenerate the Visual Studio project solution.
+                        <li class="list-item">Regenerate solusi proyek Visual Studio.
                             <ol class="ordered-list">
-                                <li class="list-item">Close the Visual Studio IDE.</li>
-                                <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                                <li class="list-item">Tutup IDE Visual Studio.</li>
+                                <li class="list-item">Klik kanan PdnUE5ExampleClient.uproject dan pilih Generate Visual Studio project files</li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the PdnUE5ExampleClient.Build.cs code.
+                        <li class="list-item">Modifikasi kode PdnUE5ExampleClient.Build.cs.
                             <ul class="unordered-list">
-                                <li class="list-item">Guide image
-                                    <img src="img/image_023-0.png" alt="Build.cs File Location" class="image">
-                                    <p class="image-caption">Build.cs File Location</p>
+                                <li class="list-item">Gambar panduan
+                                    <img src="img/image_023-0.png" alt="Lokasi File Build.cs" class="image">
+                                    <p class="image-caption">Lokasi File Build.cs</p>
                                 </li>
-                                <li class="list-item">Modifications
+                                <li class="list-item">Modifikasi
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -417,7 +417,7 @@ public class PdnUE5ExampleClient : ModuleRules
 }</pre>
                                     </div>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">Kode Lengkap
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -448,11 +448,11 @@ public class PdnUE5ExampleClient : ModuleRules
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the GissChatNet.h and .cpp code.
+                <li class="list-item">Modifikasi kode GissChatNet.h dan .cpp.
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image
-                            <img src="img/image_023-1.png" alt="GissChatNet Files" class="image">
-                            <p class="image-caption">GissChatNet Files</p>
+                        <li class="list-item">Gambar panduan
+                            <img src="img/image_023-1.png" alt="File GissChatNet" class="image">
+                            <p class="image-caption">File GissChatNet</p>
                         </li>
                         <li class="list-item">GissChatNet.h (diff)
                             <div class="code-block">
@@ -562,7 +562,7 @@ class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
 + }</pre>
                             </div>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">GissChatNet.h
                                     <div class="code-block">
@@ -676,22 +676,22 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Testing
+                <li class="list-item">Pengujian
                     <ol class="ordered-list">
-                        <li class="list-item">Build and run chat_server from PdnUE5ExampleServer.
-                            <img src="img/image_024.png" alt="chat_server Execution" class="image">
-                            <p class="image-caption">chat_server Execution</p>
+                        <li class="list-item">Build dan jalankan chat_server dari PdnUE5ExampleServer.
+                            <img src="img/image_024.png" alt="Eksekusi chat_server" class="image">
+                            <p class="image-caption">Eksekusi chat_server</p>
                         </li>
-                        <li class="list-item">Build PdnUE5ExampleClient and run the level in the Unreal Engine editor.
-                            <img src="img/image_025.png" alt="Unreal Editor Execution" class="image">
-                            <p class="image-caption">Unreal Editor Execution</p>
+                        <li class="list-item">Build PdnUE5ExampleClient dan jalankan level di editor Unreal Engine.
+                            <img src="img/image_025.png" alt="Eksekusi Editor Unreal" class="image">
+                            <p class="image-caption">Eksekusi Editor Unreal</p>
                         </li>
-                        <li class="list-item">Success if client and server connect as shown below.
-                            <img src="img/image_026.png" alt="Server Connection Success" class="image">
-                            <p class="image-caption">Server Connection Success</p>
+                        <li class="list-item">Berhasil jika klien dan server terhubung seperti yang ditunjukkan di bawah ini.
+                            <img src="img/image_026.png" alt="Koneksi Server Berhasil" class="image">
+                            <p class="image-caption">Koneksi Server Berhasil</p>
                             
-                            <img src="img/image_027.png" alt="Client Connection Success" class="image">
-                            <p class="image-caption">Client Connection Success</p>
+                            <img src="img/image_027.png" alt="Koneksi Klien Berhasil" class="image">
+                            <p class="image-caption">Koneksi Klien Berhasil</p>
                         </li>
                     </ol>
                 </li>
@@ -699,31 +699,31 @@ void UGissChatNet::Deinitialize()
         </section>
 
         <section id="local-chat" class="md-section">
-            <h2 class="heading-2">2. Creating Local Chat</h2>
-            <p class="paragraph">This section covers creating a local chat window and implementing basic chat functionality in Unreal Engine 5.</p>
+            <h2 class="heading-2">2. Membuat Chat Lokal</h2>
+            <p class="paragraph">Bagian ini mencakup pembuatan jendela chat lokal dan mengimplementasikan fungsionalitas chat dasar di Unreal Engine 5.</p>
 
-            <h3 class="heading-3">2.1. Creating Chat Widget</h3>
+            <h3 class="heading-3">2.1. Membuat Widget Chat</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a BP_ChatWidget widget blueprint following the procedure below
+                <li class="list-item">Buat blueprint widget BP_ChatWidget mengikuti prosedur di bawah ini
                     <ol class="ordered-list">
-                        <li class="list-item">Right-click on an empty area in the Content Browser to open the context menu.</li>
-                        <li class="list-item">Select "Create Advanced Asset - User Interface - Widget Blueprint".
-                            <img src="img/image_028.png" alt="Widget Blueprint Creation" class="image">
-                            <p class="image-caption">Widget Blueprint Creation</p>
+                        <li class="list-item">Klik kanan pada area kosong di Content Browser untuk membuka menu konteks.</li>
+                        <li class="list-item">Pilih "Create Advanced Asset - User Interface - Widget Blueprint".
+                            <img src="img/image_028.png" alt="Pembuatan Widget Blueprint" class="image">
+                            <p class="image-caption">Pembuatan Widget Blueprint</p>
                         </li>
-                        <li class="list-item">Select "User Widget"</li>
-                        <li class="list-item">Change the name to BP_ChatWidget
-                            <img src="img/image_029.png" alt="Widget Name Change" class="image">
-                            <p class="image-caption">Widget Name Change</p>
+                        <li class="list-item">Pilih "User Widget"</li>
+                        <li class="list-item">Ubah nama menjadi BP_ChatWidget
+                            <img src="img/image_029.png" alt="Perubahan Nama Widget" class="image">
+                            <p class="image-caption">Perubahan Nama Widget</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the appearance of the BP_ChatWidget widget following the procedure below.
+                <li class="list-item">Konfigurasikan tampilan widget BP_ChatWidget mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Double-click BP_ChatWidget to open the Blueprint editor.</li>
-                        <li class="list-item">Configure the widget according to the structure below.
+                        <li class="list-item">Klik dua kali BP_ChatWidget untuk membuka editor Blueprint.</li>
+                        <li class="list-item">Konfigurasikan widget sesuai dengan struktur di bawah ini.
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">Struktur Elemen Widget
                                     <div class="directory-tree">
                                         <pre>&gt;&gt; Canvas Panel
 	&gt;&gt; Canvas Panel
@@ -756,47 +756,47 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
-                            <img src="img/image_030.png" alt="Chat Widget Configuration" class="image">
-                            <p class="image-caption">Chat Widget Configuration</p>
+                            <p class="paragraph">Tampilan setelah konfigurasi selesai adalah sebagai berikut.</p>
+                            <img src="img/image_030.png" alt="Konfigurasi Widget Chat" class="image">
+                            <p class="image-caption">Konfigurasi Widget Chat</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Add BP_ChatWidget to viewport following the procedure below.
+                <li class="list-item">Tambahkan BP_ChatWidget ke viewport mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Level Blueprint editor.
-                            <img src="img/image_031.png" alt="Opening Level Blueprint Editor" class="image">
-                            <p class="image-caption">Opening Level Blueprint Editor</p>
+                        <li class="list-item">Buka editor Level Blueprint.
+                            <img src="img/image_031.png" alt="Membuka Editor Level Blueprint" class="image">
+                            <p class="image-caption">Membuka Editor Level Blueprint</p>
                         </li>
-                        <li class="list-item">Add Create Widget node and change the class to BP_ChatWidget.
-                            <img src="img/image_032.png" alt="Adding Create Widget Node" class="image">
-                            <p class="image-caption">Adding Create Widget Node</p>
+                        <li class="list-item">Tambahkan node Create Widget dan ubah kelas menjadi BP_ChatWidget.
+                            <img src="img/image_032.png" alt="Menambahkan Node Create Widget" class="image">
+                            <p class="image-caption">Menambahkan Node Create Widget</p>
                             
-                            <img src="img/image_033.png" alt="Class Setting" class="image">
-                            <p class="image-caption">Class Setting</p>
+                            <img src="img/image_033.png" alt="Pengaturan Kelas" class="image">
+                            <p class="image-caption">Pengaturan Kelas</p>
                         </li>
-                        <li class="list-item">Add Add to Viewport node and connect them.
-                            <img src="img/image_034.png" alt="Adding Add to Viewport Node" class="image">
-                            <p class="image-caption">Adding Add to Viewport Node</p>
+                        <li class="list-item">Tambahkan node Add to Viewport dan hubungkan keduanya.
+                            <img src="img/image_034.png" alt="Menambahkan Node Add to Viewport" class="image">
+                            <p class="image-caption">Menambahkan Node Add to Viewport</p>
                             
-                            <img src="img/image_035.png" alt="Node Connection" class="image">
-                            <p class="image-caption">Node Connection</p>
+                            <img src="img/image_035.png" alt="Koneksi Node" class="image">
+                            <p class="image-caption">Koneksi Node</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and confirm that the chat window has been added.
-                    <img src="img/image_036.png" alt="Screen with Chat Window Added" class="image">
-                    <p class="image-caption">Screen with Chat Window Added</p>
+                <li class="list-item">Jalankan level dan konfirmasi bahwa jendela chat telah ditambahkan.
+                    <img src="img/image_036.png" alt="Layar dengan Jendela Chat Ditambahkan" class="image">
+                    <p class="image-caption">Layar dengan Jendela Chat Ditambahkan</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">2.2. Implementing Chat Functionality</h3>
+            <h3 class="heading-3">2.2. Mengimplementasikan Fungsionalitas Chat</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a new widget blueprint BP_ChatBlock and configure its appearance.
+                <li class="list-item">Buat blueprint widget baru BP_ChatBlock dan konfigurasikan tampilannya.
                     <ol class="ordered-list">
-                        <li class="list-item">Configure the widget according to the structure below.
+                        <li class="list-item">Konfigurasikan widget sesuai dengan struktur di bawah ini.
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">Struktur Elemen Widget
                                     <div class="directory-tree">
                                         <pre>&gt;&gt; Canvas Panel
 	&gt;&gt; Border
@@ -814,46 +814,46 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
-                            <img src="img/image_037.png" alt="BP_ChatBlock Configuration" class="image">
-                            <p class="image-caption">BP_ChatBlock Configuration</p>
+                            <p class="paragraph">Tampilan setelah konfigurasi selesai adalah sebagai berikut.</p>
+                            <img src="img/image_037.png" alt="Konfigurasi BP_ChatBlock" class="image">
+                            <p class="image-caption">Konfigurasi BP_ChatBlock</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the Blueprint for BP_ChatBlock widget following the procedure below.
+                <li class="list-item">Konfigurasikan Blueprint untuk widget BP_ChatBlock mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Switch to Blueprint Graph mode.
-                            <img src="img/image_038.png" alt="Blueprint Graph Mode" class="image">
-                            <p class="image-caption">Blueprint Graph Mode</p>
+                        <li class="list-item">Beralih ke mode Blueprint Graph.
+                            <img src="img/image_038.png" alt="Mode Blueprint Graph" class="image">
+                            <p class="image-caption">Mode Blueprint Graph</p>
                         </li>
-                        <li class="list-item">Configure the SetChatText function.
+                        <li class="list-item">Konfigurasikan fungsi SetChatText.
                             <ol class="ordered-list">
-                                <li class="list-item">Create a function in the Blueprint window.
-                                    <img src="img/image_039.png" alt="Function Creation" class="image">
-                                    <p class="image-caption">Function Creation</p>
+                                <li class="list-item">Buat fungsi di jendela Blueprint.
+                                    <img src="img/image_039.png" alt="Pembuatan Fungsi" class="image">
+                                    <p class="image-caption">Pembuatan Fungsi</p>
                                 </li>
-                                <li class="list-item">Set function parameters in the Details window.
-                                    <img src="img/image_040.png" alt="Function Parameter Setting" class="image">
-                                    <p class="image-caption">Function Parameter Setting</p>
+                                <li class="list-item">Atur parameter fungsi di jendela Details.
+                                    <img src="img/image_040.png" alt="Pengaturan Parameter Fungsi" class="image">
+                                    <p class="image-caption">Pengaturan Parameter Fungsi</p>
                                 </li>
-                                <li class="list-item">Drag ChatText from the variable list in the Blueprint window and select Get ChatText.</li>
-                                <li class="list-item">Create and connect SetText (Text) node. Be careful not to accidentally select other items.
-                                    <img src="img/image_041.png" alt="Adding SetText Node" class="image">
-                                    <p class="image-caption">Adding SetText Node</p>
+                                <li class="list-item">Seret ChatText dari daftar variabel di jendela Blueprint dan pilih Get ChatText.</li>
+                                <li class="list-item">Buat dan hubungkan node SetText (Text). Hati-hati jangan sampai memilih item lain secara tidak sengaja.
+                                    <img src="img/image_041.png" alt="Menambahkan Node SetText" class="image">
+                                    <p class="image-caption">Menambahkan Node SetText</p>
                                     
-                                    <img src="img/image_042.png" alt="Node Connection Complete" class="image">
-                                    <p class="image-caption">Node Connection Complete</p>
+                                    <img src="img/image_042.png" alt="Koneksi Node Selesai" class="image">
+                                    <p class="image-caption">Koneksi Node Selesai</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the BP_ChatWidget widget following the procedure below.
+                <li class="list-item">Konfigurasikan widget BP_ChatWidget mengikuti prosedur di bawah ini.
                     <ol class="ordered-list">
-                        <li class="list-item">Open the BP_ChatWidget Blueprint editor and switch to Designer mode.</li>
-                        <li class="list-item">Modify the widget referring to the following.
+                        <li class="list-item">Buka editor Blueprint BP_ChatWidget dan beralih ke mode Designer.</li>
+                        <li class="list-item">Modifikasi widget mengacu pada hal berikut.
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">Struktur Elemen Widget
                                     <div class="directory-tree">
                                         <pre>-&gt; Canvas Panel
 	-&gt; Canvas Panel
@@ -870,82 +870,82 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance after modification is as follows.</p>
-                            <img src="img/image_043.png" alt="BP_ChatWidget Modification Complete" class="image">
-                            <p class="image-caption">BP_ChatWidget Modification Complete</p>
+                            <p class="paragraph">Tampilan setelah modifikasi adalah sebagai berikut.</p>
+                            <img src="img/image_043.png" alt="Modifikasi BP_ChatWidget Selesai" class="image">
+                            <p class="image-caption">Modifikasi BP_ChatWidget Selesai</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Switch the Blueprint editor to Graph mode.</li>
-                <li class="list-item">Configure the PrintChat function.
+                <li class="list-item">Beralihkan editor Blueprint ke mode Graph.</li>
+                <li class="list-item">Konfigurasikan fungsi PrintChat.
                     <ol class="ordered-list">
-                        <li class="list-item">Add a function.
-                            <img src="img/image_044.png" alt="Adding PrintChat Function" class="image">
-                            <p class="image-caption">Adding PrintChat Function</p>
+                        <li class="list-item">Tambahkan fungsi.
+                            <img src="img/image_044.png" alt="Menambahkan Fungsi PrintChat" class="image">
+                            <p class="image-caption">Menambahkan Fungsi PrintChat</p>
                         </li>
-                        <li class="list-item">Add Create Widget node and specify BP_ChatBlock for the class.</li>
-                        <li class="list-item">Add and connect BP_ChatBlock's SetChatText node.</li>
-                        <li class="list-item">Drag and add the ChatBlockArea variable.</li>
-                        <li class="list-item">Add Add Child node and connect.
-                            <img src="img/image_045.png" alt="PrintChat Function Configuration" class="image">
-                            <p class="image-caption">PrintChat Function Configuration</p>
+                        <li class="list-item">Tambahkan node Create Widget dan tentukan BP_ChatBlock untuk kelas.</li>
+                        <li class="list-item">Tambahkan dan hubungkan node SetChatText BP_ChatBlock.</li>
+                        <li class="list-item">Seret dan tambahkan variabel ChatBlockArea.</li>
+                        <li class="list-item">Tambahkan node Add Child dan hubungkan.
+                            <img src="img/image_045.png" alt="Konfigurasi Fungsi PrintChat" class="image">
+                            <p class="image-caption">Konfigurasi Fungsi PrintChat</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Implement the chat message sending event.
+                <li class="list-item">Implementasikan event pengiriman pesan chat.
                     <ol class="ordered-list">
-                        <li class="list-item">Select SendButton from variables and add a click event.
-                            <img src="img/image_046.png" alt="Adding Button Click Event" class="image">
-                            <p class="image-caption">Adding Button Click Event</p>
+                        <li class="list-item">Pilih SendButton dari variabel dan tambahkan event klik.
+                            <img src="img/image_046.png" alt="Menambahkan Event Klik Tombol" class="image">
+                            <p class="image-caption">Menambahkan Event Klik Tombol</p>
                         </li>
-                        <li class="list-item">Drag and add the ChatTextBox variable and PrintChat function.</li>
-                        <li class="list-item">Add Get Text (Text Box) node and connect all.
-                            <img src="img/image_047.png" alt="Chat Send Event Complete" class="image">
-                            <p class="image-caption">Chat Send Event Complete</p>
+                        <li class="list-item">Seret dan tambahkan variabel ChatTextBox dan fungsi PrintChat.</li>
+                        <li class="list-item">Tambahkan node Get Text (Text Box) dan hubungkan semua.
+                            <img src="img/image_047.png" alt="Event Kirim Chat Selesai" class="image">
+                            <p class="image-caption">Event Kirim Chat Selesai</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Additional features can be implemented by modifying the Blueprint graph as follows (optional).
-                    <img src="img/image_048.png" alt="Additional Feature Implementation 1" class="image">
-                    <p class="image-caption">Additional Feature Implementation 1</p>
+                <li class="list-item">Fitur tambahan dapat diimplementasikan dengan memodifikasi grafik Blueprint sebagai berikut (opsional).
+                    <img src="img/image_048.png" alt="Implementasi Fitur Tambahan 1" class="image">
+                    <p class="image-caption">Implementasi Fitur Tambahan 1</p>
                     
-                    <img src="img/image_049.png" alt="Additional Feature Implementation 2" class="image">
-                    <p class="image-caption">Additional Feature Implementation 2</p>
+                    <img src="img/image_049.png" alt="Implementasi Fitur Tambahan 2" class="image">
+                    <p class="image-caption">Implementasi Fitur Tambahan 2</p>
                     
                     <ol class="ordered-list">
-                        <li class="list-item">Ignore sending if no message is entered</li>
-                        <li class="list-item">Automatically delete the input message after sending</li>
-                        <li class="list-item">Auto-scroll chat window to bottom when new chat arrives</li>
+                        <li class="list-item">Abaikan pengiriman jika tidak ada pesan yang dimasukkan</li>
+                        <li class="list-item">Hapus otomatis pesan input setelah mengirim</li>
+                        <li class="list-item">Auto-scroll jendela chat ke bawah ketika chat baru tiba</li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and confirm that chat functionality has been added.
-                    <img src="img/image_050.png" alt="Chat Function Verification" class="image">
-                    <p class="image-caption">Chat Function Verification</p>
+                <li class="list-item">Jalankan level dan konfirmasi bahwa fungsionalitas chat telah ditambahkan.
+                    <img src="img/image_050.png" alt="Verifikasi Fungsi Chat" class="image">
+                    <p class="image-caption">Verifikasi Fungsi Chat</p>
                 </li>
             </ol>
         </section>
 
         <section id="online-chat" class="md-section">
-            <h2 class="heading-2">3. Creating Online Chat</h2>
-            <p class="paragraph">This section covers implementing network chat functionality using ProudNet.</p>
+            <h2 class="heading-2">3. Membuat Chat Online</h2>
+            <p class="paragraph">Bagian ini mencakup implementasi fungsionalitas chat jaringan menggunakan ProudNet.</p>
 
-            <h3 class="heading-3">3.1. Visual Studio Project Work</h3>
+            <h3 class="heading-3">3.1. Pekerjaan Proyek Visual Studio</h3>
             <ol class="ordered-list">
-                <li class="list-item">Add a new empty project chat_pidl in PdnUE5ExampleServer.</li>
-                <li class="list-item">Add two files C2S.PIDL, S2C.PIDL and modify their properties.
+                <li class="list-item">Tambahkan proyek kosong baru chat_pidl di PdnUE5ExampleServer.</li>
+                <li class="list-item">Tambahkan dua file C2S.PIDL, S2C.PIDL dan modifikasi propertinya.
                     <ol class="ordered-list">
-                        <li class="list-item">Select "Custom Build Tool" from "General - Item Type" dropdown</li>
-                        <li class="list-item">Enter text in "Custom Build Tool - General - Command Line"
+                        <li class="list-item">Pilih "Custom Build Tool" dari dropdown "General - Item Type"</li>
+                        <li class="list-item">Masukkan teks di "Custom Build Tool - General - Command Line"
                             <div class="code-block">
                                 <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
                             </div>
                         </li>
-                        <li class="list-item">Enter text in "Custom Build Tool - General - Description"
+                        <li class="list-item">Masukkan teks di "Custom Build Tool - General - Description"
                             <div class="code-block">
                                 <pre>%(Filename).PIDL Compiling...</pre>
                             </div>
                         </li>
-                        <li class="list-item">Select &lt;Edit…&gt; from "Custom Build Tool - General - Outputs" dropdown and add the following paths in the popup window
+                        <li class="list-item">Pilih &lt;Edit…&gt; dari dropdown "Custom Build Tool - General - Outputs" dan tambahkan path berikut di jendela popup
                             <div class="code-block">
                                 <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
 %(RootDir)%(Directory)\%(Filename)_common.h
@@ -957,9 +957,9 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Enter code in each file.
+                <li class="list-item">Masukkan kode ke setiap file.
                     <ul class="unordered-list">
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">C2S.PIDL
                                     <div class="code-block">
@@ -984,13 +984,13 @@ global CHAT_S2C 4000
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Build the chat_pidl project. You can check the built source code files in the chat_pidl project folder.
-                    <img src="img/image_051.png" alt="PIDL Build Results" class="image">
-                    <p class="image-caption">PIDL Build Results</p>
+                <li class="list-item">Build proyek chat_pidl. Anda dapat memeriksa file kode sumber yang telah di-build di folder proyek chat_pidl.
+                    <img src="img/image_051.png" alt="Hasil Build PIDL" class="image">
+                    <p class="image-caption">Hasil Build PIDL</p>
                 </li>
-                <li class="list-item">Modify the main.cpp source code of the chat_server project.
+                <li class="list-item">Modifikasi kode sumber main.cpp dari proyek chat_server.
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">Modifikasi
                             <div class="code-block">
                                 <pre>#include &lt;iostream&gt;
 #include &lt;format&gt;
@@ -1099,7 +1099,7 @@ int main()
 }</pre>
                             </div>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">main.cpp
                                     <div class="code-block">
@@ -1215,12 +1215,12 @@ int main()
                 </li>
             </ol>
 
-            <h3 class="heading-3">3.2. Unreal Project Work</h3>
+            <h3 class="heading-3">3.2. Pekerjaan Proyek Unreal</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a C++ class BaseChatWidget that inherits from UserWidget in the Unreal Engine editor.</li>
-                <li class="list-item">Modify the source code of the created BaseChatWidget class.
+                <li class="list-item">Buat kelas C++ BaseChatWidget yang mewarisi dari UserWidget di editor Unreal Engine.</li>
+                <li class="list-item">Modifikasi kode sumber kelas BaseChatWidget yang telah dibuat.
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">Modifikasi
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1248,7 +1248,7 @@ class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1278,9 +1278,9 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the source code of the GissChatNet class.
+                <li class="list-item">Modifikasi kode sumber kelas GissChatNet.
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications (showing main parts only)
+                        <li class="list-item">Modifikasi (hanya menampilkan bagian utama)
                             <ul class="unordered-list">
                                 <li class="list-item">GissChatNet.h
                                     <div class="code-block">
@@ -1338,86 +1338,86 @@ private:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the Blueprint graph of BP_ChatWidget.
+                <li class="list-item">Modifikasi grafik Blueprint dari BP_ChatWidget.
                     <ol class="ordered-list">
-                        <li class="list-item">Convert the PrintChat function to an event.
-                            <img src="img/image_052.png" alt="PrintChat Event Conversion" class="image">
-                            <p class="image-caption">PrintChat Event Conversion</p>
+                        <li class="list-item">Konversi fungsi PrintChat menjadi event.
+                            <img src="img/image_052.png" alt="Konversi Event PrintChat" class="image">
+                            <p class="image-caption">Konversi Event PrintChat</p>
                         </li>
-                        <li class="list-item">Change the parent class of BP_ChatWidget to BaseChatWidget.
-                            <img src="img/image_053.png" alt="Parent Class Change" class="image">
-                            <p class="image-caption">Parent Class Change</p>
+                        <li class="list-item">Ubah kelas parent dari BP_ChatWidget menjadi BaseChatWidget.
+                            <img src="img/image_053.png" alt="Perubahan Kelas Parent" class="image">
+                            <p class="image-caption">Perubahan Kelas Parent</p>
                         </li>
-                        <li class="list-item">Modify the event graph when SendButton is clicked.
+                        <li class="list-item">Modifikasi grafik event ketika SendButton diklik.
                             <ol class="ordered-list">
-                                <li class="list-item">Add Get GissChatNet node and Send Chat node
-                                    <img src="img/image_054.png" alt="Adding GissChatNet Node" class="image">
-                                    <p class="image-caption">Adding GissChatNet Node</p>
+                                <li class="list-item">Tambahkan node Get GissChatNet dan node Send Chat
+                                    <img src="img/image_054.png" alt="Menambahkan Node GissChatNet" class="image">
+                                    <p class="image-caption">Menambahkan Node GissChatNet</p>
                                 </li>
-                                <li class="list-item">Replace the existing Print Chat node with Send Chat node.</li>
+                                <li class="list-item">Ganti node Print Chat yang ada dengan node Send Chat.</li>
                             </ol>
                         </li>
-                        <li class="list-item">The final appearance of the BP_ChatWidget Blueprint graph is as follows.
-                            <img src="img/image_055.png" alt="BP_ChatWidget Final Appearance" class="image">
-                            <p class="image-caption">BP_ChatWidget Final Appearance</p>
+                        <li class="list-item">Tampilan akhir dari grafik Blueprint BP_ChatWidget adalah sebagai berikut.
+                            <img src="img/image_055.png" alt="Tampilan Akhir BP_ChatWidget" class="image">
+                            <p class="image-caption">Tampilan Akhir BP_ChatWidget</p>
                         </li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">3.3. Chat Testing</h3>
+            <h3 class="heading-3">3.3. Pengujian Chat</h3>
             <ol class="ordered-list">
-                <li class="list-item">Build and run the chat_server project.</li>
-                <li class="list-item">Run the Unreal Engine project level and verify the chat functionality.
-                    <img src="img/image_056.png" alt="Chat Function Test 1" class="image">
-                    <p class="image-caption">Chat Function Test 1</p>
+                <li class="list-item">Build dan jalankan proyek chat_server.</li>
+                <li class="list-item">Jalankan level proyek Unreal Engine dan verifikasi fungsionalitas chat.
+                    <img src="img/image_056.png" alt="Tes Fungsi Chat 1" class="image">
+                    <p class="image-caption">Tes Fungsi Chat 1</p>
                     
-                    <img src="img/image_057.png" alt="Chat Function Test 2" class="image">
-                    <p class="image-caption">Chat Function Test 2</p>
+                    <img src="img/image_057.png" alt="Tes Fungsi Chat 2" class="image">
+                    <p class="image-caption">Tes Fungsi Chat 2</p>
                 </li>
             </ol>
         </section>
 
         <section id="mirage-character" class="md-section">
-            <h2 class="heading-2">4. Implementing Mirage Character</h2>
-            <p class="paragraph">This section covers building a Mirage character with enhanced gameplay features.</p>
+            <h2 class="heading-2">4. Mengimplementasikan Karakter Mirage</h2>
+            <p class="paragraph">Bagian ini mencakup pembuatan karakter Mirage dengan fitur gameplay yang ditingkatkan.</p>
 
-            <h3 class="heading-3">4.1. Adding Mirage Blueprint Character</h3>
+            <h3 class="heading-3">4.1. Menambahkan Karakter Blueprint Mirage</h3>
             <ol class="ordered-list">
-                <li class="list-item">Duplicate two Blueprint classes.
+                <li class="list-item">Duplikasi dua kelas Blueprint.
                     <ol class="ordered-list">
-                        <li class="list-item">Navigate to "All - Content - InfimaGames - FreeFPSTemplate - Core" in the Content Browser.</li>
-                        <li class="list-item">Duplicate the two Blueprint classes BP_Character and ABP_Character.</li>
-                        <li class="list-item">Rename them to BP_MirageCharacter and ABP_MirageCharacter respectively.</li>
+                        <li class="list-item">Navigasi ke "All - Content - InfimaGames - FreeFPSTemplate - Core" di Content Browser.</li>
+                        <li class="list-item">Duplikasi dua kelas Blueprint BP_Character dan ABP_Character.</li>
+                        <li class="list-item">Ubah nama mereka menjadi BP_MirageCharacter dan ABP_MirageCharacter secara berturut-turut.</li>
                     </ol>
                 </li>
-                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and proceed with the following steps.
+                <li class="list-item">Buka editor Blueprint BP_MirageCharacter dan lanjutkan dengan langkah-langkah berikut.
                     <ol class="ordered-list">
-                        <li class="list-item">Select CharacterArms in the Components window.</li>
-                        <li class="list-item">Change the Anim Class of Animation to ABP_MirageCharacter.</li>
-                        <li class="list-item">Set the Skeletal Mesh Asset of the mesh to SKM_Manny_Simple.
-                            <img src="img/image_058.png" alt="BP_MirageCharacter Configuration" class="image">
-                            <p class="image-caption">BP_MirageCharacter Configuration</p>
+                        <li class="list-item">Pilih CharacterArms di jendela Components.</li>
+                        <li class="list-item">Ubah Anim Class dari Animation menjadi ABP_MirageCharacter.</li>
+                        <li class="list-item">Setel Skeletal Mesh Asset dari mesh menjadi SKM_Manny_Simple.
+                            <img src="img/image_058.png" alt="Konfigurasi BP_MirageCharacter" class="image">
+                            <p class="image-caption">Konfigurasi BP_MirageCharacter</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Place BP_MirageCharacter in the level and run to verify.
-                    <p class="paragraph">If placed as shown below, it is normal based on the current point in time.</p>
-                    <img src="img/image_059.png" alt="Mirage Character Placement Verification" class="image">
-                    <p class="image-caption">Mirage Character Placement Verification</p>
+                <li class="list-item">Tempatkan BP_MirageCharacter di level dan jalankan untuk memverifikasi.
+                    <p class="paragraph">Jika ditempatkan seperti yang ditunjukkan di bawah ini, itu normal berdasarkan titik waktu saat ini.</p>
+                    <img src="img/image_059.png" alt="Verifikasi Penempatan Karakter Mirage" class="image">
+                    <p class="image-caption">Verifikasi Penempatan Karakter Mirage</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">4.2. Movement Animation Mirroring</h3>
+            <h3 class="heading-3">4.2. Mirroring Animasi Gerakan</h3>
 
-            <h4 class="heading-4">4.2.1. Animation Variable Duplication</h4>
+            <h4 class="heading-4">4.2.1. Duplikasi Variabel Animasi</h4>
             <ol class="ordered-list">
-                <li class="list-item">Implement the C++ class BaseMirageCharacter.
+                <li class="list-item">Implementasikan kelas C++ BaseMirageCharacter.
                     <ol class="ordered-list">
-                        <li class="list-item">Create a BaseMirageCharacter class that inherits from Character</li>
-                        <li class="list-item">Modify the source code of the created class.
+                        <li class="list-item">Buat kelas BaseMirageCharacter yang mewarisi dari Character</li>
+                        <li class="list-item">Modifikasi kode sumber dari kelas yang telah dibuat.
                             <ul class="unordered-list">
-                                <li class="list-item">Modifications
+                                <li class="list-item">Modifikasi
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1457,7 +1457,7 @@ public:
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">Kode Lengkap
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1501,80 +1501,80 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Set BaseMirageCharacter as the parent class of BP_MirageCharacter</li>
-                <li class="list-item">Implement animation variable duplication using event functions.
+                <li class="list-item">Setel BaseMirageCharacter sebagai kelas parent dari BP_MirageCharacter</li>
+                <li class="list-item">Implementasikan duplikasi variabel animasi menggunakan fungsi event.
                     <ol class="ordered-list">
-                        <li class="list-item">Modify the ABP_Character Blueprint.
+                        <li class="list-item">Modifikasi Blueprint ABP_Character.
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_Character Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Navigate to the end of the BlueprintUpdateAnimation event execution flow.
-                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation Event" class="image">
-                                    <p class="image-caption">BlueprintUpdateAnimation Event</p>
+                                <li class="list-item">Buka editor Blueprint ABP_Character dan navigasi ke tab Event Graph.</li>
+                                <li class="list-item">Navigasi ke akhir alur eksekusi event BlueprintUpdateAnimation.
+                                    <img src="img/image_060.png" alt="Event BlueprintUpdateAnimation" class="image">
+                                    <p class="image-caption">Event BlueprintUpdateAnimation</p>
                                 </li>
-                                <li class="list-item">Create and connect a Get Actor Of Class node and specify BP_MirageCharacter for the Class.</li>
-                                <li class="list-item">Create and connect an Update Animation Parameter node and connect all variables. All variables can be obtained from the Blueprint's variable list.
-                                    <img src="img/image_061.png" alt="Update Animation Parameter Node" class="image">
-                                    <p class="image-caption">Update Animation Parameter Node</p>
+                                <li class="list-item">Buat dan hubungkan node Get Actor Of Class dan tentukan BP_MirageCharacter untuk Class.</li>
+                                <li class="list-item">Buat dan hubungkan node Update Animation Parameter dan hubungkan semua variabel. Semua variabel dapat diperoleh dari daftar variabel Blueprint.
+                                    <img src="img/image_061.png" alt="Node Update Animation Parameter" class="image">
+                                    <p class="image-caption">Node Update Animation Parameter</p>
                                     
-                                    <img src="img/image_062.png" alt="Variable Connection Complete" class="image">
-                                    <p class="image-caption">Variable Connection Complete</p>
+                                    <img src="img/image_062.png" alt="Koneksi Variabel Selesai" class="image">
+                                    <p class="image-caption">Koneksi Variabel Selesai</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the BP_MirageCharacter Blueprint.
+                        <li class="list-item">Modifikasi Blueprint BP_MirageCharacter.
                             <ol class="ordered-list">
-                                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Add 4 variables.
-                                    <img src="img/image_063.png" alt="Add Variables" class="image">
-                                    <p class="image-caption">Add Variables</p>
+                                <li class="list-item">Buka editor Blueprint BP_MirageCharacter dan navigasi ke tab Event Graph.</li>
+                                <li class="list-item">Tambahkan 4 variabel.
+                                    <img src="img/image_063.png" alt="Menambahkan Variabel" class="image">
+                                    <p class="image-caption">Menambahkan Variabel</p>
                                 </li>
-                                <li class="list-item">Add an Event UpdateAnimationParameter node.</li>
-                                <li class="list-item">Store the event parameters in Blueprint variables.
-                                    <img src="img/image_064.png" alt="Parameter Storage" class="image">
-                                    <p class="image-caption">Parameter Storage</p>
+                                <li class="list-item">Tambahkan node Event UpdateAnimationParameter.</li>
+                                <li class="list-item">Simpan parameter event dalam variabel Blueprint.
+                                    <img src="img/image_064.png" alt="Penyimpanan Parameter" class="image">
+                                    <p class="image-caption">Penyimpanan Parameter</p>
                                 </li>
-                                <li class="list-item">Disconnect the Event Tick node connection.
-                                    <img src="img/image_065.png" alt="Event Tick Disconnection" class="image">
-                                    <p class="image-caption">Event Tick Disconnection</p>
+                                <li class="list-item">Putuskan koneksi node Event Tick.
+                                    <img src="img/image_065.png" alt="Pemutusan Event Tick" class="image">
+                                    <p class="image-caption">Pemutusan Event Tick</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the ABP_MirageCharacter Blueprint.
+                        <li class="list-item">Modifikasi Blueprint ABP_MirageCharacter.
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Add a Try Get Pawn Owner node.</li>
-                                <li class="list-item">Add a Cast To BP_MirageCharacter node and connect it.</li>
-                                <li class="list-item">Get variables from the cast character and store them in the animation Blueprint variables.
-                                    <img src="img/image_066.png" alt="Animation Variable Connection" class="image">
-                                    <p class="image-caption">Animation Variable Connection</p>
+                                <li class="list-item">Buka editor Blueprint ABP_MirageCharacter dan navigasi ke tab Event Graph.</li>
+                                <li class="list-item">Tambahkan node Try Get Pawn Owner.</li>
+                                <li class="list-item">Tambahkan node Cast To BP_MirageCharacter dan hubungkan.</li>
+                                <li class="list-item">Dapatkan variabel dari karakter cast dan simpan dalam variabel Blueprint animasi.
+                                    <img src="img/image_066.png" alt="Koneksi Variabel Animasi" class="image">
+                                    <p class="image-caption">Koneksi Variabel Animasi</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run level and verify animation duplication functionality
-                    <p class="paragraph">You can observe the mirage character mimicking motions during actions like running, jumping, and aiming.</p>
-                    <img src="img/image_067.png" alt="Animation Duplication Verification" class="image">
-                    <p class="image-caption">Animation Duplication Verification</p>
+                <li class="list-item">Jalankan level dan verifikasi fungsionalitas duplikasi animasi
+                    <p class="paragraph">Anda dapat mengamati karakter mirage meniru gerakan selama aksi seperti berlari, melompat, dan membidik.</p>
+                    <img src="img/image_067.png" alt="Verifikasi Duplikasi Animasi" class="image">
+                    <p class="image-caption">Verifikasi Duplikasi Animasi</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.2. Corrective Animation Application</h4>
+            <h4 class="heading-4">4.2.2. Aplikasi Animasi Korektif</h4>
             <ol class="ordered-list">
-                <li class="list-item">Prepare corrective animation
+                <li class="list-item">Siapkan animasi korektif
                     <ol class="ordered-list">
-                        <li class="list-item">Download the animation file.
-                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (File download required)</p>
+                        <li class="list-item">Unduh file animasi.
+                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (Perlu unduh file)</p>
                         </li>
-                        <li class="list-item">Drag the downloaded file into the Content Browser of the Unreal Editor.</li>
-                        <li class="list-item">Specify SKEL_UE5_Mannequin in the Skeleton field of the Animations tab.
-                            <img src="img/image_068.png" alt="Skeleton Assignment" class="image">
-                            <p class="image-caption">Skeleton Assignment</p>
+                        <li class="list-item">Seret file yang diunduh ke Content Browser dari Unreal Editor.</li>
+                        <li class="list-item">Tentukan SKEL_UE5_Mannequin di field Skeleton dari tab Animations.
+                            <img src="img/image_068.png" alt="Penugasan Skeleton" class="image">
+                            <p class="image-caption">Penugasan Skeleton</p>
                         </li>
-                        <li class="list-item">Click the Import button.</li>
-                        <li class="list-item">Delete one of the two generated animations. (Optional)
-                            <img src="img/image_069.png" alt="Animation Deletion" class="image">
-                            <p class="image-caption">Animation Deletion</p>
+                        <li class="list-item">Klik tombol Import.</li>
+                        <li class="list-item">Hapus salah satu dari dua animasi yang dihasilkan. (Opsional)
+                            <img src="img/image_069.png" alt="Penghapusan Animasi" class="image">
+                            <p class="image-caption">Penghapusan Animasi</p>
                         </li>
                     </ol>
                 </li>
@@ -1819,7 +1819,7 @@ public:
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -2034,9 +2034,9 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Enter code into each source file.
+                <li class="list-item">Masukkan kode ke setiap file sumber.
                     <ul class="unordered-list">
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">setting.h
                                     <div class="code-block">
@@ -2168,9 +2168,9 @@ int main()
                     </ol>
                 </li>
 
-                <li class="list-item">Enter code into the file.
+                <li class="list-item">Masukkan kode ke file.
                     <ul class="unordered-list">
-                        <li class="list-item">Complete Code
+                        <li class="list-item">Kode Lengkap
                             <ul class="unordered-list">
                                 <li class="list-item">P2P.PIDL
                                     <div class="code-block">
@@ -2188,25 +2188,25 @@ global GAME_P2P 3000
                     </ul>
                 </li>
 
-                <li class="list-item">Build the game_pidl project.</li>
+                <li class="list-item">Build proyek game_pidl.</li>
             </ol>
 
-            <h4 class="heading-4">5.1.3. game_server Project Source Code Modification</h4>
+            <h4 class="heading-4">5.1.3. Modifikasi Kode Sumber Proyek game_server</h4>
             <ol class="ordered-list">
-                <li class="list-item">Modify the source code of the game_server project.
+                <li class="list-item">Modifikasi kode sumber proyek game_server.
                     <ul class="unordered-list">
-                        <li class="list-item">Apply modifications to add P2P group management functionality.</li>
-                        <li class="list-item">Add data structures and serialization functions to setting.h and setting.cpp.</li>
+                        <li class="list-item">Terapkan modifikasi untuk menambahkan fungsionalitas manajemen grup P2P.</li>
+                        <li class="list-item">Tambahkan struktur data dan fungsi serialisasi ke setting.h dan setting.cpp.</li>
                     </ul>
                 </li>
             </ol>
 
-            <h3 class="heading-3">5.2. Unreal Project Work</h3>
+            <h3 class="heading-3">5.2. Pekerjaan Proyek Unreal</h3>
             <ol class="ordered-list">
-                <li class="list-item">GissGameNet C++ Class Creation
+                <li class="list-item">Pembuatan Kelas C++ GissGameNet
                     <ol class="ordered-list">
-                        <li class="list-item">Create a C++ class GissGameNet that inherits from GameInstanceSubsystem.</li>
-                        <li class="list-item">Modify the source code of the GissGameNet class.
+                        <li class="list-item">Buat kelas C++ GissGameNet yang mewarisi dari GameInstanceSubsystem.</li>
+                        <li class="list-item">Modifikasi kode sumber kelas GissGameNet.
                             <ul class="unordered-list">
                                 <li class="list-item">GissGameNet.h
                                     <div class="code-block">
@@ -2250,107 +2250,107 @@ private:
                     </ol>
                 </li>
 
-                <li class="list-item">Modify the BP_Character Blueprint graph.
+                <li class="list-item">Modifikasi grafik Blueprint BP_Character.
                     <ol class="ordered-list">
-                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's Update Transform with a graph that calls GissGameNet's Update Character Transform.
-                            <img src="img/image_106.png" alt="Update Character Transform Change" class="image">
-                            <p class="image-caption">Update Character Transform Change</p>
+                        <li class="list-item">Ganti grafik yang memanggil Update Transform BP_MirageCharacter dengan grafik yang memanggil Update Character Transform GissGameNet.
+                            <img src="img/image_106.png" alt="Perubahan Update Character Transform" class="image">
+                            <p class="image-caption">Perubahan Update Character Transform</p>
                         </li>
-                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's On Fired with a graph that calls GissGameNet's Send Character Fired.
-                            <img src="img/image_107.png" alt="Send Character Fired Change" class="image">
-                            <p class="image-caption">Send Character Fired Change</p>
+                        <li class="list-item">Ganti grafik yang memanggil On Fired BP_MirageCharacter dengan grafik yang memanggil Send Character Fired GissGameNet.
+                            <img src="img/image_107.png" alt="Perubahan Send Character Fired" class="image">
+                            <p class="image-caption">Perubahan Send Character Fired</p>
                         </li>
-                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's On Reloaded with a graph that calls GissGameNet's Send Character Reloaded.
-                            <img src="img/image_108.png" alt="Send Character Reloaded Change" class="image">
-                            <p class="image-caption">Send Character Reloaded Change</p>
+                        <li class="list-item">Ganti grafik yang memanggil On Reloaded BP_MirageCharacter dengan grafik yang memanggil Send Character Reloaded GissGameNet.
+                            <img src="img/image_108.png" alt="Perubahan Send Character Reloaded" class="image">
+                            <p class="image-caption">Perubahan Send Character Reloaded</p>
                         </li>
                     </ol>
                 </li>
 
-                <li class="list-item">Modify the event graph of the ABP_Character Blueprint.
+                <li class="list-item">Modifikasi grafik event dari Blueprint ABP_Character.
                     <ol class="ordered-list">
-                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's Update Animation Parameter with a graph that calls GissGameNet's Update Character Animation Parameter.
-                            <img src="img/image_109.png" alt="Update Character Animation Parameter Change" class="image">
-                            <p class="image-caption">Update Character Animation Parameter Change</p>
+                        <li class="list-item">Ganti grafik yang memanggil Update Animation Parameter BP_MirageCharacter dengan grafik yang memanggil Update Character Animation Parameter GissGameNet.
+                            <img src="img/image_109.png" alt="Perubahan Update Character Animation Parameter" class="image">
+                            <p class="image-caption">Perubahan Update Character Animation Parameter</p>
                         </li>
                     </ol>
                 </li>
 
-                <li class="list-item">After building and running the server, when running the level, you can confirm the same results as before the integration work.</li>
+                <li class="list-item">Setelah membangun dan menjalankan server, saat menjalankan level, Anda dapat mengkonfirmasi hasil yang sama seperti sebelum pekerjaan integrasi.</li>
             </ol>
         </section>
 
         <section id="project-build" class="md-section">
-            <h2 class="heading-2">6. Final Project Build and Testing</h2>
-            <p class="paragraph">This section covers project finalization, build, and comprehensive testing procedures.</p>
+            <h2 class="heading-2">6. Build dan Pengujian Proyek Akhir</h2>
+            <p class="paragraph">Bagian ini mencakup finalisasi proyek, build, dan prosedur pengujian komprehensif.</p>
 
-            <h3 class="heading-3">6.1. Test Code Modification</h3>
+            <h3 class="heading-3">6.1. Modifikasi Kode Tes</h3>
             <ol class="ordered-list">
-                <li class="list-item">Modify the BaseMirageCharacter class code.
+                <li class="list-item">Modifikasi kode kelas BaseMirageCharacter.
                     <ul class="unordered-list">
-                        <li class="list-item">Add SetId and GetId functions for character ID management.</li>
+                        <li class="list-item">Tambahkan fungsi SetId dan GetId untuk manajemen ID karakter.</li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the GissGameNet class code.
+                <li class="list-item">Modifikasi kode kelas GissGameNet.
                     <ul class="unordered-list">
-                        <li class="list-item">Implement an ID-based management system for character identification in multiplayer environments.</li>
-                        <li class="list-item">Add functionality to automatically create mirage characters when P2P members join.</li>
-                        <li class="list-item">Modify to disable loopback so that one's own actions are not sent back to oneself.</li>
+                        <li class="list-item">Implementasikan sistem manajemen berbasis ID untuk identifikasi karakter dalam lingkungan multiplayer.</li>
+                        <li class="list-item">Tambahkan fungsionalitas untuk secara otomatis membuat karakter mirage ketika anggota P2P bergabung.</li>
+                        <li class="list-item">Modifikasi untuk menonaktifkan loopback sehingga aksi sendiri tidak dikirim kembali ke diri sendiri.</li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the BP_MirageCharacter Blueprint class.
+                <li class="list-item">Modifikasi kelas Blueprint BP_MirageCharacter.
                     <ol class="ordered-list">
-                        <li class="list-item">Reconnect the Position of the Update Transform event directly to Set Actor Location.
-                            <img src="img/image_110.png" alt="Position Direct Connection" class="image">
-                            <p class="image-caption">Position Direct Connection</p>
+                        <li class="list-item">Hubungkan kembali Position dari event Update Transform langsung ke Set Actor Location.
+                            <img src="img/image_110.png" alt="Koneksi Langsung Position" class="image">
+                            <p class="image-caption">Koneksi Langsung Position</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Remove the BP_MirageCharacter instance from the Outliner window in the Level Editor.
-                    <img src="img/image_111.png" alt="MirageCharacter Instance Removal" class="image">
-                    <p class="image-caption">MirageCharacter Instance Removal</p>
+                <li class="list-item">Hapus instance BP_MirageCharacter dari jendela Outliner di Level Editor.
+                    <img src="img/image_111.png" alt="Penghapusan Instance MirageCharacter" class="image">
+                    <p class="image-caption">Penghapusan Instance MirageCharacter</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.2. Project Build</h3>
+            <h3 class="heading-3">6.2. Build Proyek</h3>
             <ol class="ordered-list">
-                <li class="list-item">Server Executable Build
+                <li class="list-item">Build Executable Server
                     <ol class="ordered-list">
-                        <li class="list-item">Change the build configuration through the dropdown at the top of Visual Studio.
-                            <img src="img/image_112.png" alt="Build Configuration Change" class="image">
-                            <p class="image-caption">Build Configuration Change</p>
+                        <li class="list-item">Ubah konfigurasi build melalui dropdown di bagian atas Visual Studio.
+                            <img src="img/image_112.png" alt="Perubahan Konfigurasi Build" class="image">
+                            <p class="image-caption">Perubahan Konfigurasi Build</p>
                         </li>
-                        <li class="list-item">Build the chat_server and game_server projects respectively.</li>
-                        <li class="list-item">You can check the built executable files in the solution's subfolders.
-                            <img src="img/image_113.png" alt="Built Executable Files" class="image">
-                            <p class="image-caption">Built Executable Files</p>
+                        <li class="list-item">Build proyek chat_server dan game_server secara berturut-turut.</li>
+                        <li class="list-item">Anda dapat memeriksa file executable yang telah di-build di subfolder solusi.
+                            <img src="img/image_113.png" alt="File Executable yang Di-build" class="image">
+                            <p class="image-caption">File Executable yang Di-build</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Client Executable Build
+                <li class="list-item">Build Executable Client
                     <ol class="ordered-list">
-                        <li class="list-item">You can build the Unreal project through the button next to level execution in the Unreal Editor.
-                            <img src="img/image_114.png" alt="Unreal Project Build" class="image">
-                            <p class="image-caption">Unreal Project Build</p>
+                        <li class="list-item">Anda dapat membangun proyek Unreal melalui tombol di sebelah eksekusi level di Unreal Editor.
+                            <img src="img/image_114.png" alt="Build Proyek Unreal" class="image">
+                            <p class="image-caption">Build Proyek Unreal</p>
                         </li>
-                        <li class="list-item">You can check the built files through the specified path.
-                            <img src="img/image_115.png" alt="Built Client Files" class="image">
-                            <p class="image-caption">Built Client Files</p>
+                        <li class="list-item">Anda dapat memeriksa file yang di-build melalui path yang ditentukan.
+                            <img src="img/image_115.png" alt="File Client yang Di-build" class="image">
+                            <p class="image-caption">File Client yang Di-build</p>
                         </li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.3. Testing</h3>
+            <h3 class="heading-3">6.3. Pengujian</h3>
             <ol class="ordered-list">
-                <li class="list-item">Run the built chat_server.exe and game_server.exe from the server project.</li>
-                <li class="list-item">Run PdnUE5ExampleClient.exe from the Windows folder built in the Unreal project.
+                <li class="list-item">Jalankan chat_server.exe dan game_server.exe yang telah di-build dari proyek server.</li>
+                <li class="list-item">Jalankan PdnUE5ExampleClient.exe dari folder Windows yang di-build dalam proyek Unreal.
                     
-                    Be careful as this may put a heavy load on the computer depending on your PC specifications.
+                    Hati-hati karena ini dapat memberikan beban berat pada komputer tergantung pada spesifikasi PC Anda.
                 </li>
-                <li class="list-item">You can see two clients using the chat server and game server.
-                    <img src="img/image_116.png" alt="Final Test Results" class="image">
-                    <p class="image-caption">Final Test Results</p>
+                <li class="list-item">Anda dapat melihat dua klien menggunakan chat server dan game server.
+                    <img src="img/image_116.png" alt="Hasil Tes Akhir" class="image">
+                    <p class="image-caption">Hasil Tes Akhir</p>
                 </li>
             </ol>
         </section>

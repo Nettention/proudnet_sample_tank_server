@@ -1099,7 +1099,7 @@ int main()
 }</pre>
                             </div>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">完整代码
                             <ul class="unordered-list">
                                 <li class="list-item">main.cpp
                                     <div class="code-block">
@@ -1215,12 +1215,12 @@ int main()
                 </li>
             </ol>
 
-            <h3 class="heading-3">3.2. Unreal Project Work</h3>
+            <h3 class="heading-3">3.2. 虚幻项目工作</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a C++ class BaseChatWidget that inherits from UserWidget in the Unreal Engine editor.</li>
-                <li class="list-item">Modify the source code of the created BaseChatWidget class.
+                <li class="list-item">在虚幻引擎编辑器中创建继承自 UserWidget 的 C++ 类 BaseChatWidget。</li>
+                <li class="list-item">修改创建的 BaseChatWidget 类的源代码。
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">修改内容
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1248,7 +1248,7 @@ class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">完整代码
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1278,9 +1278,9 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the source code of the GissChatNet class.
+                <li class="list-item">修改 GissChatNet 类的源代码。
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications (showing main parts only)
+                        <li class="list-item">修改内容（仅显示主要部分）
                             <ul class="unordered-list">
                                 <li class="list-item">GissChatNet.h
                                     <div class="code-block">
@@ -1310,7 +1310,7 @@ private:
 };</pre>
                                     </div>
                                 </li>
-                                <li class="list-item">GissChatNet.cpp (main addition parts)
+                                <li class="list-item">GissChatNet.cpp（主要添加部分）
                                     <div class="code-block">
                                         <pre>+ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.h"
 + #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.cpp"
@@ -1338,42 +1338,42 @@ private:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the Blueprint graph of BP_ChatWidget.
+                <li class="list-item">修改 BP_ChatWidget 的蓝图图表。
                     <ol class="ordered-list">
-                        <li class="list-item">Convert the PrintChat function to an event.
-                            <img src="img/image_052.png" alt="PrintChat Event Conversion" class="image">
-                            <p class="image-caption">PrintChat Event Conversion</p>
+                        <li class="list-item">将 PrintChat 函数转换为事件。
+                            <img src="img/image_052.png" alt="PrintChat 事件转换" class="image">
+                            <p class="image-caption">PrintChat 事件转换</p>
                         </li>
-                        <li class="list-item">Change the parent class of BP_ChatWidget to BaseChatWidget.
-                            <img src="img/image_053.png" alt="Parent Class Change" class="image">
-                            <p class="image-caption">Parent Class Change</p>
+                        <li class="list-item">将 BP_ChatWidget 的父类更改为 BaseChatWidget。
+                            <img src="img/image_053.png" alt="父类更改" class="image">
+                            <p class="image-caption">父类更改</p>
                         </li>
-                        <li class="list-item">Modify the event graph when SendButton is clicked.
+                        <li class="list-item">修改点击 SendButton 时的事件图表。
                             <ol class="ordered-list">
-                                <li class="list-item">Add Get GissChatNet node and Send Chat node
-                                    <img src="img/image_054.png" alt="Adding GissChatNet Node" class="image">
-                                    <p class="image-caption">Adding GissChatNet Node</p>
+                                <li class="list-item">添加 Get GissChatNet 节点和 Send Chat 节点
+                                    <img src="img/image_054.png" alt="添加 GissChatNet 节点" class="image">
+                                    <p class="image-caption">添加 GissChatNet 节点</p>
                                 </li>
-                                <li class="list-item">Replace the existing Print Chat node with Send Chat node.</li>
+                                <li class="list-item">用 Send Chat 节点替换现有的 Print Chat 节点。</li>
                             </ol>
                         </li>
-                        <li class="list-item">The final appearance of the BP_ChatWidget Blueprint graph is as follows.
-                            <img src="img/image_055.png" alt="BP_ChatWidget Final Appearance" class="image">
-                            <p class="image-caption">BP_ChatWidget Final Appearance</p>
+                        <li class="list-item">BP_ChatWidget 蓝图图表的最终外观如下。
+                            <img src="img/image_055.png" alt="BP_ChatWidget 最终外观" class="image">
+                            <p class="image-caption">BP_ChatWidget 最终外观</p>
                         </li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">3.3. Chat Testing</h3>
+            <h3 class="heading-3">3.3. 聊天测试</h3>
             <ol class="ordered-list">
-                <li class="list-item">Build and run the chat_server project.</li>
-                <li class="list-item">Run the Unreal Engine project level and verify the chat functionality.
-                    <img src="img/image_056.png" alt="Chat Function Test 1" class="image">
-                    <p class="image-caption">Chat Function Test 1</p>
+                <li class="list-item">构建并运行 chat_server 项目。</li>
+                <li class="list-item">运行虚幻引擎项目关卡并验证聊天功能。
+                    <img src="img/image_056.png" alt="聊天功能测试 1" class="image">
+                    <p class="image-caption">聊天功能测试 1</p>
                     
-                    <img src="img/image_057.png" alt="Chat Function Test 2" class="image">
-                    <p class="image-caption">Chat Function Test 2</p>
+                    <img src="img/image_057.png" alt="聊天功能测试 2" class="image">
+                    <p class="image-caption">聊天功能测试 2</p>
                 </li>
             </ol>
         </section>
@@ -1384,27 +1384,27 @@ private:
 
             <h3 class="heading-3">4.1. 添加幻影蓝图角色</h3>
             <ol class="ordered-list">
-                <li class="list-item">Duplicate two Blueprint classes.
+                <li class="list-item">复制两个蓝图类。
                     <ol class="ordered-list">
-                        <li class="list-item">Navigate to "All - Content - InfimaGames - FreeFPSTemplate - Core" in the Content Browser.</li>
-                        <li class="list-item">Duplicate the two Blueprint classes BP_Character and ABP_Character.</li>
-                        <li class="list-item">Rename them to BP_MirageCharacter and ABP_MirageCharacter respectively.</li>
+                        <li class="list-item">在内容浏览器中导航到"全部 - 内容 - InfimaGames - FreeFPSTemplate - Core"。</li>
+                        <li class="list-item">复制两个蓝图类 BP_Character 和 ABP_Character。</li>
+                        <li class="list-item">分别将它们重命名为 BP_MirageCharacter 和 ABP_MirageCharacter。</li>
                     </ol>
                 </li>
-                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and proceed with the following steps.
+                <li class="list-item">打开 BP_MirageCharacter 蓝图编辑器并按以下步骤进行。
                     <ol class="ordered-list">
-                        <li class="list-item">Select CharacterArms in the Components window.</li>
-                        <li class="list-item">Change the Anim Class of Animation to ABP_MirageCharacter.</li>
-                        <li class="list-item">Set the Skeletal Mesh Asset of the mesh to SKM_Manny_Simple.
-                            <img src="img/image_058.png" alt="BP_MirageCharacter Configuration" class="image">
-                            <p class="image-caption">BP_MirageCharacter Configuration</p>
+                        <li class="list-item">在组件窗口中选择 CharacterArms。</li>
+                        <li class="list-item">将动画的 Anim Class 更改为 ABP_MirageCharacter。</li>
+                        <li class="list-item">将网格的骨骼网格资产设置为 SKM_Manny_Simple。
+                            <img src="img/image_058.png" alt="BP_MirageCharacter 配置" class="image">
+                            <p class="image-caption">BP_MirageCharacter 配置</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Place BP_MirageCharacter in the level and run to verify.
-                    <p class="paragraph">If placed as shown below, it is normal based on the current point in time.</p>
-                    <img src="img/image_059.png" alt="Mirage Character Placement Verification" class="image">
-                    <p class="image-caption">Mirage Character Placement Verification</p>
+                <li class="list-item">在关卡中放置 BP_MirageCharacter 并运行以验证。
+                    <p class="paragraph">如果如下所示放置，则基于当前时间点是正常的。</p>
+                    <img src="img/image_059.png" alt="幻影角色放置验证" class="image">
+                    <p class="image-caption">幻影角色放置验证</p>
                 </li>
             </ol>
 

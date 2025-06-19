@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProudNet UE5 Example</title>
+    <title>Ví dụ ProudNet UE5</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/syntax-highlighting.css">
     <script src="js/image-modal.js"></script>
@@ -13,79 +13,79 @@
 <body>
     <div class="md-container">
         <div class="md-header">
-            <h1>ProudNet UE5 Example</h1>
-            <p class="paragraph">A comprehensive guide for implementing multiplayer games using ProudNet networking library and Unreal Engine 5. Covers chat systems, character networking, and advanced multiplayer features.</p>
+            <h1>Ví dụ ProudNet UE5</h1>
+            <p class="paragraph">Hướng dẫn toàn diện để triển khai game nhiều người chơi sử dụng thư viện mạng ProudNet và Unreal Engine 5. Bao gồm hệ thống chat, mạng nhân vật và các tính năng nhiều người chơi nâng cao.</p>
         </div>
 
         <div class="md-nav">
-            <h3 class="heading-3">📋 Table of Contents</h3>
+            <h3 class="heading-3">📋 Mục lục</h3>
             <ul class="unordered-list">
-                <li class="list-item"><a href="#project-setup" class="link">1. Project Setup</a>
-                    <p class="paragraph">Prepare and configure Unreal Engine 5 project for ProudNet integration</p>
+                <li class="list-item"><a href="#project-setup" class="link">1. Thiết lập dự án</a>
+                    <p class="paragraph">Chuẩn bị và cấu hình dự án Unreal Engine 5 để tích hợp ProudNet</p>
                 </li>
-                <li class="list-item"><a href="#local-chat" class="link">2. Creating Local Chat</a>
-                    <p class="paragraph">Create a basic local chat system for testing and foundation</p>
+                <li class="list-item"><a href="#local-chat" class="link">2. Tạo Chat cục bộ</a>
+                    <p class="paragraph">Tạo hệ thống chat cục bộ cơ bản để kiểm tra và làm nền tảng</p>
                 </li>
-                <li class="list-item"><a href="#online-chat" class="link">3. Creating Online Chat</a>
-                    <p class="paragraph">Implement network chat functionality using ProudNet</p>
+                <li class="list-item"><a href="#online-chat" class="link">3. Tạo Chat trực tuyến</a>
+                    <p class="paragraph">Triển khai chức năng chat mạng sử dụng ProudNet</p>
                 </li>
-                <li class="list-item"><a href="#mirage-character" class="link">4. Implementing Mirage Character</a>
-                    <p class="paragraph">Build a mirage character with enhanced gameplay features</p>
+                <li class="list-item"><a href="#mirage-character" class="link">4. Triển khai nhân vật Mirage</a>
+                    <p class="paragraph">Xây dựng nhân vật mirage với các tính năng gameplay nâng cao</p>
                 </li>
-                <li class="list-item"><a href="#mirage-online" class="link">5. Mirage Character Online Integration</a>
-                    <p class="paragraph">Integrate mirage character with ProudNet networking for multiplayer gameplay</p>
+                <li class="list-item"><a href="#mirage-online" class="link">5. Tích hợp trực tuyến nhân vật Mirage</a>
+                    <p class="paragraph">Tích hợp nhân vật mirage với mạng ProudNet cho gameplay nhiều người chơi</p>
                 </li>
-                <li class="list-item"><a href="#project-build" class="link">6. Final Project Build and Testing</a>
-                    <p class="paragraph">Project finalization, build, and comprehensive testing procedures</p>
+                <li class="list-item"><a href="#project-build" class="link">6. Build và kiểm tra dự án cuối cùng</a>
+                    <p class="paragraph">Hoàn thiện dự án, build và quy trình kiểm tra toàn diện</p>
                     <ul class="unordered-list">
-                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. Test Code Modification</a></li>
-                        <li class="list-item"><a href="#project-build-section" class="link">6.2. Project Build</a></li>
-                        <li class="list-item"><a href="#testing" class="link">6.3. Testing</a></li>
+                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. Sửa đổi mã kiểm tra</a></li>
+                        <li class="list-item"><a href="#project-build-section" class="link">6.2. Build dự án</a></li>
+                        <li class="list-item"><a href="#testing" class="link">6.3. Kiểm tra</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
 
         <section id="project-setup" class="md-section">
-            <h2 class="heading-2">1. Project Setup</h2>
-            <p class="paragraph">This section covers the initial setup and configuration needed to create an Unreal Engine 5 project with ProudNet enabled.</p>
+            <h2 class="heading-2">1. Thiết lập dự án</h2>
+            <p class="paragraph">Phần này bao gồm thiết lập ban đầu và cấu hình cần thiết để tạo dự án Unreal Engine 5 với ProudNet được kích hoạt.</p>
 
-            <h3 class="heading-3">1.1. ProudNet Installation</h3>
+            <h3 class="heading-3">1.1. Cài đặt ProudNet</h3>
             <ol class="ordered-list">
-                <li class="list-item">Install the latest release from the https://github.com/Nettention/ProudNet repository.
+                <li class="list-item">Cài đặt phiên bản mới nhất từ kho lưu trữ https://github.com/Nettention/ProudNet.
                     <ol class="ordered-list">
-                        <li class="list-item">The default installation path is "C:\Program Files (x86)\Nettention\ProudNet". This guide and the UE5 plugin are configured for this path, so if you change the installation path, you'll need to modify the plugin source code and carefully review the guide.</li>
+                        <li class="list-item">Đường dẫn cài đặt mặc định là "C:\Program Files (x86)\Nettention\ProudNet". Hướng dẫn này và plugin UE5 được cấu hình cho đường dẫn này, vì vậy nếu bạn thay đổi đường dẫn cài đặt, bạn sẽ cần sửa đổi mã nguồn plugin và xem xét cẩn thận hướng dẫn.</li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">1.2. Visual Studio Project Configuration</h3>
+            <h3 class="heading-3">1.2. Cấu hình dự án Visual Studio</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a blank project in Visual Studio
+                <li class="list-item">Tạo một dự án trống trong Visual Studio
                     <ul class="unordered-list">
-                        <li class="list-item">This guide uses the following path/name.</li>
+                        <li class="list-item">Hướng dẫn này sử dụng đường dẫn/tên sau.</li>
                     </ul>
-                    <img src="img/image_017-1.png" alt="Visual Studio Project Creation" class="image">
-                    <p class="image-caption">Visual Studio Project Creation</p>
+                    <img src="img/image_017-1.png" alt="Tạo dự án Visual Studio" class="image">
+                    <p class="image-caption">Tạo dự án Visual Studio</p>
                 </li>
-                <li class="list-item">Add 3 new items to the chat_server project: main.cpp, setting.cpp, setting.h.
-                    <img src="img/image_017.png" alt="Adding Project Files" class="image">
-                    <p class="image-caption">Adding Project Files</p>
+                <li class="list-item">Thêm 3 mục mới vào dự án chat_server: main.cpp, setting.cpp, setting.h.
+                    <img src="img/image_017.png" alt="Thêm tệp dự án" class="image">
+                    <p class="image-caption">Thêm tệp dự án</p>
                     
-                    <img src="img/image_018.png" alt="Project Structure" class="image">
-                    <p class="image-caption">Project Structure</p>
+                    <img src="img/image_018.png" alt="Cấu trúc dự án" class="image">
+                    <p class="image-caption">Cấu trúc dự án</p>
                 </li>
-                <li class="list-item">Modify the properties of the chat_server project.
+                <li class="list-item">Sửa đổi thuộc tính của dự án chat_server.
                     <ol class="ordered-list">
                         <li class="list-item">"C/C++ - Language - C++ Language Standard"
                             <ol class="ordered-list">
-                                <li class="list-item">Select "ISO C++20 Standard (/std:C++20)" from the dropdown</li>
+                                <li class="list-item">Chọn "ISO C++20 Standard (/std:C++20)" từ dropdown</li>
                             </ol>
                         </li>
                         <li class="list-item">"C/C++ - General - Additional Include Directories"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following path in the popup window</li>
+                                <li class="list-item">Chọn &lt;Edit…&gt; từ dropdown</li>
+                                <li class="list-item">Thêm đường dẫn sau trong cửa sổ popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
@@ -93,8 +93,8 @@
                         </li>
                         <li class="list-item">"Linker - General - Additional Library Directories"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following path in the popup window</li>
+                                <li class="list-item">Chọn &lt;Edit…&gt; từ dropdown</li>
+                                <li class="list-item">Thêm đường dẫn sau trong cửa sổ popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
@@ -102,8 +102,8 @@
                         </li>
                         <li class="list-item">"Linker - Input - Additional Dependencies"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following filenames in the popup window</li>
+                                <li class="list-item">Chọn &lt;Edit…&gt; từ dropdown</li>
+                                <li class="list-item">Thêm các tên tệp sau trong cửa sổ popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>ProudNetServer.lib
@@ -112,8 +112,8 @@ ProudNetClient.lib</pre>
                         </li>
                         <li class="list-item">"Build Events - Post-Build Event - Command Line"
                             <ol class="ordered-list">
-                                <li class="list-item">Select &lt;Edit…&gt; from the dropdown</li>
-                                <li class="list-item">Add the following commands in the popup window</li>
+                                <li class="list-item">Chọn &lt;Edit…&gt; từ dropdown</li>
+                                <li class="list-item">Thêm các lệnh sau trong cửa sổ popup</li>
                             </ol>
                             <div class="code-block">
                                 <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
@@ -122,7 +122,7 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Enter code into each source file.
+                <li class="list-item">Nhập mã vào từng tệp nguồn.
                     <ul class="unordered-list">
                         <li class="list-item">setting.h (diff)
                             <div class="code-block">
@@ -215,7 +215,7 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ul>
                     
-                    <p class="paragraph"><strong class="text-strong">Complete Code</strong></p>
+                    <p class="paragraph"><strong class="text-strong">Mã hoàn chỉnh</strong></p>
                     <ul class="unordered-list">
                         <li class="list-item">setting.h
                             <div class="code-block">
@@ -308,63 +308,63 @@ int main()
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Build and run the project (F5) to see the following screen.
-                    <img src="img/image_018-1.png" alt="Server Running Screen" class="image">
-                    <p class="image-caption">Server Running Screen</p>
+                <li class="list-item">Build và chạy dự án (F5) để xem màn hình sau.
+                    <img src="img/image_018-1.png" alt="Màn hình Server đang chạy" class="image">
+                    <p class="image-caption">Màn hình Server đang chạy</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">1.3. Unreal Engine Project Configuration</h3>
+            <h3 class="heading-3">1.3. Cấu hình dự án Unreal Engine</h3>
             <ol class="ordered-list">
-                <li class="list-item">Add <a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games' Free FPS Template</a> to your library.</li>
-                <li class="list-item">Create a template project following the procedure below.
+                <li class="list-item">Thêm <a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games' Free FPS Template</a> vào thư viện của bạn.</li>
+                <li class="list-item">Tạo dự án mẫu theo quy trình dưới đây.
                     <ol class="ordered-list">
-                        <li class="list-item">Launch Epic Games Launcher</li>
-                        <li class="list-item">Navigate to the Unreal Engine tab</li>
-                        <li class="list-item">Navigate to the Library tab</li>
-                        <li class="list-item">Click "Create Project" for "Free FPS Template & Tutorial" in the Fab library list</li>
-                        <li class="list-item">Change the name and folder, then click Create
+                        <li class="list-item">Khởi chạy Epic Games Launcher</li>
+                        <li class="list-item">Điều hướng đến tab Unreal Engine</li>
+                        <li class="list-item">Điều hướng đến tab Library</li>
+                        <li class="list-item">Nhấp "Create Project" cho "Free FPS Template & Tutorial" trong danh sách thư viện Fab</li>
+                        <li class="list-item">Thay đổi tên và thư mục, sau đó nhấp Create
                             <ul class="unordered-list">
-                                <li class="list-item">This guide uses the following name and path.</li>
+                                <li class="list-item">Hướng dẫn này sử dụng tên và đường dẫn sau.</li>
                             </ul>
-                            <img src="img/image_019-0.png" alt="Unreal Project Creation" class="image">
-                            <p class="image-caption">Unreal Project Creation</p>
+                            <img src="img/image_019-0.png" alt="Tạo dự án Unreal" class="image">
+                            <p class="image-caption">Tạo dự án Unreal</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Create a C++ class following the procedure below.
+                <li class="list-item">Tạo lớp C++ theo quy trình dưới đây.
                     <ol class="ordered-list">
-                        <li class="list-item">Top Toolbar - Tools - New C++ Class
-                            <img src="img/image_019.png" alt="C++ Class Creation Menu" class="image">
-                            <p class="image-caption">C++ Class Creation Menu</p>
+                        <li class="list-item">Thanh công cụ trên - Tools - New C++ Class
+                            <img src="img/image_019.png" alt="Menu tạo lớp C++" class="image">
+                            <p class="image-caption">Menu tạo lớp C++</p>
                         </li>
-                        <li class="list-item">Show All Classes, then select GameInstanceSubsystem
-                            <img src="img/image_020.png" alt="GameInstanceSubsystem Selection" class="image">
-                            <p class="image-caption">GameInstanceSubsystem Selection</p>
+                        <li class="list-item">Show All Classes, sau đó chọn GameInstanceSubsystem
+                            <img src="img/image_020.png" alt="Chọn GameInstanceSubsystem" class="image">
+                            <p class="image-caption">Chọn GameInstanceSubsystem</p>
                         </li>
-                        <li class="list-item">Class Type - Select Public and enter class name, then create class
+                        <li class="list-item">Class Type - Chọn Public và nhập tên lớp, sau đó tạo lớp
                             <ol class="ordered-list">
-                                <li class="list-item">This guide uses GissChatNet.
-                                    <img src="img/image_021.png" alt="Enter Class Name" class="image">
-                                    <p class="image-caption">Enter Class Name</p>
+                                <li class="list-item">Hướng dẫn này sử dụng GissChatNet.
+                                    <img src="img/image_021.png" alt="Nhập tên lớp" class="image">
+                                    <p class="image-caption">Nhập tên lớp</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Generate the VS solution for the Unreal project following the procedure below.
+                <li class="list-item">Tạo giải pháp VS cho dự án Unreal theo quy trình dưới đây.
                     <ol class="ordered-list">
-                        <li class="list-item">Close the Unreal Engine editor.</li>
-                        <li class="list-item">Navigate to the Unreal project folder.</li>
-                        <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                        <li class="list-item">Đóng trình chỉnh sửa Unreal Engine.</li>
+                        <li class="list-item">Điều hướng đến thư mục dự án Unreal.</li>
+                        <li class="list-item">Nhấp chuột phải vào PdnUE5ExampleClient.uproject và chọn Generate Visual Studio project files</li>
                     </ol>
                 </li>
-                <li class="list-item">Change the startup project (recommended)
+                <li class="list-item">Thay đổi dự án khởi động (khuyến nghị)
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image</li>
+                        <li class="list-item">Hình ảnh hướng dẫn</li>
                     </ul>
-                    <img src="img/image_022.png" alt="Change Startup Project" class="image">
-                    <p class="image-caption">Change Startup Project</p>
+                    <img src="img/image_022.png" alt="Thay đổi dự án khởi động" class="image">
+                    <p class="image-caption">Thay đổi dự án khởi động</p>
                 </li>
                 <li class="list-item">Apply the UE5 ProudNet plugin following the procedure below.
                     <ol class="ordered-list">
@@ -417,7 +417,7 @@ public class PdnUE5ExampleClient : ModuleRules
 }</pre>
                                     </div>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">Mã hoàn chỉnh
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -676,9 +676,9 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Testing
+                <li class="list-item">Kiểm tra
                     <ol class="ordered-list">
-                        <li class="list-item">Build and run chat_server from PdnUE5ExampleServer.
+                        <li class="list-item">Build và chạy chat_server từ PdnUE5ExampleServer.
                             <img src="img/image_024.png" alt="chat_server Execution" class="image">
                             <p class="image-caption">chat_server Execution</p>
                         </li>
@@ -687,11 +687,11 @@ void UGissChatNet::Deinitialize()
                             <p class="image-caption">Unreal Editor Execution</p>
                         </li>
                         <li class="list-item">Success if client and server connect as shown below.
-                            <img src="img/image_026.png" alt="Server Connection Success" class="image">
-                            <p class="image-caption">Server Connection Success</p>
+                            <img src="img/image_026.png" alt="Kết nối Server thành công" class="image">
+                            <p class="image-caption">Kết nối Server thành công</p>
                             
-                            <img src="img/image_027.png" alt="Client Connection Success" class="image">
-                            <p class="image-caption">Client Connection Success</p>
+                            <img src="img/image_027.png" alt="Kết nối Client thành công" class="image">
+                            <p class="image-caption">Kết nối Client thành công</p>
                         </li>
                     </ol>
                 </li>
@@ -699,10 +699,10 @@ void UGissChatNet::Deinitialize()
         </section>
 
         <section id="local-chat" class="md-section">
-            <h2 class="heading-2">2. Creating Local Chat</h2>
-            <p class="paragraph">This section covers creating a local chat window and implementing basic chat functionality in Unreal Engine 5.</p>
+            <h2 class="heading-2">2. Tạo Chat cục bộ</h2>
+            <p class="paragraph">Phần này bao gồm tạo cửa sổ chat cục bộ và triển khai chức năng chat cơ bản trong Unreal Engine 5.</p>
 
-            <h3 class="heading-3">2.1. Creating Chat Widget</h3>
+            <h3 class="heading-3">2.1. Tạo Widget Chat</h3>
             <ol class="ordered-list">
                 <li class="list-item">Create a BP_ChatWidget widget blueprint following the procedure below
                     <ol class="ordered-list">
@@ -926,10 +926,10 @@ void UGissChatNet::Deinitialize()
         </section>
 
         <section id="online-chat" class="md-section">
-            <h2 class="heading-2">3. Creating Online Chat</h2>
-            <p class="paragraph">This section covers implementing network chat functionality using ProudNet.</p>
+            <h2 class="heading-2">3. Tạo Chat trực tuyến</h2>
+            <p class="paragraph">Phần này bao gồm triển khai chức năng chat mạng sử dụng ProudNet.</p>
 
-            <h3 class="heading-3">3.1. Visual Studio Project Work</h3>
+            <h3 class="heading-3">3.1. Công việc dự án Visual Studio</h3>
             <ol class="ordered-list">
                 <li class="list-item">Add a new empty project chat_pidl in PdnUE5ExampleServer.</li>
                 <li class="list-item">Add two files C2S.PIDL, S2C.PIDL and modify their properties.
@@ -1365,9 +1365,9 @@ private:
                 </li>
             </ol>
 
-            <h3 class="heading-3">3.3. Chat Testing</h3>
+            <h3 class="heading-3">3.3. Kiểm tra Chat</h3>
             <ol class="ordered-list">
-                <li class="list-item">Build and run the chat_server project.</li>
+                <li class="list-item">Build và chạy dự án chat_server.</li>
                 <li class="list-item">Run the Unreal Engine project level and verify the chat functionality.
                     <img src="img/image_056.png" alt="Chat Function Test 1" class="image">
                     <p class="image-caption">Chat Function Test 1</p>
@@ -1379,8 +1379,8 @@ private:
         </section>
 
         <section id="mirage-character" class="md-section">
-            <h2 class="heading-2">4. Implementing Mirage Character</h2>
-            <p class="paragraph">This section covers building a Mirage character with enhanced gameplay features.</p>
+            <h2 class="heading-2">4. Triển khai nhân vật Mirage</h2>
+            <p class="paragraph">Phần này bao gồm xây dựng nhân vật Mirage với các tính năng gameplay nâng cao.</p>
 
             <h3 class="heading-3">4.1. Adding Mirage Blueprint Character</h3>
             <ol class="ordered-list">
@@ -2281,10 +2281,10 @@ private:
         </section>
 
         <section id="project-build" class="md-section">
-            <h2 class="heading-2">6. Final Project Build and Testing</h2>
-            <p class="paragraph">This section covers project finalization, build, and comprehensive testing procedures.</p>
+            <h2 class="heading-2">6. Build và kiểm tra dự án cuối cùng</h2>
+            <p class="paragraph">Phần này bao gồm hoàn thiện dự án, build và quy trình kiểm tra toàn diện.</p>
 
-            <h3 class="heading-3">6.1. Test Code Modification</h3>
+            <h3 class="heading-3">6.1. Sửa đổi mã kiểm tra</h3>
             <ol class="ordered-list">
                 <li class="list-item">Modify the BaseMirageCharacter class code.
                     <ul class="unordered-list">
@@ -2312,7 +2312,7 @@ private:
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.2. Project Build</h3>
+            <h3 class="heading-3">6.2. Build dự án</h3>
             <ol class="ordered-list">
                 <li class="list-item">Server Executable Build
                     <ol class="ordered-list">
@@ -2341,7 +2341,7 @@ private:
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.3. Testing</h3>
+            <h3 class="heading-3">6.3. Kiểm tra</h3>
             <ol class="ordered-list">
                 <li class="list-item">Run the built chat_server.exe and game_server.exe from the server project.</li>
                 <li class="list-item">Run PdnUE5ExampleClient.exe from the Windows folder built in the Unreal project.
