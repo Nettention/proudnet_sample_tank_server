@@ -1220,7 +1220,7 @@ int main()
                 <li class="list-item">สร้างคลาส C++ BaseChatWidget ที่สืบทอดจาก UserWidget ใน Unreal Engine editor</li>
                 <li class="list-item">แก้ไขซอร์สโค้ดของคลาส BaseChatWidget ที่สร้างขึ้น
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">การแก้ไข
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1248,7 +1248,7 @@ class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">โค้ดสมบูรณ์
                             <ul class="unordered-list">
                                 <li class="list-item">BaseChatWidget.h
                                     <div class="code-block">
@@ -1278,9 +1278,9 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the source code of the GissChatNet class.
+                <li class="list-item">แก้ไขซอร์สโค้ดของคลาส GissChatNet
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications (showing main parts only)
+                        <li class="list-item">การแก้ไข (แสดงส่วนหลักเท่านั้น)
                             <ul class="unordered-list">
                                 <li class="list-item">GissChatNet.h
                                     <div class="code-block">
@@ -1338,26 +1338,26 @@ private:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the Blueprint graph of BP_ChatWidget.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ของ BP_ChatWidget
                     <ol class="ordered-list">
-                        <li class="list-item">Convert the PrintChat function to an event.
+                        <li class="list-item">แปลงฟังก์ชัน PrintChat เป็นเหตุการณ์
                             <img src="img/image_052.png" alt="PrintChat Event Conversion" class="image">
                             <p class="image-caption">PrintChat Event Conversion</p>
                         </li>
-                        <li class="list-item">Change the parent class of BP_ChatWidget to BaseChatWidget.
+                        <li class="list-item">เปลี่ยนคลาสแม่ของ BP_ChatWidget เป็น BaseChatWidget
                             <img src="img/image_053.png" alt="Parent Class Change" class="image">
                             <p class="image-caption">Parent Class Change</p>
                         </li>
-                        <li class="list-item">Modify the event graph when SendButton is clicked.
+                        <li class="list-item">แก้ไขกราฟเหตุการณ์เมื่อคลิก SendButton
                             <ol class="ordered-list">
-                                <li class="list-item">Add Get GissChatNet node and Send Chat node
+                                <li class="list-item">เพิ่มโหนด Get GissChatNet และโหนด Send Chat
                                     <img src="img/image_054.png" alt="Adding GissChatNet Node" class="image">
                                     <p class="image-caption">Adding GissChatNet Node</p>
                                 </li>
-                                <li class="list-item">Replace the existing Print Chat node with Send Chat node.</li>
+                                <li class="list-item">แทนที่โหนด Print Chat ที่มีอยู่ด้วยโหนด Send Chat</li>
                             </ol>
                         </li>
-                        <li class="list-item">The final appearance of the BP_ChatWidget Blueprint graph is as follows.
+                        <li class="list-item">ลักษณะสุดท้ายของกราฟบลูปรินท์ BP_ChatWidget เป็นดังนี้
                             <img src="img/image_055.png" alt="BP_ChatWidget Final Appearance" class="image">
                             <p class="image-caption">BP_ChatWidget Final Appearance</p>
                         </li>
@@ -1391,7 +1391,7 @@ private:
                         <li class="list-item">เปลี่ยนชื่อเป็น BP_MirageCharacter และ ABP_MirageCharacter ตามลำดับ</li>
                     </ol>
                 </li>
-                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and proceed with the following steps.
+                <li class="list-item">เปิด BP_MirageCharacter Blueprint editor และดำเนินการตามขั้นตอนต่อไปนี้
                     <ol class="ordered-list">
                         <li class="list-item">เลือก CharacterArms ในหน้าต่าง Components</li>
                         <li class="list-item">เปลี่ยน Anim Class ของ Animation เป็น ABP_MirageCharacter</li>
@@ -1401,8 +1401,8 @@ private:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Place BP_MirageCharacter in the level and run to verify.
-                    <p class="paragraph">If placed as shown below, it is normal based on the current point in time.</p>
+                <li class="list-item">วาง BP_MirageCharacter ในเลเวลและเรียกใช้เพื่อตรวจสอบ
+                    <p class="paragraph">หากวางตามที่แสดงด้านล่างแล้ว ถือว่าปกติตามจุดเวลาปัจจุบัน</p>
                     <img src="img/image_059.png" alt="Mirage Character Placement Verification" class="image">
                     <p class="image-caption">Mirage Character Placement Verification</p>
                 </li>
@@ -1410,14 +1410,14 @@ private:
 
             <h3 class="heading-3">4.2. การสะท้อนอนิเมชันการเคลื่อนไหว</h3>
 
-            <h4 class="heading-4">4.2.1. Animation Variable Duplication</h4>
+            <h4 class="heading-4">4.2.1. การทำซ้ำตัวแปรอนิเมชัน</h4>
             <ol class="ordered-list">
-                <li class="list-item">Implement the C++ class BaseMirageCharacter.
+                <li class="list-item">ใช้งานคลาส C++ BaseMirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Create a BaseMirageCharacter class that inherits from Character</li>
-                        <li class="list-item">Modify the source code of the created class.
+                        <li class="list-item">สร้างคลาส BaseMirageCharacter ที่สืบทอดจาก Character</li>
+                        <li class="list-item">แก้ไขซอร์สโค้ดของคลาสที่สร้างขึ้น
                             <ul class="unordered-list">
-                                <li class="list-item">Modifications
+                                <li class="list-item">การแก้ไข
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1457,7 +1457,7 @@ public:
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">โค้ดสมบูรณ์
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1501,18 +1501,18 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Set BaseMirageCharacter as the parent class of BP_MirageCharacter</li>
-                <li class="list-item">Implement animation variable duplication using event functions.
+                <li class="list-item">ตั้งค่า BaseMirageCharacter เป็นคลาสแม่ของ BP_MirageCharacter</li>
+                <li class="list-item">ใช้งานการทำซ้ำตัวแปรอนิเมชันโดยใช้ฟังก์ชันเหตุการณ์
                     <ol class="ordered-list">
-                        <li class="list-item">Modify the ABP_Character Blueprint.
+                        <li class="list-item">แก้ไขบลูปรินท์ ABP_Character
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_Character Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Navigate to the end of the BlueprintUpdateAnimation event execution flow.
+                                <li class="list-item">เปิด ABP_Character Blueprint editor และไปที่แท็บ Event Graph</li>
+                                <li class="list-item">ไปยังจุดสิ้นสุดของขั้นตอนการทำงานเหตุการณ์ BlueprintUpdateAnimation
                                     <img src="img/image_060.png" alt="BlueprintUpdateAnimation Event" class="image">
                                     <p class="image-caption">BlueprintUpdateAnimation Event</p>
                                 </li>
-                                <li class="list-item">Create and connect a Get Actor Of Class node and specify BP_MirageCharacter for the Class.</li>
-                                <li class="list-item">Create and connect an Update Animation Parameter node and connect all variables. All variables can be obtained from the Blueprint's variable list.
+                                <li class="list-item">สร้างและเชื่อมต่อโหนด Get Actor Of Class และระบุ BP_MirageCharacter สำหรับ Class</li>
+                                <li class="list-item">สร้างและเชื่อมต่อโหนด Update Animation Parameter และเชื่อมต่อตัวแปรทั้งหมด ตัวแปรทั้งหมดสามารถหาได้จากรายการตัวแปรของบลูปรินท์
                                     <img src="img/image_061.png" alt="Update Animation Parameter Node" class="image">
                                     <p class="image-caption">Update Animation Parameter Node</p>
                                     
@@ -1521,30 +1521,30 @@ public:
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the BP_MirageCharacter Blueprint.
+                        <li class="list-item">แก้ไขบลูปรินท์ BP_MirageCharacter
                             <ol class="ordered-list">
-                                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Add 4 variables.
+                                <li class="list-item">เปิด BP_MirageCharacter Blueprint editor และไปที่แท็บ Event Graph</li>
+                                <li class="list-item">เพิ่มตัวแปร 4 ตัว
                                     <img src="img/image_063.png" alt="Add Variables" class="image">
                                     <p class="image-caption">Add Variables</p>
                                 </li>
-                                <li class="list-item">Add an Event UpdateAnimationParameter node.</li>
-                                <li class="list-item">Store the event parameters in Blueprint variables.
+                                <li class="list-item">เพิ่มโหนด Event UpdateAnimationParameter</li>
+                                <li class="list-item">เก็บพารามิเตอร์เหตุการณ์ในตัวแปรบลูปรินท์
                                     <img src="img/image_064.png" alt="Parameter Storage" class="image">
                                     <p class="image-caption">Parameter Storage</p>
                                 </li>
-                                <li class="list-item">Disconnect the Event Tick node connection.
+                                <li class="list-item">ตัดการเชื่อมต่อโหนด Event Tick
                                     <img src="img/image_065.png" alt="Event Tick Disconnection" class="image">
                                     <p class="image-caption">Event Tick Disconnection</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the ABP_MirageCharacter Blueprint.
+                        <li class="list-item">แก้ไขบลูปรินท์ ABP_MirageCharacter
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
-                                <li class="list-item">Add a Try Get Pawn Owner node.</li>
-                                <li class="list-item">Add a Cast To BP_MirageCharacter node and connect it.</li>
-                                <li class="list-item">Get variables from the cast character and store them in the animation Blueprint variables.
+                                <li class="list-item">เปิด ABP_MirageCharacter Blueprint editor และไปที่แท็บ Event Graph</li>
+                                <li class="list-item">เพิ่มโหนด Try Get Pawn Owner</li>
+                                <li class="list-item">เพิ่มโหนด Cast To BP_MirageCharacter และเชื่อมต่อ</li>
+                                <li class="list-item">ดึงตัวแปรจากตัวละครที่แคสต์แล้วและเก็บไว้ในตัวแปรบลูปรินท์อนิเมชัน
                                     <img src="img/image_066.png" alt="Animation Variable Connection" class="image">
                                     <p class="image-caption">Animation Variable Connection</p>
                                 </li>
@@ -1552,40 +1552,40 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run level and verify animation duplication functionality
-                    <p class="paragraph">You can observe the mirage character mimicking motions during actions like running, jumping, and aiming.</p>
+                <li class="list-item">เรียกใช้เลเวลและยืนยันฟังก์ชันการทำซ้ำอนิเมชัน
+                    <p class="paragraph">คุณสามารถสังเกตเห็นตัวละครมิราจเลียนแบบการเคลื่อนไหวระหว่างการกระทำต่างๆ เช่น การวิ่ง การกระโดด และการเล็ง</p>
                     <img src="img/image_067.png" alt="Animation Duplication Verification" class="image">
                     <p class="image-caption">Animation Duplication Verification</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.2. Corrective Animation Application</h4>
+            <h4 class="heading-4">4.2.2. การใช้งานอนิเมชันแก้ไข</h4>
             <ol class="ordered-list">
-                <li class="list-item">Prepare corrective animation
+                <li class="list-item">เตรียมอนิเมชันแก้ไข
                     <ol class="ordered-list">
-                        <li class="list-item">Download the animation file.
-                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (File download required)</p>
+                        <li class="list-item">ดาวน์โหลดไฟล์อนิเมชัน
+                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (ต้องดาวน์โหลดไฟล์)</p>
                         </li>
-                        <li class="list-item">Drag the downloaded file into the Content Browser of the Unreal Editor.</li>
-                        <li class="list-item">Specify SKEL_UE5_Mannequin in the Skeleton field of the Animations tab.
+                        <li class="list-item">ลากไฟล์ที่ดาวน์โหลดไปยัง Content Browser ของ Unreal Editor</li>
+                        <li class="list-item">ระบุ SKEL_UE5_Mannequin ในฟิลด์ Skeleton ของแท็บ Animations
                             <img src="img/image_068.png" alt="Skeleton Assignment" class="image">
                             <p class="image-caption">Skeleton Assignment</p>
                         </li>
-                        <li class="list-item">Click the Import button.</li>
-                        <li class="list-item">Delete one of the two generated animations. (Optional)
+                        <li class="list-item">คลิกปุ่ม Import</li>
+                        <li class="list-item">ลบอนิเมชันหนึ่งในสองตัวที่สร้างขึ้น (ไม่บังคับ)
                             <img src="img/image_069.png" alt="Animation Deletion" class="image">
                             <p class="image-caption">Animation Deletion</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the corrective animation.
+                <li class="list-item">แก้ไขอนิเมชันแก้ไข
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Blueprint editor for the Inver_Anim_Scene animation sequence.</li>
-                        <li class="list-item">Modify the Additive Settings in the Asset Details window.
+                        <li class="list-item">เปิด Blueprint editor สำหรับลำดับอนิเมชัน Inver_Anim_Scene</li>
+                        <li class="list-item">แก้ไข Additive Settings ในหน้าต่าง Asset Details
                             <ol class="ordered-list">
-                                <li class="list-item">Additive Anim Type - Select Mesh Space</li>
-                                <li class="list-item">Base Pose Type - Select Selected animation frame</li>
-                                <li class="list-item">Base Pose Animation - Select A_FP_AssaultRifle_Idle_Loop
+                                <li class="list-item">Additive Anim Type - เลือก Mesh Space</li>
+                                <li class="list-item">Base Pose Type - เลือก Selected animation frame</li>
+                                <li class="list-item">Base Pose Animation - เลือก A_FP_AssaultRifle_Idle_Loop
                                     <img src="img/image_070.png" alt="Additive Settings" class="image">
                                     <p class="image-caption">Additive Settings</p>
                                 </li>
@@ -1593,57 +1593,57 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the ABP_MirageCharacter Blueprint graph.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ ABP_MirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Add Apply Additive node and Invert_Anim_Scene animation node.</li>
-                        <li class="list-item">Connect with the A_FP_AssaultRifle_Idle_Loop animation node.
+                        <li class="list-item">เพิ่มโหนด Apply Additive และโหนดอนิเมชัน Invert_Anim_Scene</li>
+                        <li class="list-item">เชื่อมต่อกับโหนดอนิเมชัน A_FP_AssaultRifle_Idle_Loop
                             <img src="img/image_071.png" alt="Apply Additive Node Connection" class="image">
                             <p class="image-caption">Apply Additive Node Connection</p>
                         </li>
-                        <li class="list-item">Perform the same operation for the remaining 4 animation nodes. Use Inver_Anim_Scene and Apply Additive identically for all.
+                        <li class="list-item">ทำการดำเนินการเดียวกันสำหรับโหนดอนิเมชันที่เหลือ 4 โหนด ใช้ Inver_Anim_Scene และ Apply Additive เหมือนกันสำหรับทั้งหมด
                             <img src="img/image_072.png" alt="All Animation Node Modifications" class="image">
                             <p class="image-caption">All Animation Node Modifications</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run level and verify animation correction results
-                    <p class="paragraph">You can confirm that the arm skeleton positions have been corrected to normal ranges.</p>
+                <li class="list-item">เรียกใช้เลเวลและตรวจสอบผลลัพธ์การแก้ไขอนิเมชัน
+                    <p class="paragraph">คุณสามารถยืนยันได้ว่าตำแหน่งโครงกระดูกแขนได้รับการแก้ไขให้อยู่ในช่วงปกติแล้ว</p>
                     <img src="img/image_073.png" alt="Animation Correction Results" class="image">
                     <p class="image-caption">Animation Correction Results</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.3. Applying Leg Animation During Movement</h4>
+            <h4 class="heading-4">4.2.3. การใช้อนิเมชันขาระหว่างการเคลื่อนไหว</h4>
             <ol class="ordered-list">
-                <li class="list-item">Modify the part connected to A_FP_AssaultRifle_Run_Loop in the ABP_MirageCharacter - AnimGraph Blueprint graph following the procedure below.
+                <li class="list-item">แก้ไขส่วนที่เชื่อมต่อกับ A_FP_AssaultRifle_Run_Loop ในกราฟบลูปรินท์ ABP_MirageCharacter - AnimGraph ตามขั้นตอนด้านล่าง
                     <ol class="ordered-list">
-                        <li class="list-item">Add a Layered blend per bone node.</li>
-                        <li class="list-item">Modify the details of the added node.
+                        <li class="list-item">เพิ่มโหนด Layered blend per bone</li>
+                        <li class="list-item">แก้ไขรายละเอียดของโหนดที่เพิ่มเข้ามา
                             <ol class="ordered-list">
-                                <li class="list-item">Settings - Layer Setup - Add two branch filters to Index[0].</li>
-                                <li class="list-item">Specify the bone names as thigh_l and thigh_r respectively.
+                                <li class="list-item">Settings - Layer Setup - เพิ่มตัวกรอง branch สองตัวไปยัง Index[0]</li>
+                                <li class="list-item">ระบุชื่อกระดูกเป็น thigh_l และ thigh_r ตามลำดับ
                                     <img src="img/image_074.png" alt="Layered Blend Per Bone Settings" class="image">
                                     <p class="image-caption">Layered Blend Per Bone Settings</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Connect the existing Apply Additive node to the Base Pose of the above node.</li>
-                        <li class="list-item">Add an MM_Run_Fwd animation node and connect it to Blend Poses 0 of the above node.</li>
-                        <li class="list-item">Enable animation loop in the details window of the MM_Run_Fwd node.
+                        <li class="list-item">เชื่อมต่อโหนด Apply Additive ที่มีอยู่กับ Base Pose ของโหนดข้างต้น</li>
+                        <li class="list-item">เพิ่มโหนดอนิเมชัน MM_Run_Fwd และเชื่อมต่อกับ Blend Poses 0 ของโหนดข้างต้น</li>
+                        <li class="list-item">เปิดใช้งาน animation loop ในหน้าต่างรายละเอียดของโหนด MM_Run_Fwd
                             <img src="img/image_075.png" alt="Animation Loop Activation" class="image">
                             <p class="image-caption">Animation Loop Activation</p>
                         </li>
-                        <li class="list-item">The final appearance is as follows. Adjusting the size of comment nodes is optional.
+                        <li class="list-item">ลักษณะสุดท้ายเป็นดังนี้ การปรับขนาดของโหนดความคิดเห็นเป็นตัวเลือก
                             <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop Final Appearance" class="image">
                             <p class="image-caption">A_FP_AssaultRifle_Run_Loop Final Appearance</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Apply the above process similarly to the remaining 4 animation nodes.
+                <li class="list-item">ใช้กระบวนการข้างต้นในลักษณะเดียวกันกับโหนดอนิเมชันที่เหลือ 4 โหนด
                     <ol class="ordered-list">
-                        <li class="list-item">The Layered blend per bone node settings are identical, so you can copy and use them.</li>
-                        <li class="list-item">Instead of the MM_Run_Fwd node, you should use MM_Walk_Fwd or MM_Idle as appropriate.</li>
-                        <li class="list-item">After completing all processes, the graph appears as follows.
+                        <li class="list-item">การตั้งค่าโหนด Layered blend per bone เหมือนกัน คุณสามารถคัดลอกและใช้ได้</li>
+                        <li class="list-item">แทนที่จะใช้โหนด MM_Run_Fwd คุณควรใช้ MM_Walk_Fwd หรือ MM_Idle ตามความเหมาะสม</li>
+                        <li class="list-item">หลังจากทำกระบวนการทั้งหมดเสร็จสิ้น กราฟจะปรากฏดังนี้
                             <img src="img/image_077.png" alt="Complete Graph 1" class="image">
                             <p class="image-caption">Complete Graph 1</p>
                             
@@ -1652,8 +1652,8 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run level and verify leg animation application
-                    <p class="paragraph">You can confirm that walking and running animations are being played.</p>
+                <li class="list-item">เรียกใช้เลเวลและตรวจสอบการใช้งานอนิเมชันขา
+                    <p class="paragraph">คุณสามารถยืนยันได้ว่าอนิเมชันการเดินและการวิ่งกำลังเล่นอยู่</p>
                     <img src="img/image_079.png" alt="Leg Animation Verification" class="image">
                     <p class="image-caption">Leg Animation Verification</p>
                 </li>
@@ -1661,9 +1661,9 @@ public:
 
             <h3 class="heading-3">4.3. การทำซ้ำอนิเมชันการกระทำและการเคลื่อนไหว</h3>
             <ol class="ordered-list">
-                <li class="list-item">Modify the source code of the BaseMirageCharacter class.
+                <li class="list-item">แก้ไขซอร์สโค้ดของคลาส BaseMirageCharacter
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">การแก้ไข
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1711,34 +1711,34 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the BP_Character Blueprint graph.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ BP_Character
                     <ol class="ordered-list">
-                        <li class="list-item">Create a graph that calls the mirage character's reload event when reloading.
+                        <li class="list-item">สร้างกราฟที่เรียกเหตุการณ์รีโหลดของตัวละครมิราจเมื่อรีโหลด
                             <ol class="ordered-list">
-                                <li class="list-item">Navigate to the Reload-related area at the top of the graph.
+                                <li class="list-item">ไปยังพื้นที่ที่เกี่ยวข้องกับ Reload ที่ด้านบนของกราฟ
                                     <img src="img/image_080.png" alt="Reload Related Area" class="image">
                                     <p class="image-caption">Reload Related Area</p>
                                 </li>
-                                <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
-                                <li class="list-item">Connect to the On Reloaded function node.
+                                <li class="list-item">สร้างโหนด Get Actor Of Class และระบุ BP_MirageCharacter สำหรับคลาส</li>
+                                <li class="list-item">เชื่อมต่อกับโหนดฟังก์ชัน On Reloaded
                                     <img src="img/image_081.png" alt="On Reloaded Node Addition" class="image">
                                     <p class="image-caption">On Reloaded Node Addition</p>
                                 </li>
-                                <li class="list-item">Connect between the Reload and Delay functions.
+                                <li class="list-item">เชื่อมต่อระหว่างฟังก์ชัน Reload และ Delay
                                     <img src="img/image_082.png" alt="Reload Event Connection" class="image">
                                     <p class="image-caption">Reload Event Connection</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Create a graph that calls the mirage character's fire event when shooting.
+                        <li class="list-item">สร้างกราฟที่เรียกเหตุการณ์ยิงของตัวละครมิราจเมื่อยิง
                             <ol class="ordered-list">
-                                <li class="list-item">Navigate to the end of the Shoot-related area on the right side of the graph.
+                                <li class="list-item">ไปยังจุดสิ้นสุดของพื้นที่ที่เกี่ยวข้องกับ Shoot ที่ด้านขวาของกราฟ
                                     <img src="img/image_083.png" alt="Shoot Related Area" class="image">
                                     <p class="image-caption">Shoot Related Area</p>
                                 </li>
-                                <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
-                                <li class="list-item">Connect to the On Fired function node.</li>
-                                <li class="list-item">Connect between the (Current Ammunition) Set and Delay functions.
+                                <li class="list-item">สร้างโหนด Get Actor Of Class และระบุ BP_MirageCharacter สำหรับคลาส</li>
+                                <li class="list-item">เชื่อมต่อกับโหนดฟังก์ชัน On Fired</li>
+                                <li class="list-item">เชื่อมต่อระหว่างฟังก์ชัน (Current Ammunition) Set และ Delay
                                     <img src="img/image_084.png" alt="Shoot Event Connection" class="image">
                                     <p class="image-caption">Shoot Event Connection</p>
                                 </li>
@@ -1746,21 +1746,21 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the BP_MirageCharacter Blueprint graph.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ BP_MirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Navigate to the Reload-related area at the top of the graph.</li>
-                        <li class="list-item">Connect the On Reloaded event node in front of the Play Montage node
+                        <li class="list-item">ไปยังพื้นที่ที่เกี่ยวข้องกับ Reload ที่ด้านบนของกราฟ</li>
+                        <li class="list-item">เชื่อมต่อโหนดเหตุการณ์ On Reloaded ไว้หน้าโหนด Play Montage
                             <img src="img/image_085.png" alt="On Reloaded Event Connection" class="image">
                             <p class="image-caption">On Reloaded Event Connection</p>
                         </li>
-                        <li class="list-item">Navigate to the Shoot-related area on the right side of the graph.</li>
-                        <li class="list-item">Connect the On Fired event node in front of the Shoot node
+                        <li class="list-item">ไปยังพื้นที่ที่เกี่ยวข้องกับ Shoot ที่ด้านขวาของกราฟ</li>
+                        <li class="list-item">เชื่อมต่อโหนดเหตุการณ์ On Fired ไว้หน้าโหนด Shoot
                             <img src="img/image_086.png" alt="On Fired Event Connection" class="image">
                             <p class="image-caption">On Fired Event Connection</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and you can see the mirage character mimicking reload and fire actions.
+                <li class="list-item">เรียกใช้เลเวลและคุณจะเห็นตัวละครมิราจเลียนแบบการกระทำรีโหลดและยิง
                     <img src="img/image_087.png" alt="Action Animation Test" class="image">
                     <p class="image-caption">Action Animation Test</p>
                 </li>
@@ -1768,9 +1768,9 @@ public:
 
             <h3 class="heading-3">4.4. การทำซ้ำตำแหน่ง การหมุน และอื่น ๆ</h3>
             <ol class="ordered-list">
-                <li class="list-item">Modify the source code of the BaseMirageCharacter class.
+                <li class="list-item">แก้ไขซอร์สโค้ดของคลาส BaseMirageCharacter
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">การแก้ไข
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1819,7 +1819,7 @@ public:
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">โค้ดสมบูรณ์
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1870,115 +1870,115 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Modify the BP_Character Blueprint graph.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ BP_Character
                     <ol class="ordered-list">
-                        <li class="list-item">Add a float type AimPitch variable.
+                        <li class="list-item">เพิ่มตัวแปร AimPitch ประเภท float
                             <img src="img/image_088.png" alt="AimPitch Variable Addition" class="image">
                             <p class="image-caption">AimPitch Variable Addition</p>
                         </li>
-                        <li class="list-item">Navigate to the end of the Tick event code.</li>
-                        <li class="list-item">Create two route nodes and connect the Branch node's False and Stop Running nodes.
+                        <li class="list-item">ไปยังจุดสิ้นสุดของโค้ดเหตุการณ์ Tick</li>
+                        <li class="list-item">สร้างโหนด route สองตัวและเชื่อมต่อโหนด False ของ Branch และโหนด Stop Running
                             <img src="img/image_089.png" alt="Route Node 1" class="image">
                             <p class="image-caption">Route Node 1</p>
                             
                             <img src="img/image_090.png" alt="Route Node 2" class="image">
                             <p class="image-caption">Route Node 2</p>
                         </li>
-                        <li class="list-item">Move the route nodes.
+                        <li class="list-item">ย้ายโหนด route
                             <img src="img/image_091.png" alt="Route Node Movement" class="image">
                             <p class="image-caption">Route Node Movement</p>
                         </li>
-                        <li class="list-item">Create a graph that calls BP_MirageCharacter's Update Transform
+                        <li class="list-item">สร้างกราฟที่เรียก Update Transform ของ BP_MirageCharacter
                             
-                            The completed graph appearance is as follows, and you can check the process below.
+                            ลักษณะกราฟที่เสร็จสมบูรณ์เป็นดังนี้ และคุณสามารถตรวจสอบกระบวนการด้านล่างได้
                             
                             <img src="img/image_092.png" alt="Update Transform Graph Complete" class="image">
                             <p class="image-caption">Update Transform Graph Complete</p>
                             
                             <details class="expandable-section">
-                                <summary>View Process</summary>
+                                <summary>ดูกระบวนการ</summary>
                                 <ol class="ordered-list">
-                                    <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
-                                    <li class="list-item">Connect to the Update Transform function node.
+                                    <li class="list-item">สร้างโหนด Get Actor Of Class และระบุ BP_MirageCharacter สำหรับคลาส</li>
+                                    <li class="list-item">เชื่อมต่อกับโหนดฟังก์ชัน Update Transform
                                         <img src="img/image_093.png" alt="Update Transform Node Addition" class="image">
                                         <p class="image-caption">Update Transform Node Addition</p>
                                     </li>
-                                    <li class="list-item">Create nodes that get position/rotation values using Get Actor Location and Get Actor Rotation.
+                                    <li class="list-item">สร้างโหนดที่ได้ค่าตำแหน่ง/การหมุนโดยใช้ Get Actor Location และ Get Actor Rotation
                                         <img src="img/image_094.png" alt="Position/Rotation Node Addition" class="image">
                                         <p class="image-caption">Position/Rotation Node Addition</p>
                                     </li>
-                                    <li class="list-item">Connect Get Actor Rotation to the To Quaternion node.
+                                    <li class="list-item">เชื่อมต่อ Get Actor Rotation กับโหนด To Quaternion
                                         <img src="img/image_095.png" alt="To Quaternion Connection" class="image">
                                         <p class="image-caption">To Quaternion Connection</p>
                                     </li>
-                                    <li class="list-item">Create a Get Character Arms node and connect to nodes that get velocity and angular velocity.
+                                    <li class="list-item">สร้างโหนด Get Character Arms และเชื่อมต่อกับโหนดที่ได้ความเร็วและความเร็วเชิงมุม
                                         <img src="img/image_096.png" alt="Character Arms Node" class="image">
                                         <p class="image-caption">Character Arms Node</p>
                                         
                                         <img src="img/image_097.png" alt="Velocity/Angular Velocity Nodes" class="image">
                                         <p class="image-caption">Velocity/Angular Velocity Nodes</p>
                                     </li>
-                                    <li class="list-item">Create a Get Control Rotation node and calculate the Pitch rotation value from the return value.
-                                        All nodes can be connected through node names.
-                                        The multiplication node in the middle can be created with Multiply.
+                                    <li class="list-item">สร้างโหนด Get Control Rotation และคำนวณค่าการหมุน Pitch จากค่าที่ส่งกลับ
+                                        โหนดทั้งหมดสามารถเชื่อมต่อผ่านชื่อโหนดได้
+                                        โหนดการคูณในตรงกลางสามารถสร้างด้วย Multiply ได้
                                         
                                         <img src="img/image_098.png" alt="Control Rotation and Pitch Calculation" class="image">
                                         <p class="image-caption">Control Rotation and Pitch Calculation</p>
                                     </li>
-                                    <li class="list-item">Connect all added nodes to the appropriate parameters of Update Transform.
-                                        The Get Physics Linear Velocity node must have its execution pin connected.</li>
+                                    <li class="list-item">เชื่อมต่อโหนดที่เพิ่มทั้งหมดกับพารามิเตอร์ที่เหมาะสมของ Update Transform
+                                        โหนด Get Physics Linear Velocity ต้องเชื่อมต่อ execution pin</li>
                                 </ol>
                             </details>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the BP_MirageCharacter Blueprint graph.
+                <li class="list-item">แก้ไขกราฟบลูปรินท์ BP_MirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Add a float type AimPitch variable.</li>
-                        <li class="list-item">Add an UpdateTransform event node.</li>
-                        <li class="list-item">Add and connect each node appropriate for the event node.
+                        <li class="list-item">เพิ่มตัวแปร AimPitch ประเภท float</li>
+                        <li class="list-item">เพิ่มโหนดเหตุการณ์ UpdateTransform</li>
+                        <li class="list-item">เพิ่มและเชื่อมต่อโหนดแต่ละตัวที่เหมาะสมสำหรับโหนดเหตุการณ์
                             <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform Implementation" class="image">
                             <p class="image-caption">BP_MirageCharacter UpdateTransform Implementation</p>
                         </li>
-                        <li class="list-item">Disconnect the Position node connection and add a Make Vector node to connect.
+                        <li class="list-item">ตัดการเชื่อมต่อโหนด Position และเพิ่มโหนด Make Vector เพื่อเชื่อมต่อ
                             
-                            This is a measure to prevent bug behavior in single test environments.
+                            นี่เป็นมาตรการป้องกันพฤติกรรมบั๊กในสภาพแวดล้อมการทดสอบเดี่ยว
                             
                             <img src="img/image_100.png" alt="Position Make Vector Connection" class="image">
                             <p class="image-caption">Position Make Vector Connection</p>
                         </li>
-                        <li class="list-item">Navigate to the Shoot-related section.</li>
-                        <li class="list-item">Configure and connect the graph as follows.
+                        <li class="list-item">ไปยังส่วนที่เกี่ยวข้องกับ Shoot</li>
+                        <li class="list-item">กำหนดค่าและเชื่อมต่อกราฟดังนี้
                             <img src="img/image_101.png" alt="Shoot Related Graph Configuration" class="image">
                             <p class="image-caption">Shoot Related Graph Configuration</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the event graph of the ABP_MirageCharacter Blueprint.
+                <li class="list-item">แก้ไขกราฟเหตุการณ์ของบลูปรินท์ ABP_MirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Add a float type AimPitch variable.</li>
-                        <li class="list-item">Retrieve and store values from the cast BP_MirageCharacter.
+                        <li class="list-item">เพิ่มตัวแปร AimPitch ประเภท float</li>
+                        <li class="list-item">ดึงและเก็บค่าจาก cast BP_MirageCharacter
                             <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch Variable" class="image">
                             <p class="image-caption">ABP_MirageCharacter AimPitch Variable</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the AnimGraph of the ABP_MirageCharacter Blueprint.
+                <li class="list-item">แก้ไข AnimGraph ของบลูปรินท์ ABP_MirageCharacter
                     <ol class="ordered-list">
-                        <li class="list-item">Navigate to the Mouse Sway related section.
+                        <li class="list-item">ไปยังส่วนที่เกี่ยวข้องกับ Mouse Sway
                             <img src="img/image_103.png" alt="Mouse Sway Related Section" class="image">
                             <p class="image-caption">Mouse Sway Related Section</p>
                         </li>
-                        <li class="list-item">Add a Transform (Modify) Bone node and connect it in front of the Mouse Sway comment node.</li>
-                        <li class="list-item">Create a Rotator with the AimPitch variable value and apply it to the node's Rotation.
+                        <li class="list-item">เพิ่มโหนด Transform (Modify) Bone และเชื่อมต่อไว้หน้าโหนดความคิดเห็น Mouse Sway</li>
+                        <li class="list-item">สร้าง Rotator ด้วยค่าตัวแปร AimPitch และนำไปใช้กับ Rotation ของโหนด
                             <img src="img/image_104.png" alt="Transform Bone Node Application" class="image">
                             <p class="image-caption">Transform Bone Node Application</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and test the functionality.
+                <li class="list-item">เรียกใช้เลเวลและทดสอบฟังก์ชัน
                     
-                    The mirage character now aims and fires in the same direction as the player character.
+                    ตัวละครมิราจตอนนี้เล็งและยิงในทิศทางเดียวกันกับตัวละครผู้เล่น
 
                     <img src="img/image_105.png" alt="Position Rotation Duplication Test" class="image">
                     <p class="image-caption">Position Rotation Duplication Test</p>
