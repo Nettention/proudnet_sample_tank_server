@@ -366,30 +366,30 @@ int main()
                     <img src="img/image_022.png" alt="Thay đổi dự án khởi động" class="image">
                     <p class="image-caption">Thay đổi dự án khởi động</p>
                 </li>
-                <li class="list-item">Apply the UE5 ProudNet plugin following the procedure below.
+                <li class="list-item">Áp dụng plugin UE5 ProudNet theo quy trình dưới đây.
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Unreal project folder.
-                            <p class="paragraph">Shortcut: Epic Games Launcher → My Projects → Right-click project → Show in Folder</p>
+                        <li class="list-item">Mở thư mục dự án Unreal.
+                            <p class="paragraph">Phím tắt: Epic Games Launcher → My Projects → Nhấp chuột phải vào dự án → Show in Folder</p>
                         </li>
-                        <li class="list-item">Extract the following file and place it in the Plugins folder.
-                            <p class="paragraph">Create a new Plugins folder if it doesn't exist.</p>
+                        <li class="list-item">Giải nén tệp sau và đặt vào thư mục Plugins.
+                            <p class="paragraph">Tạo thư mục Plugins mới nếu chưa tồn tại.</p>
                             <p class="paragraph"><strong class="text-strong"><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample/ProudNet.UE5.Linker.Plugin.zip">ProudNet UE5 Lib Linker Plugin.zip</a></strong></p>
-                            <img src="img/image_023.png" alt="Plugin Folder Structure" class="image">
-                            <p class="image-caption">Plugin Folder Structure</p>
+                            <img src="img/image_023.png" alt="Cấu trúc thư mục Plugin" class="image">
+                            <p class="image-caption">Cấu trúc thư mục Plugin</p>
                         </li>
-                        <li class="list-item">Regenerate the Visual Studio project solution.
+                        <li class="list-item">Tạo lại giải pháp dự án Visual Studio.
                             <ol class="ordered-list">
-                                <li class="list-item">Close the Visual Studio IDE.</li>
-                                <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                                <li class="list-item">Đóng Visual Studio IDE.</li>
+                                <li class="list-item">Nhấp chuột phải vào PdnUE5ExampleClient.uproject và chọn Generate Visual Studio project files</li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the PdnUE5ExampleClient.Build.cs code.
+                        <li class="list-item">Sửa đổi mã PdnUE5ExampleClient.Build.cs.
                             <ul class="unordered-list">
-                                <li class="list-item">Guide image
-                                    <img src="img/image_023-0.png" alt="Build.cs File Location" class="image">
-                                    <p class="image-caption">Build.cs File Location</p>
+                                <li class="list-item">Hình ảnh hướng dẫn
+                                    <img src="img/image_023-0.png" alt="Vị trí tệp Build.cs" class="image">
+                                    <p class="image-caption">Vị trí tệp Build.cs</p>
                                 </li>
-                                <li class="list-item">Modifications
+                                <li class="list-item">Sửa đổi
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -448,11 +448,11 @@ public class PdnUE5ExampleClient : ModuleRules
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the GissChatNet.h and .cpp code.
+                <li class="list-item">Sửa đổi mã GissChatNet.h và .cpp.
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image
-                            <img src="img/image_023-1.png" alt="GissChatNet Files" class="image">
-                            <p class="image-caption">GissChatNet Files</p>
+                        <li class="list-item">Hình ảnh hướng dẫn
+                            <img src="img/image_023-1.png" alt="Tệp GissChatNet" class="image">
+                            <p class="image-caption">Tệp GissChatNet</p>
                         </li>
                         <li class="list-item">GissChatNet.h (diff)
                             <div class="code-block">
@@ -682,11 +682,11 @@ void UGissChatNet::Deinitialize()
                             <img src="img/image_024.png" alt="chat_server Execution" class="image">
                             <p class="image-caption">chat_server Execution</p>
                         </li>
-                        <li class="list-item">Build PdnUE5ExampleClient and run the level in the Unreal Engine editor.
-                            <img src="img/image_025.png" alt="Unreal Editor Execution" class="image">
-                            <p class="image-caption">Unreal Editor Execution</p>
+                        <li class="list-item">Build PdnUE5ExampleClient và chạy level trong trình chỉnh sửa Unreal Engine.
+                            <img src="img/image_025.png" alt="Thực thi Unreal Editor" class="image">
+                            <p class="image-caption">Thực thi Unreal Editor</p>
                         </li>
-                        <li class="list-item">Success if client and server connect as shown below.
+                        <li class="list-item">Thành công nếu client và server kết nối như hiển thị bên dưới.
                             <img src="img/image_026.png" alt="Kết nối Server thành công" class="image">
                             <p class="image-caption">Kết nối Server thành công</p>
                             
@@ -704,24 +704,24 @@ void UGissChatNet::Deinitialize()
 
             <h3 class="heading-3">2.1. Tạo Widget Chat</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a BP_ChatWidget widget blueprint following the procedure below
+                <li class="list-item">Tạo blueprint widget BP_ChatWidget theo quy trình dưới đây
                     <ol class="ordered-list">
-                        <li class="list-item">Right-click on an empty area in the Content Browser to open the context menu.</li>
-                        <li class="list-item">Select "Create Advanced Asset - User Interface - Widget Blueprint".
-                            <img src="img/image_028.png" alt="Widget Blueprint Creation" class="image">
-                            <p class="image-caption">Widget Blueprint Creation</p>
+                        <li class="list-item">Nhấp chuột phải vào vùng trống trong Content Browser để mở menu ngữ cảnh.</li>
+                        <li class="list-item">Chọn "Create Advanced Asset - User Interface - Widget Blueprint".
+                            <img src="img/image_028.png" alt="Tạo Widget Blueprint" class="image">
+                            <p class="image-caption">Tạo Widget Blueprint</p>
                         </li>
-                        <li class="list-item">Select "User Widget"</li>
-                        <li class="list-item">Change the name to BP_ChatWidget
-                            <img src="img/image_029.png" alt="Widget Name Change" class="image">
-                            <p class="image-caption">Widget Name Change</p>
+                        <li class="list-item">Chọn "User Widget"</li>
+                        <li class="list-item">Thay đổi tên thành BP_ChatWidget
+                            <img src="img/image_029.png" alt="Thay đổi tên Widget" class="image">
+                            <p class="image-caption">Thay đổi tên Widget</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the appearance of the BP_ChatWidget widget following the procedure below.
+                <li class="list-item">Cấu hình giao diện của widget BP_ChatWidget theo quy trình dưới đây.
                     <ol class="ordered-list">
-                        <li class="list-item">Double-click BP_ChatWidget to open the Blueprint editor.</li>
-                        <li class="list-item">Configure the widget according to the structure below.
+                        <li class="list-item">Nhấp đúp vào BP_ChatWidget để mở trình chỉnh sửa Blueprint.</li>
+                        <li class="list-item">Cấu hình widget theo cấu trúc dưới đây.
                             <ul class="unordered-list">
                                 <li class="list-item">Widget Element Structure
                                     <div class="directory-tree">
@@ -2314,28 +2314,28 @@ private:
 
             <h3 class="heading-3">6.2. Project Build</h3>
             <ol class="ordered-list">
-                <li class="list-item">Server Executable Build
+                <li class="list-item">Build tệp thực thi Server
                     <ol class="ordered-list">
-                        <li class="list-item">Change the build configuration through the dropdown at the top of Visual Studio.
-                            <img src="img/image_112.png" alt="Build Configuration Change" class="image">
-                            <p class="image-caption">Build Configuration Change</p>
+                        <li class="list-item">Thay đổi cấu hình build thông qua dropdown ở đầu Visual Studio.
+                            <img src="img/image_112.png" alt="Thay đổi cấu hình Build" class="image">
+                            <p class="image-caption">Thay đổi cấu hình Build</p>
                         </li>
-                        <li class="list-item">Build the chat_server and game_server projects respectively.</li>
-                        <li class="list-item">You can check the built executable files in the solution's subfolders.
-                            <img src="img/image_113.png" alt="Built Executable Files" class="image">
-                            <p class="image-caption">Built Executable Files</p>
+                        <li class="list-item">Build các dự án chat_server và game_server tương ứng.</li>
+                        <li class="list-item">Bạn có thể kiểm tra các tệp thực thi đã build trong thư mục con của solution.
+                            <img src="img/image_113.png" alt="Tệp thực thi đã Build" class="image">
+                            <p class="image-caption">Tệp thực thi đã Build</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Client Executable Build
+                <li class="list-item">Build tệp thực thi Client
                     <ol class="ordered-list">
-                        <li class="list-item">You can build the Unreal project through the button next to level execution in the Unreal Editor.
-                            <img src="img/image_114.png" alt="Unreal Project Build" class="image">
-                            <p class="image-caption">Unreal Project Build</p>
+                        <li class="list-item">Bạn có thể build dự án Unreal thông qua nút bên cạnh thực thi level trong Unreal Editor.
+                            <img src="img/image_114.png" alt="Build dự án Unreal" class="image">
+                            <p class="image-caption">Build dự án Unreal</p>
                         </li>
-                        <li class="list-item">You can check the built files through the specified path.
-                            <img src="img/image_115.png" alt="Built Client Files" class="image">
-                            <p class="image-caption">Built Client Files</p>
+                        <li class="list-item">Bạn có thể kiểm tra các tệp đã build thông qua đường dẫn được chỉ định.
+                            <img src="img/image_115.png" alt="Tệp Client đã Build" class="image">
+                            <p class="image-caption">Tệp Client đã Build</p>
                         </li>
                     </ol>
                 </li>
@@ -2343,14 +2343,14 @@ private:
 
             <h3 class="heading-3">6.3. Kiểm tra</h3>
             <ol class="ordered-list">
-                <li class="list-item">Run the built chat_server.exe and game_server.exe from the server project.</li>
-                <li class="list-item">Run PdnUE5ExampleClient.exe from the Windows folder built in the Unreal project.
+                <li class="list-item">Chạy chat_server.exe và game_server.exe đã build từ dự án server.</li>
+                <li class="list-item">Chạy PdnUE5ExampleClient.exe từ thư mục Windows đã build trong dự án Unreal.
                     
-                    Be careful as this may put a heavy load on the computer depending on your PC specifications.
+                    Hãy cẩn thận vì điều này có thể gây tải nặng cho máy tính tùy thuộc vào thông số kỹ thuật PC của bạn.
                 </li>
-                <li class="list-item">You can see two clients using the chat server and game server.
-                    <img src="img/image_116.png" alt="Final Test Results" class="image">
-                    <p class="image-caption">Final Test Results</p>
+                <li class="list-item">Bạn có thể thấy hai client sử dụng chat server và game server.
+                    <img src="img/image_116.png" alt="Kết quả kiểm tra cuối cùng" class="image">
+                    <p class="image-caption">Kết quả kiểm tra cuối cùng</p>
                 </li>
             </ol>
         </section>
