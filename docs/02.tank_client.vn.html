@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Liệu Dự Án Unity Client Game Tank</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/webgl-embed.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/webgl-embed.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>Dự Án Unity Client Game Tank</h1>
+            <p class="paragraph">Triển khai Unity client cho game tank nhiều người chơi sử dụng thư viện mạng ProudNet, được xây dựng dựa trên template hướng dẫn tank chính thức của Unity với chức năng nhiều người chơi và chat được cải tiến.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 Mục Lục</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">Điều Kiện Tiên Quyết</a></li>
+                <li class="list-item"><a href="#webgl-demo" class="link">Demo Game WebGL Build</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">Cấu Trúc Dự Án</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">Ghi Chú Phát Triển</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">Bắt Đầu</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Tạo và Thiết Lập Dự Án Unity</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. Tích Hợp ProudNet Unity</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. Quy Trình Tích Hợp PIDL</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. Tích Hợp Tank Multiplayer</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. Kiểm Tra Chức Năng Multiplayer</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. Kiểm Tra Tính Năng Multiplayer</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. Triển Khai WebGL (Tùy Chọn)</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">Khắc Phục Sự Cố</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">Điều Kiện Tiên Quyết</h2>
+            <p class="paragraph">Trước khi xây dựng dự án Unity client này, bạn phải hoàn thành <strong class="text-strong">Thiết Lập Tank Server</strong> từ tài liệu trước đó và cài đặt các thành phần sau.</p>
+
+            <h3 class="heading-3">Cấu Trúc Thư Mục Yêu Cầu</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # Dự án server (từ thiết lập trước đó)
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # Yêu cầu: Các file từ cài đặt ProudNet
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # Dự án Unity này (sẽ được tạo)
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Cài Đặt Phần Mềm Yêu Cầu</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong> và <strong class="text-strong">Unity Editor</strong> (khuyến nghị 2021.3 LTS hoặc mới hơn)</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity Tank Client Sample Package</strong> - Có sẵn từ GitHub tại https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99</li>
+                <li class="list-item"><strong class="text-strong">Tank Server Hoàn Chỉnh</strong> - Từ tài liệu thiết lập server trước đó</li>
+            </ol>
+
+            <h3 class="heading-3">Vị Trí ProudNet Unity Tank Client Sample Package</h3>
+            <p class="paragraph">ProudNet Unity Tank Client Sample Package có thể được tải xuống từ:</p>
+            <div class="code-block">
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+File: tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <h3 class="heading-3">Repository Mẫu Unity 6 Hoàn Chỉnh</h3>
+            <p class="paragraph">Đối với những người muốn bỏ qua quá trình thiết lập thủ công, một dự án mẫu Unity 6 hoàn chỉnh với tất cả các bước tích hợp đã hoàn thành có sẵn tại:</p>
+
+            <p class="paragraph"><strong class="text-strong">GitHub Repository:</strong> <a href="https://github.com/Nettention/proudnet_sample_tank_unity_client" class="link">https://github.com/Nettention/proudnet_sample_tank_unity_client</a></p>
+
+            <p class="paragraph">Repository mẫu hoàn chỉnh này bao gồm:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Dự án Unity 6 với tất cả các thành phần ProudNet đã được tích hợp sẵn</li>
+                <li class="list-item">Các scene và script mạng đã được cấu hình sẵn</li>
+                <li class="list-item">Game tank nhiều người chơi sẵn sàng chạy</li>
+                <li class="list-item">Tất cả các DLL cần thiết và cài đặt nền tảng đã được cấu hình</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Khởi Động Nhanh với Mẫu Hoàn Chỉnh:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Clone repository: <code class="inline-code">git clone https://github.com/Nettention/proudnet_sample_tank_unity_client.git</code></li>
+                <li class="list-item">Mở dự án trong Unity 6 (hoặc Unity 2021.3 LTS+)</li>
+                <li class="list-item">Mở scene: <code class="inline-code">Assets/Proundnet_Demo/DemoScene/Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">Đảm bảo tank server đang chạy</li>
+                <li class="list-item">Nhấp Play để kiểm tra ngay lập tức</li>
+            </ol>
+
+            <p class="paragraph">Tùy chọn này được khuyến nghị cho các nhà phát triển muốn nhanh chóng kiểm tra chức năng nhiều người chơi mà không cần trải qua quá trình tích hợp hoàn chỉnh được mô tả trong tài liệu này.</p>
+        </section>
+
+        <section id="webgl-demo" class="md-section">
+            <h2 class="heading-2">Demo Game WebGL Build</h2>
+            <p class="paragraph">Trải nghiệm ProudNet Tank Game trực tiếp trong trình duyệt của bạn! Đây là bản build WebGL trực tiếp của Unity client kết nối với server nhiều người chơi thực được host trên AWS.</p>
+            
+            <div id="webgl-game-demo" class="webgl-game-container">
+                <!-- Game will be loaded here by JavaScript -->
+            </div>
+            
+            <p class="paragraph"><strong class="text-strong">Tính Năng Game Được Trình Diễn:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Multiplayer Thời Gian Thực</strong>: Kết nối và chơi với những người dùng khác đang truy cập trang này</li>
+                <li class="list-item"><strong class="text-strong">Mạng ProudNet</strong>: Trải nghiệm mạng dựa trên WebSocket hoạt động</li>
+                <li class="list-item"><strong class="text-strong">Chiến Đấu Tank</strong>: Di chuyển với WASD, nhắm bằng chuột, bắn bằng click/space</li>
+                <li class="list-item"><strong class="text-strong">Chat P2P</strong>: Nhấn Enter để chat với người chơi khác</li>
+                <li class="list-item"><strong class="text-strong">Chơi Đa Nền Tảng</strong>: Người chơi từ các bản build standalone có thể tham gia cùng game</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">Chi Tiết Kỹ Thuật:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Được xây dựng với Unity 6 và biên dịch thành WebGL</li>
+                <li class="list-item">Sử dụng ProudNet WebSocket transport để tương thích trình duyệt</li>
+                <li class="list-item">Host trên AWS S3 với CloudFront CDN</li>
+                <li class="list-item">Server backend chạy trên AWS EC2 với Docker</li>
+                <li class="list-item">Cùng codebase với dự án Unity có thể tải xuống</li>
+            </ul>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">Cấu Trúc Dự Án</h2>
+
+            <h3 class="heading-3">🎮 Unity Project Assets</h3>
+            <p class="paragraph">Chứa các tài sản game đặc trưng của Unity và các thành phần tích hợp ProudNet.</p>
+
+            <p class="paragraph"><strong class="text-strong">Nội Dung:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank Template</strong> - Dự án hướng dẫn tank chính thức của Unity (cơ sở đơn người chơi)</li>
+                <li class="list-item"><strong class="text-strong">Tích Hợp ProudNet</strong> - Script mạng và plugin DLL</li>
+                <li class="list-item"><strong class="text-strong">Script Multiplayer</strong> - Logic game tank được cải tiến với đồng bộ hóa mạng</li>
+                <li class="list-item"><strong class="text-strong">Hệ Thống Chat</strong> - Chức năng nhắn tin P2P</li>
+                <li class="list-item"><strong class="text-strong">Network Manager</strong> - Kết nối server và quản lý nhóm P2P</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Thành Phần Chính:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - Các file DLL ProudNet cho Unity</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - Script tích hợp ProudNet</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - Các scene game mẫu với hỗ trợ multiplayer</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 Tính Năng Mạng</h3>
+            <p class="paragraph">Triển khai Unity client với mạng ProudNet.</p>
+
+            <p class="paragraph"><strong class="text-strong">Tính Năng:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Client game tank multiplayer thời gian thực</li>
+                <li class="list-item">Đồng bộ hóa di chuyển, bắn và sức khỏe tank</li>
+                <li class="list-item">Tham gia nhóm P2P để mạng hiệu quả</li>
+                <li class="list-item">Hệ thống chat trong game với nhắn tin P2P</li>
+                <li class="list-item">Quản lý kết nối server</li>
+                <li class="list-item">Tương thích đa nền tảng (Windows, Mac, Linux builds)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Nền Tảng Được Hỗ Trợ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows Standalone</strong> - Ứng dụng desktop</li>
+                <li class="list-item"><strong class="text-strong">Mac Standalone</strong> - Ứng dụng macOS</li>
+                <li class="list-item"><strong class="text-strong">Linux Standalone</strong> - Ứng dụng Linux</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - Triển khai trình duyệt web (qua WebSocket)</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 Tương Thích Giao Thức</h3>
+            <p class="paragraph">Sử dụng định nghĩa giao thức giống hệt từ dự án tank server.</p>
+
+            <p class="paragraph"><strong class="text-strong">Thành Phần Chia Sẻ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Cùng Tank.PIDL</strong> - Định nghĩa hàm RMI giống hệt</li>
+                <li class="list-item"><strong class="text-strong">Định Dạng Tin Nhắn Tương Thích</strong> - Cùng giao thức mạng với server C# và C++</li>
+                <li class="list-item"><strong class="text-strong">Logic Game Đồng Bộ</strong> - Hệ thống di chuyển, bắn và sức khỏe khớp với triển khai server</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">Ghi Chú Phát Triển</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Phiên bản Unity: khuyến nghị 2021.3 LTS hoặc mới hơn</li>
+                <li class="list-item">Gói ProudNet Unity cung cấp tích hợp DLL native</li>
+                <li class="list-item">Tương thích với tất cả triển khai tank server (C# và C++)</li>
+                <li class="list-item">Build WebGL sử dụng WebSocket transport để tương thích trình duyệt web</li>
+                <li class="list-item">Build desktop sử dụng TCP transport để hiệu suất tối ưu</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">Bắt Đầu</h2>
+
+            <h3 class="heading-3">Xác Minh Điều Kiện Tiên Quyết</h3>
+            <p class="paragraph">Trước khi bắt đầu, đảm bảo bạn có:</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Hoàn Thành Thiết Lập Tank Server</strong> - Theo tài liệu server để thiết lập server C# hoặc C++</li>
+                <li class="list-item"><strong class="text-strong">Tank Server Đang Chạy</strong> - Có một tank server đang chạy và có thể truy cập</li>
+                <li class="list-item"><strong class="text-strong">Cài Đặt ProudNet</strong> - Thư mục ProudNet với gói Unity có sẵn</li>
+                <li class="list-item"><strong class="text-strong">Unity Hub và Editor</strong> - Unity 2021.3 LTS hoặc mới hơn đã cài đặt</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Tạo và Thiết Lập Dự Án Unity</h2>
+
+            <h3 class="heading-3">Bước 1: Tạo Dự Án Unity Mới</h3>
+            <p class="paragraph">Tạo một dự án Unity mới cho tank client:</p>
+
+            <p class="paragraph"><strong class="text-strong">Sử Dụng Unity Hub:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Mở <strong class="text-strong">Unity Hub</strong></li>
+                <li class="list-item">Nhấp <strong class="text-strong">"New Project"</strong></li>
+                <li class="list-item">Chọn template <strong class="text-strong">"3D"</strong></li>
+                <li class="list-item">Đặt <strong class="text-strong">Project Name</strong>: <code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item">Đặt <strong class="text-strong">Location</strong>: <code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Create project"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Cấu Trúc Dự Án Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Bước 2: Import Unity Tank Template</h3>
+            <p class="paragraph">Import dự án hướng dẫn tank chính thức của Unity làm template cơ sở:</p>
+
+            <p class="paragraph"><strong class="text-strong">Qua Unity Asset Store:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Mở <strong class="text-strong">Window > Asset Store</strong> trong Unity Editor</li>
+                <li class="list-item">Tìm kiếm <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Điều hướng đến: https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Add to My Assets"</strong> (nếu chưa sở hữu)</li>
+                <li class="list-item">Trong Unity Editor, mở <strong class="text-strong">Window > Package Manager</strong></li>
+                <li class="list-item">Chọn <strong class="text-strong">"My Assets"</strong> từ dropdown</li>
+                <li class="list-item">Tìm <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Download"</strong> rồi <strong class="text-strong">"Import"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Tùy Chọn Import:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Chọn <strong class="text-strong">"All"</strong> để import dự án hoàn chỉnh</li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Import"</strong> để thêm tất cả tài sản tank game</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">Bước 3: Kiểm Tra Template Đơn Người Chơi</h3>
+            <p class="paragraph">Xác minh template tank đã import hoạt động chính xác:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Mở Scene Chính</strong>: Điều hướng đến <code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code></li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Unity Tank Demo Scene</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">Vào Play Mode</strong>: Nhấp nút <strong class="text-strong">Play</strong> trong Unity Editor</li>
+                <li class="list-item"><strong class="text-strong">Kiểm Tra Điều Khiển</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>: Di chuyển tank</li>
+                        <li class="list-item"><strong class="text-strong">Space</strong>: Giữ để tích năng lượng bắn, thả để bắn đạn</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Hành Vi Đơn Người Chơi Mong Đợi:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Tank di chuyển mượt mà với điều khiển WASD</li>
+                <li class="list-item">Pháo hướng về vị trí chuột</li>
+                <li class="list-item">Đạn bắn và tạo vụ nổ khi va chạm</li>
+                <li class="list-item">Sức khỏe tank giảm khi bị đạn trúng</li>
+                <li class="list-item">Game kết thúc khi sức khỏe tank về 0</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. Tích Hợp ProudNet Unity</h2>
+
+            <h3 class="heading-3">Bước 1: Import ProudNet Unity Tank Client Sample Package</h3>
+            <p class="paragraph">Import ProudNet Unity Tank Client Sample Package để thêm khả năng mạng:</p>
+
+            <p class="paragraph"><strong class="text-strong">File Package Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Import Package trong Unity:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Tải xuống <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> từ GitHub release</li>
+                <li class="list-item">Trong Unity Editor, đi đến <strong class="text-strong">Assets > Import Package > Custom Package...</strong></li>
+                <li class="list-item">Điều hướng đến <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> đã tải xuống</li>
+                <li class="list-item">Chọn file package và nhấp <strong class="text-strong">"Open"</strong></li>
+                <li class="list-item">Trong hộp thoại import, chọn <strong class="text-strong">"All"</strong> để import tất cả thành phần</li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Import"</strong> để thêm ProudNet vào dự án</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">ProudNet Unity Tank Client Sample Package Import</p>
+
+            <h3 class="heading-3">Bước 2: Xác Minh Cài Đặt ProudNet</h3>
+            <p class="paragraph">Kiểm tra các thành phần ProudNet được tích hợp đúng cách:</p>
+
+            <p class="paragraph"><strong class="text-strong">Xác Minh Cài Đặt Sample Assets:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Xác minh cấu trúc thư mục sau tồn tại:
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # Chứa các DLL ProudNet
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # Demo scene và script
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # Script liên quan đến mạng</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Xác Minh Cài Đặt Nền Tảng:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Chọn từng DLL trong <code class="inline-code">Assets/Plugins/</code></li>
+                <li class="list-item">Trong Inspector, xác minh <strong class="text-strong">Platform settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>: Enabled cho x86_64 (Standalone Windows)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">Bước 3: Cấu Hình Cài Đặt Mạng</h3>
+            <p class="paragraph">Thiết lập cấu hình mạng cơ bản cho tank game:</p>
+
+            <p class="paragraph"><strong class="text-strong">Tạo Cấu Hình Mạng:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Nhấp chuột phải trong cửa sổ Project</li>
+                <li class="list-item">Chọn <strong class="text-strong">Create > ProudNet > Network Config</strong></li>
+                <li class="list-item">Đặt tên <code class="inline-code">TankNetworkConfig</code></li>
+                <li class="list-item">Cấu hình các cài đặt sau:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost để kiểm tra)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (khớp với port tank server)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Chi Tiết Cấu Hình Mạng:</strong></p>
+            <p class="paragraph">Cài Đặt Kết Nối TankNetworkConfig:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Server IP: 127.0.0.1</li>
+                <li class="list-item">TCP Port: 33334 (cho standalone builds)</li>
+                <li class="list-item">WebSocket Port: 33335 (cho WebGL builds, chỉ được hỗ trợ bởi C++ server)</li>
+            </ul>
+
+            <p class="paragraph">Lưu ý: Chúng ta sẽ sử dụng port 33334 cho standalone builds ban đầu. Sau này cho WebGL builds, chúng ta sẽ sử dụng WebSocket port 33335 chỉ có sẵn trong triển khai C++ server (C# server không hỗ trợ kết nối WebSocket).</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. Quy Trình Tích Hợp PIDL (Tùy Chọn nhưng Được Khuyến Nghị)</h2>
+
+            <p class="paragraph">Nếu bạn đã hoàn thành thiết lập server từ tài liệu trước đó, bạn có thể tái sử dụng các file PIDL đã tạo:</p>
+
+            <p class="paragraph"><strong class="text-strong">Tùy Chọn A: Sao Chép từ Dự Án Server (Được Khuyến Nghị)</strong></p>
+            <p class="paragraph">Nếu bạn có dự án tank server sẵn có, sử dụng script batch tiện lợi:</p>
+
+            <div class="code-block">
+                <pre># Điều hướng đến thư mục tank_server
+cd tank_server
+
+# Chạy script sao chép
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Script thực hiện gì:</strong></p>
+            <div class="code-block">
+                <pre>Sao chép từ tank_server/:
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Kết Quả Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+Copy completed! The following files have been copied to Unity project:
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+Press any key to continue...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Tùy Chọn B: Tạo PIDL Thủ Công (Nếu không có dự án server)</strong></p>
+            <p class="paragraph">Nếu bạn không có dự án server, bạn sẽ cần:</p>
+            <ol class="ordered-list">
+                <li class="list-item">Có quyền truy cập file <code class="inline-code">Tank.PIDL</code> từ thư mục Common</li>
+                <li class="list-item">Chạy <code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code></li>
+                <li class="list-item">Sao chép thủ công các file đã tạo vào thư mục Unity</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Lợi Ích Tương Thích Giao Thức:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ID Tin Nhắn Giống Hệt</strong>: Unity client sử dụng cùng RMI ID với server</li>
+                <li class="list-item"><strong class="text-strong">An Toàn Kiểu</strong>: Kiểm tra tham số tin nhắn mạng tại thời điểm biên dịch</li>
+                <li class="list-item"><strong class="text-strong">Đồng Bộ Phiên Bản</strong>: Phiên bản giao thức tự động khớp với server</li>
+                <li class="list-item"><strong class="text-strong">Không Cấu Hình</strong>: Không cần thiết lập mạng bổ sung</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. Tích Hợp Tank Multiplayer</h2>
+
+            <h3 class="heading-3">Bước 1: Tổng Quan Script Mạng</h3>
+            <p class="paragraph">Unity client tank sử dụng hệ thống mạng toàn diện được xây dựng trên ProudNet RMI (Remote Method Invocation). Đây là cấu trúc script thực tế:</p>
+
+            <p class="paragraph"><strong class="text-strong">Script Mạng Cốt Lõi:</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # Quản lý mạng chính (Singleton)
+│   └── NetworkTank.cs           # Đồng bộ mạng tank cá nhân
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # Phiên bản giao thức và cấu hình server
+│   └── Generated/               # Tự động tạo từ Tank.PIDL
+│       ├── Tank_common.cs       # ID tin nhắn RMI và hằng số
+│       ├── Tank_proxy.cs        # Lời gọi RMI client-to-server
+│       └── Tank_stub.cs         # Trình xử lý RMI server-to-client</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - Tính Năng Chính:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Quản Lý Kết Nối Server</strong>: Xử lý kết nối đến tank server (TCP/WebSocket)</li>
+                <li class="list-item"><strong class="text-strong">Quản Lý Nhóm P2P</strong>: Quản lý các nhóm giao tiếp peer-to-peer</li>
+                <li class="list-item"><strong class="text-strong">Vòng Đời Tank</strong>: Spawn/destroy tank local và remote</li>
+                <li class="list-item"><strong class="text-strong">Giao Tiếp RMI</strong>: Gửi/nhận cập nhật di chuyển, bắn, sức khỏe tank</li>
+                <li class="list-item"><strong class="text-strong">Hệ Thống Chat</strong>: Nhắn tin P2P với người chơi khác</li>
+                <li class="list-item"><strong class="text-strong">Hỗ Trợ Đa Nền Tảng</strong>: Tự động chọn TCP (standalone) vs WebSocket (WebGL)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - Tính Năng Tank Cá Nhân:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Nội Suy Vị Trí</strong>: Đồng bộ di chuyển mượt mà cho tank remote</li>
+                <li class="list-item"><strong class="text-strong">Điều Khiển Người Chơi Local</strong>: Di chuyển WASD và bắn cho tank của bạn</li>
+                <li class="list-item"><strong class="text-strong">Hiển Thị Người Chơi Remote</strong>: Hiển thị tank của người chơi khác với dữ liệu mạng</li>
+                <li class="list-item"><strong class="text-strong">Đồng Bộ Sức Khỏe</strong>: Cập nhật sức khỏe thời gian thực trên tất cả client</li>
+                <li class="list-item"><strong class="text-strong">Đồng Bộ Đạn</strong>: Xử lý bắn đạn và hiệu ứng va chạm</li>
+                <li class="list-item"><strong class="text-strong">Phát Hiện Va Chạm</strong>: Theo dõi sát thương từ vụ nổ đạn</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Các Lớp RMI Được Tạo (từ Tank.PIDL):</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>: Phương thức gửi dữ liệu đến server (<code class="inline-code">SendMove</code>, <code class="inline-code">SendFire</code>, <code class="inline-code">SendTankHealthUpdated</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>: Trình xử lý nhận dữ liệu từ server (<code class="inline-code">OnTankPositionUpdated</code>, <code class="inline-code">OnSpawnBullet</code>, <code class="inline-code">OnPlayerJoined</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>: ID tin nhắn và hằng số RMI được chia sẻ giữa client và server</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Lưu Ý Quan Trọng:</strong> Các file trong thư mục <code class="inline-code">Generated/</code> là <strong class="text-strong">chính xác các file giống hệt</strong> được tạo trong quá trình triển khai C# server trong tài liệu trước đó. Điều này đảm bảo tương thích giao thức 100% giữa server và Unity client. Unity client tái sử dụng mã mạng được tạo PIDL giống hệt.</p>
+
+            <p class="paragraph"><strong class="text-strong">Tính Năng Mạng Chính Được Triển Khai:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Đồng Bộ Di Chuyển Thời Gian Thực</strong>: Cập nhật vị trí 20Hz với nội suy</li>
+                <li class="list-item"><strong class="text-strong">Đồng Bộ Đạn</strong>: Đạn bắn bởi người chơi khác xuất hiện ngay lập tức</li>
+                <li class="list-item"><strong class="text-strong">Quản Lý Sức Khỏe</strong>: Sát thương và hồi máu được đồng bộ trên tất cả client</li>
+                <li class="list-item"><strong class="text-strong">Hệ Thống Chat P2P</strong>: Nhắn tin trực tiếp giữa người chơi trong cùng nhóm</li>
+                <li class="list-item"><strong class="text-strong">Lựa Chọn Loại Tank</strong>: Các mô hình tank khác nhau được đồng bộ trên các client</li>
+                <li class="list-item"><strong class="text-strong">Kết Nối Lại Tự Động</strong>: Xử lý ngắt kết nối mạng một cách nhẹ nhàng</li>
+            </ul>
+
+            <h3 class="heading-3">Bước 2: Mở Scene Multiplayer Được Cấu Hình Sẵn</h3>
+            <p class="paragraph">Unity tank client bao gồm một scene multiplayer được cấu hình sẵn với tích hợp ProudNet:</p>
+
+            <p class="paragraph"><strong class="text-strong">Mở Scene Sẵn Sàng Mạng:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Điều hướng đến <code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code></li>
+                <li class="list-item">Mở scene <code class="inline-code">Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">Scene này <strong class="text-strong">đã được cấu hình</strong> với tất cả các thành phần mạng cần thiết</li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">ProudNet Network Demo Scene</p>
+
+            <h3 class="heading-3">Step 3: Verify Network Configuration (Optional)</h3>
+            <p class="paragraph">The scene is pre-configured, but you can verify or modify the network settings if needed:</p>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager Settings (Already Configured):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Select <strong class="text-strong">GameNetworkManager</strong> GameObject in hierarchy</li>
+                <li class="list-item">In Inspector, view <strong class="text-strong">GameNetworkManager</strong> component settings:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost for testing)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (TCP for standalone builds)</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Port</strong>: <code class="inline-code">33335</code> (for WebGL builds only) [Note: This setting is hidden in the inspector for standalone builds but will be used later when building for WebGL]</li>
+                        <li class="list-item"><strong class="text-strong">Auto Connect On Start</strong>: Enabled for automatic connection</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">GameNetworkManager Inspector</p>
+
+            <p class="paragraph"><strong class="text-strong">Customization Options:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server IP</strong>: Change if your server runs on a different machine</li>
+                <li class="list-item"><strong class="text-strong">Ports</strong>: Modify if your server uses different ports</li>
+                <li class="list-item"><strong class="text-strong">Auto Connect</strong>: Disable if you want manual connection control</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. Kiểm Tra Chức Năng Multiplayer</h2>
+
+            <h3 class="heading-3">Bước 1: Khởi Động Tank Server</h3>
+            <p class="paragraph">Before testing the Unity client, ensure your tank server is running:</p>
+
+            <p class="paragraph"><strong class="text-strong">C++ Server</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Server Output:</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">Bước 2: Kiểm Tra Kết Nối Unity Client</h3>
+            <p class="paragraph">Kiểm tra kết nối Unity client đến tank server:</p>
+
+            <p class="paragraph"><strong class="text-strong">Kiểm Tra Unity Editor:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Nhấp nút <strong class="text-strong">Play</strong> trong Unity Editor</li>
+                <li class="list-item">Quan sát trạng thái kết nối trong Unity Console và Game view</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Expected Server Response:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Giao Diện Game Unity:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Trạng Thái Kết Nối</strong>: Chỉ báo "Connected to Server"</li>
+                <li class="list-item"><strong class="text-strong">Lựa Chọn Tank</strong>: Chọn từ 4 loại tank có sẵn để spawn</li>
+                <li class="list-item"><strong class="text-strong">Tank Người Chơi</strong>: Tank đã chọn của bạn spawn trong thế giới game</li>
+                <li class="list-item"><strong class="text-strong">Giao Diện Chat</strong>: Nhấn Enter để mở cửa sổ chat cho tin nhắn P2P</li>
+                <li class="list-item"><strong class="text-strong">Điều Khiển Tank</strong>: Di chuyển WASD, nhắm bằng chuột, bắn bằng click/space</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Unity Game Initial Screen</p>
+
+            <h3 class="heading-3">Bước 3: Kiểm Tra Đa Client</h3>
+            <p class="paragraph">Test multiplayer functionality with multiple Unity clients:</p>
+
+            <p class="paragraph"><strong class="text-strong">Second Unity Instance:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Build Unity Project</strong>: Go to <strong class="text-strong">File > Build and Run</strong></li>
+                <li class="list-item"><strong class="text-strong">Configure Build Settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Target Platform</strong>: PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">Architecture</strong>: x86_64</li>
+                        <li class="list-item"><strong class="text-strong">Scenes</strong>: Add <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> scene</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Build</strong>: Nhấp "Build and Run" để tạo executable độc lập</li>
+                <li class="list-item"><strong class="text-strong">Chạy Standalone</strong>: Điều này tạo ra instance client thứ hai. Sau khi build thành công, bạn có thể chạy game trực tiếp từ vị trí build (ví dụ: <code class="inline-code">Build/unity_tank_client.exe</code>)</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows Standalone Build Settings</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">Build Completed</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">Multi-Client Gameplay</p>
+
+            <p class="paragraph"><strong class="text-strong">Phương Pháp Kiểm Tra Thay Thế:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong> (Unity Asset): Cho phép nhiều instance Unity Editor</li>
+                <li class="list-item"><strong class="text-strong">Clone Project</strong>: Tạo bản sao dự án để kiểm tra đồng thời</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Hành Vi Đa Client Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Log Server với Nhiều Client:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. Kiểm Tra Tính Năng Multiplayer</h2>
+
+            <h3 class="heading-3">Kiểm Tra Đồng Bộ Di Chuyển</h3>
+            <p class="paragraph">Kiểm tra di chuyển tank thời gian thực trên nhiều client:</p>
+
+            <p class="paragraph"><strong class="text-strong">Hành Động Client 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Sử dụng <strong class="text-strong">WASD</strong> để di chuyển tank quanh bản đồ</li>
+                <li class="list-item">Quan sát di chuyển mượt mà trong client local</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Quan Sát Client 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Thấy tank của Client 1 di chuyển theo thời gian thực</li>
+                <li class="list-item">Di chuyển mượt mà và được đồng bộ</li>
+                <li class="list-item">Cập nhật vị trí xảy ra ở 20Hz (có thể cấu hình)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Tin Nhắn Mạng Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Client 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">Kiểm Tra Bắn và Đạn</h3>
+            <p class="paragraph">Kiểm tra đồng bộ bắn đạn:</p>
+
+            <p class="paragraph"><strong class="text-strong">Hành Động Client 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Nhắm bằng <strong class="text-strong">chuột</strong> về phía mục tiêu</li>
+                <li class="list-item">Nhấp <strong class="text-strong">chuột trái</strong> hoặc nhấn <strong class="text-strong">space</strong> để bắn</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Quan Sát Client 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Thấy đạn xuất hiện từ tank của Client 1</li>
+                <li class="list-item">Quỹ đạo đạn tuân theo vật lý chính xác</li>
+                <li class="list-item">Hiệu ứng nổ xảy ra tại vị trí va chạm</li>
+                <li class="list-item">Sức khỏe giảm nếu đạn trúng tank của Client 2</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Tin Nhắn Mạng Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Client 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → All: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">Kiểm Tra Hệ Thống Chat P2P</h3>
+            <p class="paragraph">Kiểm tra nhắn tin thời gian thực giữa các người chơi:</p>
+
+            <p class="paragraph"><strong class="text-strong">Hành Động Client 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Nhấp vào <strong class="text-strong">ô nhập chat</strong> ở cuối màn hình</li>
+                <li class="list-item">Gõ tin nhắn: <code class="inline-code">"Hello from Client 1!"</code></li>
+                <li class="list-item">Nhấn <strong class="text-strong">Enter</strong> để gửi</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Quan Sát Client 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Tin nhắn xuất hiện trong log chat: <code class="inline-code">"Player: Hello from Client 1!"</code></li>
+                <li class="list-item">Log chat tự động cuộn</li>
+                <li class="list-item">Thời gian tin nhắn được hiển thị</li>
+            </ul>
+
+            <h3 class="heading-3">Kiểm Tra Sức Khỏe và Sát Thương</h3>
+            <p class="paragraph">Kiểm tra đồng bộ sức khỏe và hiệu ứng sát thương:</p>
+
+            <p class="paragraph"><strong class="text-strong">Tình Huống Sát Thương:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Client 1 bắn đạn vào tank của Client 2</li>
+                <li class="list-item">Đạn trúng và gây sát thương</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Kết Quả Mong Đợi:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Client 2</strong>: Sức khỏe giảm (ví dụ: 100 → 75)</li>
+                <li class="list-item"><strong class="text-strong">Client 1</strong>: Thấy cập nhật sức khỏe của Client 2</li>
+                <li class="list-item"><strong class="text-strong">UI Sức Khỏe</strong>: Cả hai client hiển thị giá trị sức khỏe đã cập nhật</li>
+                <li class="list-item"><strong class="text-strong">Hiệu Ứng Hình Ảnh</strong>: Hiệu ứng sát thương và hạt được hiển thị</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. Triển Khai WebGL (Tùy Chọn)</h2>
+
+            <h3 class="heading-3">Cấu Hình Build WebGL</h3>
+            <p class="paragraph">Triển khai Unity tank client như một ứng dụng web:</p>
+
+            <p class="paragraph"><strong class="text-strong">Cài Đặt Build:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Đi tới <strong class="text-strong">File > Build Settings</strong></li>
+                <li class="list-item">Chọn nền tảng <strong class="text-strong">WebGL</strong></li>
+                <li class="list-item">Nhấp <strong class="text-strong">"Switch Platform"</strong></li>
+                <li class="list-item"><strong class="text-strong">Thêm Scenes</strong>: Đảm bảo <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> được bao gồm</li>
+                <li class="list-item"><strong class="text-strong">Cấu hình ProudNet Plugin Settings</strong> (Quan trọng!)</li>
+                <li class="list-item"><strong class="text-strong">Cấu hình WebGL Player Settings</strong> (Quan trọng!)</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">WebGL Build Settings</p>
+
+            <h3 class="heading-3">Cấu Hình ProudNet Plugin cho WebGL</h3>
+            <p class="paragraph">Sau khi chuyển sang nền tảng WebGL, bạn phải cấu hình cài đặt ProudNet plugin:</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Hạn Chế WebGL Quan Trọng</strong>: ProudNet không hỗ trợ chế độ play trong editor khi nền tảng WebGL được chọn. Bạn phải build và deploy phiên bản WebGL để kiểm tra chức năng mạng. Chế độ play editor sẽ không hoạt động cho kiểm tra mạng trên nền tảng WebGL.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Bước 1: Tắt Editor cho .NET DLL</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Điều hướng đến <code class="inline-code">Assets/Plugins/ProudNet/</code></li>
+                <li class="list-item">Chọn <code class="inline-code">ProudDotNetClientUnity.dll</code></li>
+                <li class="list-item">Trong Inspector → <strong class="text-strong">Platform settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (bỏ chọn)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet .NET DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Bước 2: Tắt Editor cho x86_64 DLLs</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Điều hướng đến <code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code></li>
+                <li class="list-item">Chọn <code class="inline-code">ProudNetClient.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (bỏ chọn)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Chọn <code class="inline-code">ProudNetClientPlugin.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (bỏ chọn)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet x86_64 DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Bước 3: Bật Editor cho WebGL Files</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Điều hướng đến <code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code></li>
+                <li class="list-item">Chọn <code class="inline-code">JSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (được chọn)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (được chọn)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Chọn <code class="inline-code">NewJSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (được chọn)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (được chọn)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Chọn <code class="inline-code">ProudNetClientPlugin-webgl.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (được chọn)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (được chọn)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">ProudNet WebGL Files Platform Settings</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Quan Trọng</strong>: Nếu các cài đặt này không được cấu hình đúng, bản build WebGL sẽ thất bại hoặc mạng sẽ không hoạt động đúng cách.</p>
+            </div>
+
+            <h3 class="heading-3">Cấu Hình WebGL Player Settings</h3>
+            <p class="paragraph">Cấu hình cài đặt WebGL cụ thể của Unity để kiểm tra local tối ưu:</p>
+
+            <p class="paragraph"><strong class="text-strong">Publishing Settings (Quan Trọng cho Kiểm Tra Local):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Đi tới <strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">Mở rộng phần <strong class="text-strong">Publishing Settings</strong></li>
+                <li class="list-item">Đặt <strong class="text-strong">Compression Format</strong>: <strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Điều này rất cần thiết cho kiểm tra web server local</li>
+                        <li class="list-item">Bản build đã nén có thể không hoạt động với HTTP server đơn giản</li>
+                        <li class="list-item">Có thể bật lại cho triển khai production</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">WebGL Publishing Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Cài Đặt WebGL Được Khuyến Nghị:</strong></p>
+            <div class="code-block">
+                <pre>Publishing Settings:
+├── Compression Format: Disabled (for local testing)
+├── Name Files As Hashes: ❌ (unchecked)
+├── Data Caching: ❌ (unchecked)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Memory Settings:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Mẹo</strong>: Cho triển khai production, bạn có thể bật định dạng nén <strong class="text-strong">Gzip</strong> để giảm kích thước tải xuống, nhưng hãy tắt nó cho kiểm tra local để tránh vấn đề tương thích server.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Cấu Hình Mạng cho WebGL:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Transport</strong>: WebSocket (tự động sử dụng cho WebGL)</li>
+                <li class="list-item"><strong class="text-strong">Server URL</strong>: <code class="inline-code">ws://localhost:33335/ws</code> (kiểm tra local)</li>
+                <li class="list-item"><strong class="text-strong">Production URL</strong>: <code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL Network Configuration" class="image">
+            <p class="image-caption">WebGL Network Configuration</p>
+
+            <h3 class="heading-3">Kiểm Tra WebGL</h3>
+            <p class="paragraph">Kiểm tra phiên bản web của tank client:</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Lưu ý</strong>: Nhớ rằng mạng ProudNet không hoạt động trong chế độ play Unity Editor khi nền tảng WebGL được chọn. Bạn phải hoàn thành quy trình build đầy đủ để kiểm tra các tính năng mạng.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Quy Trình Build:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Nhấp <strong class="text-strong">"Build"</strong> trong Build Settings</li>
+                <li class="list-item">Tạo hoặc chọn thư mục bất kỳ cho thư mục đầu ra: ví dụ- <code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">Chờ hoàn thành build (có thể mất vài phút)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Thiết Lập Web Server Local:</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Quan trọng</strong>: Các bản build WebGL phải được host trên web server và không thể chơi bằng cách mở trực tiếp file HTML locally.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Phương Pháp 1: Python HTTP Server</strong></p>
+            <div class="code-block">
+                <pre># Navigate to WebGL build folder
+cd WebGL_Build/
+
+# Python 3 (recommended)
+python -m http.server 8000
+
+# Python 2 (if Python 3 not available)
+python -m SimpleHTTPServer 8000
+
+# Custom port example
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Đầu Ra Python Mong Đợi:</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Phương Pháp 2: VS Code Live Server Extension</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Cài Đặt Extension</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">Mở VS Code</li>
+                        <li class="list-item">Đi tới Extensions (Ctrl+Shift+X)</li>
+                        <li class="list-item">Tìm kiếm "Live Server" của Ritwick Dey</li>
+                        <li class="list-item">Nhấp "Install"</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Host WebGL Build</strong>:
+                    <div class="code-block">
+                        <pre>1. Mở thư mục WebGL_Build/ trong VS Code
+2. Nhấp chuột phải vào index.html
+3. Chọn "Open with Live Server"
+4. Trình duyệt mở tự động tại http://127.0.0.1:5500</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Phương Pháp 3: Node.js http-server (Thay Thế)</strong></p>
+            <div class="code-block">
+                <pre># Install globally (one-time setup)
+npm install -g http-server
+
+# Navigate to build folder and serve
+cd WebGL_Build/
+http-server -p 8000
+
+# With CORS enabled (if needed)
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">URL Truy Cập:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>: http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>: http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>: http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Kiểm Tra Trình Duyệt Web:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Mở trình duyệt web</li>
+                <li class="list-item">Điều hướng đến <code class="inline-code">http://localhost:8000</code></li>
+                <li class="list-item">Game tải trong trình duyệt với WebGL</li>
+                <li class="list-item">Chức năng multiplayer giống như phiên bản desktop</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Hành Vi WebGL Mong Đợi:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Kết Nối WebSocket</strong>: Kết nối đến tank server qua WebSocket (cổng 33335)</li>
+                <li class="list-item"><strong class="text-strong">Chơi Đa Nền Tảng</strong>: Client WebGL có thể chơi với client desktop</li>
+                <li class="list-item"><strong class="text-strong">Logic Game Giống Nhau</strong>: Chức năng di chuyển, bắn và chat giống hệt nhau</li>
+                <li class="list-item"><strong class="text-strong">Tương Thích Trình Duyệt</strong>: Hoạt động trong Chrome, Firefox, Safari, Edge</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL Browser Gameplay" class="image">
+            <p class="image-caption">WebGL Browser Gameplay</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">Khắc Phục Sự Cố</h2>
+
+            <p class="paragraph"><strong class="text-strong">Vấn Đề Thường Gặp và Giải Pháp:</strong></p>
+
+            <h3 class="heading-3">Vấn Đề Kết Nối</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Kết nối server thất bại"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Xác minh tank server đang chạy và có thể truy cập</li>
+                        <li class="list-item">Kiểm tra cài đặt firewall cho cổng 33334-33335</li>
+                        <li class="list-item">Xác nhận địa chỉ IP server trong cài đặt NetworkManager</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Vấn Đề Tích Hợp ProudNet</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Không tìm thấy ProudNet DLL"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Xác minh DLL có trong thư mục <code class="inline-code">Assets/Plugins/</code></li>
+                        <li class="list-item">Kiểm tra cài đặt nền tảng cho mỗi file DLL</li>
+                        <li class="list-item">Khởi động lại Unity Editor sau khi thay đổi DLL</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Vấn Đề Build</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Build thất bại với lỗi mạng"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Đảm bảo tất cả script ProudNet biên dịch không có lỗi</li>
+                        <li class="list-item">Kiểm tra Unity Console cho thông báo lỗi cụ thể</li>
+                        <li class="list-item">Xác minh cài đặt nền tảng cho ProudNet DLL trong thư mục Plugins:
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows: x86_64 được bật cho standalone builds</li>
+                                <li class="list-item">WebGL: Nền tảng WebGL được bật cho browser builds</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Vấn Đề WebGL</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Kết nối WebSocket thất bại"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Xác minh tank server hỗ trợ WebSocket (cổng 33335)</li>
+                        <li class="list-item">Kiểm tra console trình duyệt cho thông báo lỗi cụ thể</li>
+                        <li class="list-item">Đảm bảo header CORS được cấu hình đúng trên server</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"Mạng không hoạt động trong Unity Editor với nền tảng WebGL được chọn"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Hành Vi Mong Đợi</strong>: ProudNet không hỗ trợ chế độ play trong editor cho nền tảng WebGL</li>
+                        <li class="list-item"><strong class="text-strong">Giải Pháp</strong>: Build dự án như WebGL và kiểm tra trong trình duyệt web thay thế</li>
+                        <li class="list-item"><strong class="text-strong">Thay Thế</strong>: Chuyển lại về nền tảng Windows/Mac/Linux Standalone để kiểm tra editor</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Công Cụ Debug:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Console</strong>: Kết nối mạng và thông báo lỗi</li>
+                <li class="list-item"><strong class="text-strong">Server Console</strong>: Kết nối client và log trạng thái game</li>
+                <li class="list-item"><strong class="text-strong">Network Profiler</strong>: Phân tích hiệu suất mạng tích hợp Unity</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Monitor</strong>: Thống kê mạng thời gian thực (nếu có)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Nhận Trợ Giúp:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tài Liệu Unity</strong>: https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">Tài Liệu ProudNet</strong>: Có sẵn trong thư mục <code class="inline-code">ProudNet/doc/</code></li>
+                <li class="list-item"><strong class="text-strong">Diễn Đàn Unity</strong>: Hỗ trợ cộng đồng cho phát triển Unity</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>: Báo cáo lỗi và yêu cầu tính năng (nếu có)</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 

@@ -15,18 +15,32 @@ class LanguageSelector {
                 name: '한국어',
                 flag: '🇰🇷', 
                 file: this.getCurrentDocumentType() + '.kr.html'
+            },
+            'cn': {
+                name: '中文',
+                flag: '🇨🇳',
+                file: this.getCurrentDocumentType() + '.cn.html'
+            },
+            'id': {
+                name: 'Bahasa Indonesia',
+                flag: '🇮🇩',
+                file: this.getCurrentDocumentType() + '.id.html'
+            },
+            'th': {
+                name: 'ภาษาไทย',
+                flag: '🇹🇭',
+                file: this.getCurrentDocumentType() + '.th.html'
+            },
+            'jp': {
+                name: '日本語',
+                flag: '🇯🇵',
+                file: this.getCurrentDocumentType() + '.jp.html'
+            },
+            'vn': {
+                name: 'Tiếng Việt',
+                flag: '🇻🇳',
+                file: this.getCurrentDocumentType() + '.vn.html'
             }
-            // 추후 다른 언어 추가 가능:
-            // 'ja': {
-            //     name: '日本語',
-            //     flag: '🇯🇵',
-            //     file: '02.tank_client.ja.html'
-            // },
-            // 'zh': {
-            //     name: '中文',
-            //     flag: '🇨🇳',
-            //     file: '02.tank_client.zh.html'
-            // }
         };
         
         this.init();
@@ -54,6 +68,16 @@ class LanguageSelector {
         
         if (filename.includes('.kr.') || filename.includes('_kr.')) {
             return 'ko';
+        } else if (filename.includes('.cn.') || filename.includes('_cn.')) {
+            return 'cn';
+        } else if (filename.includes('.id.') || filename.includes('_id.')) {
+            return 'id';
+        } else if (filename.includes('.th.') || filename.includes('_th.')) {
+            return 'th';
+        } else if (filename.includes('.jp.') || filename.includes('_jp.')) {
+            return 'jp';
+        } else if (filename.includes('.vn.') || filename.includes('_vn.')) {
+            return 'vn';
         }
         // 기본값은 영어
         return 'en';

@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เอกสารโปรเจกต์เซิร์ฟเวอร์เกม Tank</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>โปรเจกต์เซิร์ฟเวอร์เกม Tank</h1>
+            <p class="paragraph">การใช้งานเซิร์ฟเวอร์เกมแท็งค์แบบผู้เล่นหลายคนโดยใช้ไลบรารีเครือข่าย ProudNet พร้อมให้บริการทั้งเวอร์ชัน C# และ C++ ที่รองรับหลายแพลตฟอร์ม</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 สารบัญ</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">ข้อกำหนดเบื้องต้น</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">โครงสร้างโปรเจกต์</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">หมายเหตุการพัฒนา</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">เริ่มต้นใช้งาน</a></li>
+                <li class="list-item"><a href="#cs-server-implementation" class="link">1. การใช้งานเซิร์ฟเวอร์ C#</a></li>
+                <li class="list-item"><a href="#cs-client-implementation" class="link">2. การใช้งานไคลเอนต์ C#</a></li>
+                <li class="list-item"><a href="#cpp-server-implementation" class="link">3. การใช้งานเซิร์ฟเวอร์ C++ (ตัวเลือกเสริม)</a></li>
+                <li class="list-item"><a href="#multiplayer-movement-testing" class="link">4. การทดสอบการเคลื่อนไหวแบบผู้เล่นหลายคน</a></li>
+                <li class="list-item"><a href="#fire-and-messaging-testing" class="link">5. การทดสอบการยิงและการส่งข้อความ</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">การแก้ปัญหา</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">ข้อกำหนดเบื้องต้น</h2>
+            <p class="paragraph">ก่อนสร้างโปรเจกต์นี้ คุณต้องติดตั้งโฟลเดอร์ <strong class="text-strong">ProudNet</strong> ไว้ในระดับเดียวกับโฟลเดอร์โปรเจกต์ <code class="inline-code">tank_server</code></p>
+
+            <h3 class="heading-3">โครงสร้างไดเรกทอรีที่จำเป็น</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # This project
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+└── ProudNet/            # Required: Files from ProudNet installation
+    ├── doc/             # ProudNet documentation
+    ├── include/         # ProudNet header files
+    ├── lib/             # ProudNet library files
+    ├── Sample/          # ProudNet sample projects
+    └── util/            # ProudNet utilities</pre>
+            </div>
+
+            <h3 class="heading-3">การติดตั้ง ProudNet</h3>
+            <ol class="ordered-list">
+                <li class="list-item">ดาวน์โหลดและติดตั้ง ProudNet จากเว็บไซต์อย่างเป็นทางการ</li>
+                <li class="list-item">ตรวจสอบให้แน่ใจว่าโฟลเดอร์ ProudNet มีไดเรกทอรีย่อยต่อไปนี้:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">doc/</code> - ไฟล์เอกสารประกอบ</li>
+                        <li class="list-item"><code class="inline-code">include/</code> - ไฟล์ header สำหรับการพัฒนา C++</li>
+                        <li class="list-item"><code class="inline-code">lib/</code> - ไฟล์ไลบรารีสำหรับทั้ง .NET และ C++</li>
+                        <li class="list-item"><code class="inline-code">Sample/</code> - โปรเจกต์ตัวอย่าง</li>
+                        <li class="list-item"><code class="inline-code">util/</code> - เครื่องมือยูทิลิตี้และการตรวจสอบสิทธิ์ใบอนุญาต</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">โครงสร้างโปรเจกต์</h2>
+            
+            <h3 class="heading-3">📁 Common</h3>
+            <p class="paragraph">ประกอบด้วยทรัพยากรที่ใช้ร่วมกันโดยการใช้งานเซิร์ฟเวอร์และไคลเอนต์</p>
+            
+            <p class="paragraph"><strong class="text-strong">เนื้อหา:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ไฟล์ PIDL</strong> - ไฟล์ Protocol Interface Definition Language ที่กำหนดฟังก์ชัน RMI (Remote Method Invocation)</li>
+                <li class="list-item"><strong class="text-strong">ไฟล์ Batch</strong> - สคริปต์สำหรับคอมไพล์ไฟล์ PIDL เป็นคลาส stub/proxy ของ C# และ C++</li>
+                <li class="list-item"><strong class="text-strong">Vars.cs/Vars.h</strong> - ตัวแปรการกำหนดค่าที่ใช้ร่วมกัน (พอร์ตเซิร์ฟเวอร์, เวอร์ชันโปรโตคอล, ฯลฯ)</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">ไฟล์สำคัญ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Tank.PIDL</code> - คำนิยามโปรโตคอลเกม Tank</li>
+                <li class="list-item"><code class="inline-code">CompilePIDL_cs.bat</code> - สคริปต์คอมไพล์ PIDL (C#)</li>
+                <li class="list-item"><code class="inline-code">CompilePIDL_cpp.bat</code> - สคริปต์คอมไพล์ PIDL (C++)</li>
+                <li class="list-item"><code class="inline-code">Vars.cs</code> - การกำหนดค่า C#</li>
+                <li class="list-item"><code class="inline-code">Vars.h</code> - การกำหนดค่า C++</li>
+            </ul>
+
+            <h3 class="heading-3">🖥️ Server</h3>
+            <p class="paragraph">การใช้งานเซิร์ฟเวอร์เกมแท็งค์ด้วย C#</p>
+            
+            <p class="paragraph"><strong class="text-strong">คุณสมบัติ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">เซิร์ฟเวอร์เกมแท็งค์แบบผู้เล่นหลายคนแบบเรียลไทม์</li>
+                <li class="list-item">การจัดการการเคลื่อนไหว การยิง และสุขภาพของแท็งค์</li>
+                <li class="list-item">การจัดการการเชื่อมต่อ/ตัดการเชื่อมต่อของผู้เล่น</li>
+                <li class="list-item">การจัดการกลุ่ม P2P เพื่อเครือข่ายที่มีประสิทธิภาพ</li>
+                <li class="list-item">คำสั่งคอนโซลเซิร์ฟเวอร์ (damage, heal, respawn, status)</li>
+                <li class="list-item">เข้ากันได้กับ Windows/.NET</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">ไฟล์สำคัญ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">TankServer.cs</code> - การใช้งานเซิร์ฟเวอร์หลัก</li>
+                <li class="list-item"><code class="inline-code">TankServer.csproj</code> - ไฟล์โปรเจกต์ .NET</li>
+                <li class="list-item"><code class="inline-code">build.bat</code> - สคริปต์สร้างพร้อมการคัดลอก DLL</li>
+            </ul>
+
+            <h3 class="heading-3">🎮 Client</h3>
+            <p class="paragraph">ไคลเอนต์แบบคอนโซลด้วย C# สำหรับเกมแท็งค์</p>
+            
+            <p class="paragraph"><strong class="text-strong">คุณสมบัติ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">อินเทอร์เฟซคอนโซลสำหรับไคลเอนต์เกมแท็งค์</li>
+                <li class="list-item">การควบคุมการเคลื่อนไหวและการยิงของแท็งค์</li>
+                <li class="list-item">การสื่อสารแบบเรียลไทม์กับเซิร์ฟเวอร์</li>
+                <li class="list-item">รองรับการส่งข้อความ P2P</li>
+                <li class="list-item">เข้ากันได้กับ Windows/.NET</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">ไฟล์สำคัญ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">TankClient.cs</code> - การใช้งานไคลเอนต์หลัก</li>
+                <li class="list-item"><code class="inline-code">TankClient.csproj</code> - ไฟล์โปรเจกต์ .NET</li>
+                <li class="list-item"><code class="inline-code">build.bat</code> - สคริปต์สร้างพร้อมการคัดลอก DLL</li>
+            </ul>
+
+            <h3 class="heading-3">🐧 Server_CPP</h3>
+            <p class="paragraph">การใช้งานเซิร์ฟเวอร์เกมแท็งค์ด้วย C++ พร้อมรองรับ Linux</p>
+            
+            <p class="paragraph"><strong class="text-strong">คุณสมบัติ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">เซิร์ฟเวอร์เกมแท็งค์ข้ามแพลตฟอร์ม (Windows/Linux)</li>
+                <li class="list-item">รองรับการ containerization ด้วย Docker</li>
+                <li class="list-item">ระบบสร้าง CMake</li>
+                <li class="list-item">ตรรกะเกมเดียวกับเวอร์ชัน C#</li>
+                <li class="list-item">พร้อมสำหรับการ deploy ใน production บน Linux</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">ไฟล์สำคัญ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">src/TankServer.cpp</code> - การใช้งานเซิร์ฟเวอร์ C++ หลัก</li>
+                <li class="list-item"><code class="inline-code">CMakeLists.txt</code> - การกำหนดค่า CMake</li>
+                <li class="list-item"><code class="inline-code">Dockerfile</code> - การกำหนดค่า Docker container</li>
+                <li class="list-item"><code class="inline-code">docker-compose.yml</code> - การตั้งค่า Docker Compose</li>
+                <li class="list-item"><code class="inline-code">run.bat</code> - สคริปต์รันสำหรับ Windows</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">ตัวเลือกการสร้าง:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows</strong>: Visual Studio กับ CMake</li>
+                <li class="list-item"><strong class="text-strong">Linux</strong>: GCC กับ CMake</li>
+                <li class="list-item"><strong class="text-strong">Docker</strong>: การ deploy แบบ containerized</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">หมายเหตุการพัฒนา</h2>
+            <ul class="unordered-list">
+                <li class="list-item">เวอร์ชัน C# ต้องการ .NET 9.0</li>
+                <li class="list-item">เวอร์ชัน C++ ต้องการมาตรฐาน C++17</li>
+                <li class="list-item">ทั้งสองเวอร์ชันใช้คำนิยามโปรโตคอลเดียวกันผ่านไฟล์ PIDL</li>
+                <li class="list-item">การ deploy ด้วย Docker รองรับการตรวจจับและคัดลอกไลบรารี ProudNet อัตโนมัติ</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">เริ่มต้นใช้งาน</h2>
+            
+            <h3 class="heading-3">ข้อกำหนดเบื้องต้น</h3>
+            <ol class="ordered-list">
+                <li class="list-item">คัดลอกไฟล์ ProudNet จากตำแหน่งการติดตั้ง ProudNet ของคุณเพื่อสร้างไดเรกทอรี <code class="inline-code">ProudNet/</code> ในระดับเดียวกับ <code class="inline-code">tank_server/</code></li>
+                <li class="list-item">ตรวจสอบว่า <code class="inline-code">ProudNet/util/PIDL.exe</code> มีอยู่สำหรับการคอมไพล์โปรโตคอล</li>
+            </ol>
+        </section>
+
+        <section id="cs-server-implementation" class="md-section">
+            <h2 class="heading-2">1. การใช้งานเซิร์ฟเวอร์ C#</h2>
+
+            <h3 class="heading-3">ขั้นตอนที่ 1: ทำความเข้าใจคำนิยามโปรโตคอล (Tank.PIDL)</h3>
+            <p class="paragraph">ไฟล์ <code class="inline-code">Tank.PIDL</code> กำหนดโปรโตคอลการสื่อสารระหว่างเซิร์ฟเวอร์และไคลเอนต์:</p>
+
+            <div class="code-block">
+                <pre>// Tank.PIDL - Protocol Interface Definition Language
+global Tank 2000 // Client-Server and Server-Client RMI, first message ID = 2000
+{
+    // Client to Server functions
+    SendMove([in] float posX, [in] float posY, [in] float direction);
+    SendFire([in] int shooterId, [in] float direction, [in] float launchForce, ...);
+    SendTankType([in] int tankType);
+    
+    // Server to Client functions  
+    OnPlayerJoined([in] int clientId, [in] float posX, [in] float posY, [in] int tankType);
+    OnTankPositionUpdated([in] int clientId, [in] float posX, [in] float posY, [in] float direction);
+    OnSpawnBullet([in] int clientId, [in] int shooterId, ...);
+    // ... more RMI functions
+}</pre>
+            </div>
+
+            <p class="paragraph">ไฟล์ PIDL นี้กำหนด:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ฟังก์ชัน RMI</strong> ที่ส่งจากไคลเอนต์ไปยังเซิร์ฟเวอร์ (SendMove, SendFire, ฯลฯ)</li>
+                <li class="list-item"><strong class="text-strong">ฟังก์ชัน RMI</strong> ที่ส่งจากเซิร์ฟเวอร์ไปยังไคลเอนต์ (OnPlayerJoined, OnTankPositionUpdated, ฯลฯ)</li>
+                <li class="list-item"><strong class="text-strong">การส่งข้อความ P2P</strong> สำหรับการสื่อสารระหว่างไคลเอนต์โดยตรง</li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 2: สร้างคลาส Stub และ Proxy ของ C#</h3>
+            <p class="paragraph">รันตัวคอมไพล์ PIDL เพื่อสร้างโค้ดเครือข่าย C#:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Common
+CompilePIDL_cs.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Common [master +5 ~14 -15 !]> .\CompilePIDL_cs.bat 
+PIDL compile complete!
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">สคริปต์นี้จะ:</p>
+            <ul class="unordered-list">
+                <li class="list-item">รัน <code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir ../Server</code></li>
+                <li class="list-item">รัน <code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir ../Client</code></li>
+                <li class="list-item">สร้างไฟล์ในไดเรกทอรี Server และ Client ทั้งคู่:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">Tank_stub.cs</code> - จัดการกับการเรียก RMI ที่เข้ามา</li>
+                        <li class="list-item"><code class="inline-code">Tank_proxy.cs</code> - ส่งการเรียก RMI ที่ออกไป</li>
+                        <li class="list-item"><code class="inline-code">Tank_common.cs</code> - คำนิยามและค่าคงที่ทั่วไป</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 3: สร้างเซิร์ฟเวอร์</h3>
+            <p class="paragraph">ไปยัง the Server directory และสร้าง:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +15 ~13 -15 !]> ./build.bat
+========================================
+Tank Server Build Script
+========================================
+Build configuration: Debug
+Building Tank Server...
+Restore complete (0.2s)
+  TankServer succeeded (1.8s) → bin\Debug\net9.0\TankServer.dll
+
+Build succeeded in 2.3s
+Build completed successfully!
+Using build output path: bin\Debug\net9.0
+Build output directory exists: bin\Debug\net9.0
+ProudNet DotNet directory exists: ..\..\ProudNet\lib\DotNet
+ProudNet x64 directory exists: ..\..\ProudNet\lib\DotNet\x64
+========================================
+Copying ProudNet DLLs...
+========================================
+Copying libcrypto-3-x64.dll...
+        1 file(s) copied.
+Copying libssl-3-x64.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.pdb...
+        1 file(s) copied.
+Copying ProudDotNetServer.dll...
+        1 file(s) copied.
+Copying ProudDotNetServer.pdb...
+        1 file(s) copied.
+Copying ProudNetClient.dll...
+        1 file(s) copied.
+Copying ProudNetClientPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServer.dll...
+        1 file(s) copied.
+Copying ProudNetServerPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServerPlugin.pdb...
+        1 file(s) copied.
+========================================
+Build and DLL copy completed!
+========================================
+
+Output directory: bin\Debug\net9.0
+You can now run the Tank Server executable.
+
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">สคริปต์สร้างจะ:</p>
+            <ul class="unordered-list">
+                <li class="list-item">คอมไพล์โปรเจกต์ C# โดยใช้ <code class="inline-code">dotnet build --configuration Debug</code></li>
+                <li class="list-item">คัดลอก DLL ของ ProudNet ที่จำเป็นไปยังไดเรกทอรีเอาท์พุต:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">ProudDotNetServer.dll</code>, <code class="inline-code">ProudDotNetClient.dll</code></li>
+                        <li class="list-item"><code class="inline-code">ProudNetServer.dll</code>, <code class="inline-code">ProudNetServerPlugin.dll</code></li>
+                        <li class="list-item"><code class="inline-code">libcrypto-3-x64.dll</code>, <code class="inline-code">libssl-3-x64.dll</code></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 4: รันเซิร์ฟเวอร์</h3>
+            <div class="code-block">
+                <pre>cd tank_server/Server/bin/Debug/net9.0
+TankServer.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe      
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: ออก server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph">เซิร์ฟเวอร์จะ:</p>
+            <ul class="unordered-list">
+                <li class="list-item">เริ่มรับฟังที่พอร์ต 33334</li>
+                <li class="list-item">แสดงสถานะการเชื่อมต่อและเหตุการณ์ในเกม</li>
+                <li class="list-item">รับคำสั่ง: <code class="inline-code">status</code>, <code class="inline-code">health</code>, <code class="inline-code">damage</code>, <code class="inline-code">heal</code>, <code class="inline-code">respawn</code>, <code class="inline-code">q</code> (ออก)</li>
+            </ul>
+        </section>
+
+        <section id="cs-client-implementation" class="md-section">
+            <h2 class="heading-2">2. การใช้งานไคลเอนต์ C#</h2>
+
+            <h3 class="heading-3">ขั้นตอนที่ 1: ความเข้าใจโปรโตคอลที่ใช้ร่วมกัน</h3>
+            <p class="paragraph">ไคลเอนต์ใช้ <strong class="text-strong">ไฟล์ Tank.PIDL เดียวกัน</strong> กับเซิร์ฟเวอร์ เพื่อให้มั่นใจในความเข้ากันได้ของโปรโตคอลอย่างสมบูรณ์:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">คำนิยาม RMI เดียวกัน</strong>: ทั้งเซิร์ฟเวอร์และไคลเอนต์เข้าใจฟังก์ชันลายเซ็นเดียวกัน</li>
+                <li class="list-item"><strong class="text-strong">คลาส stub/proxy ที่ใช้ร่วมกัน</strong>: สคริปต์ <code class="inline-code">CompilePIDL_cs.bat</code> สร้างโค้ดเครือข่ายเดียวกันสำหรับทั้งสองโปรเจกต์</li>
+                <li class="list-item"><strong class="text-strong">การซิงโครไนซ์โปรโตคอล</strong>: การเปลี่ยนแปลงใดๆ ใน Tank.PIDL จะอัปเดตทั้งเซิร์ฟเวอร์และไคลเอนต์โดยอัตโนมัติเมื่อคอมไพล์ใหม่</li>
+            </ul>
+
+            <p class="paragraph">แนวทางนี้รับประกันว่า:</p>
+            <ul class="unordered-list">
+                <li class="list-item">เซิร์ฟเวอร์และไคลเอนต์ใช้โปรโตคอลเครือข่ายที่เข้ากันได้เสมอ</li>
+                <li class="list-item">การเรียกฟังก์ชัน RMI ปลอดภัยด้านประเภทและได้รับการตรวจสอบเมื่อคอมไพล์</li>
+                <li class="list-item">รูปแบบข้อความเครือข่ายสอดคล้องกันระหว่างแอปพลิเคชันทั้งสอง</li>
+            </ul>
+
+            <h3 class="heading-3">Step 2: สร้างไคลเอนต์</h3>
+            <p class="paragraph">ไปยัง the Client directory และสร้าง:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Client  
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +5 ~14 -15 !]> .\build.bat
+========================================
+Tank Client Build Script
+========================================
+Build configuration: Debug
+Building Tank Client...
+Restore complete (0.3s)
+  TankClient succeeded (0.2s) → bin\Debug\net9.0\TankClient.dll
+
+Build succeeded in 0.8s
+Build completed successfully!
+Using build output path: bin\Debug\net9.0
+Build output directory exists: bin\Debug\net9.0
+ProudNet DotNet directory exists: ..\..\ProudNet\lib\DotNet
+ProudNet x64 directory exists: ..\..\ProudNet\lib\DotNet\x64
+========================================
+Copying ProudNet DLLs...
+========================================
+Copying libcrypto-3-x64.dll...
+        1 file(s) copied.
+Copying libssl-3-x64.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.dll...
+        1 file(s) copied.
+Copying ProudDotNetClient.pdb...
+        1 file(s) copied.
+Copying ProudDotNetServer.dll...
+        1 file(s) copied.
+Copying ProudNetClient.dll...
+        1 file(s) copied.
+Copying ProudNetClientPlugin.dll...
+        1 file(s) copied.
+Copying ProudNetServer.dll...
+        1 file(s) copied.
+========================================
+Build and DLL copy completed!
+========================================
+
+Output directory: bin\Debug\net9.0
+You can now run the Tank Client executable.
+
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">The client build script performs the same operations as the server:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Compiles the C# project using <code class="inline-code">dotnet build --configuration Debug</code></li>
+                <li class="list-item">Copies the same ProudNet DLLs to ensure runtime compatibility</li>
+                <li class="list-item">Uses the generated stub/proxy classes from the PIDL compilation</li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 3: รันไคลเอนต์</h3>
+            <div class="code-block">
+                <pre>cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +6 ~14 -15 !]> .\bin\Debug\net9.0\TankClient.exe
+Connecting to server...
+Commands:
+move x y dir : Move tank to position (x,y) with direction dir
+fire dir [force] : Fire in direction dir with optional force (default 25.0)
+tank n       : Select tank type (0-3)
+health h [max]: Update tank health to h with optional max health
+destroy [id] : Send tank destroyed event (id of destroyer, default 0 = environment)
+spawn x y dir type health: Spawn/respawn tank
+msg text     : Send P2P message to other clients
+history      : Show message history
+status       : Show P2P connection status
+auto         : Toggle auto movement
+q            : ออก
+Connected to server. My ID: 3</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">🔍 Check Server Connection:</strong></p>
+            <p class="paragraph">When the client successfully connects, you should also see a connection message on the <strong class="text-strong">server console</strong>:</p>
+
+            <p class="paragraph"><strong class="text-strong">Server Console Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: ออก server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">📝 Server Log Explanation:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Client 3 connected</code> - A new client has successfully connected and been assigned ID 3</li>
+                <li class="list-item"><code class="inline-code">New tank created for client 3 with tank type -1 and health 100/100</code> - Server creates a tank object for the new client:
+                    <ul class="unordered-list">
+                        <li class="list-item">Tank type <code class="inline-code">-1</code> means no tank type selected yet</li>
+                        <li class="list-item">Initial health is set to 100/100 (current/maximum)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">Not enough clients to create P2P group (need at least 2)</code> - P2P group creation requires at least 2 clients for peer-to-peer communication</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">💡 To test P2P functionality:</strong></p>
+            <p class="paragraph">Run a <strong class="text-strong">second client</strong> in another terminal to see:</p>
+
+            <p class="paragraph"><strong class="text-strong">Second Client Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Client [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankClient.exe          
+Connecting to server...                                                                                                                                                                                                                             
+Commands:                                                                                                                                                                                                                                           
+move x y dir : Move tank to position (x,y) with direction dir                                                                                                                                                                                       
+fire dir [force] : Fire in direction dir with optional force (default 25.0)
+tank n       : Select tank type (0-3)
+health h [max]: Update tank health to h with optional max health
+destroy [id] : Send tank destroyed event (id of destroyer, default 0 = environment)
+spawn x y dir type health: Spawn/respawn tank
+msg text     : Send P2P message to other clients
+history      : Show message history
+status       : Show P2P connection status
+auto         : Toggle auto movement
+q            : ออก
+Connected to server. My ID: 4
+P2P: Member 4 joined group 5
+P2P: Member 3 joined group 5
+P2P: Added member 3 to group member list
+OnPlayerJoined: Tank 3 joined at (12.939716,28.795837) with tank type -1
+OnTankHealthUpdated: Tank 3 health: 100/100
+P2P: Received group info, Group ID: 5</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Updated Server Console Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server [master +5 ~14 -15 !]> .\bin\Debug\net9.0\TankServer.exe
+Tank Server started on port 33334
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: ออก server
+Client 3 connected
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)
+Client 4 connected
+New tank created for client 4 with tank type -1 and health 100/100
+Sending existing player info to new client: ID=3, Type=-1, Health=100/100
+Notifying existing client 3 about new player: ID=4, Type=-1, Health=100/100
+P2P group created with 2 members, Group ID: 5
+Sent P2P group info to client 3: P2P_GROUP_INFO:5
+Sent P2P group info to client 4: P2P_GROUP_INFO:5</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">📝 Multi-Client Connection Analysis:</strong></p>
+
+            <p class="paragraph"><strong class="text-strong">When the second client connects:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Client 4 connects</strong> - Server assigns new ID and creates tank object</li>
+                <li class="list-item"><strong class="text-strong">Player synchronization</strong> - Server exchanges player information:
+                    <ul class="unordered-list">
+                        <li class="list-item">Sends existing player info (Client 3) to the new client (Client 4)</li>
+                        <li class="list-item">Notifies existing client (Client 3) about the new player (Client 4)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">P2P group creation</strong> - Now that there are 2+ clients:
+                    <ul class="unordered-list">
+                        <li class="list-item">Server creates P2P group with ID 5</li>
+                        <li class="list-item">Both clients receive P2P group information</li>
+                        <li class="list-item">Clients can now communicate directly via P2P messaging</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Client-side P2P events:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">P2P: Member X joined group Y</code> - P2P group membership notifications</li>
+                <li class="list-item"><code class="inline-code">OnPlayerJoined: Tank 3 joined at (x,y)</code> - Receives info about existing players</li>
+                <li class="list-item"><code class="inline-code">OnTankHealthUpdated: Tank 3 health: 100/100</code> - Receives health status of other tanks</li>
+                <li class="list-item"><code class="inline-code">P2P: Received group info, Group ID: 5</code> - Confirms P2P group setup</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 Now you can test multiplayer features:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Use <code class="inline-code">msg hello</code> in one client to send P2P messages to others</li>
+                <li class="list-item">Use <code class="inline-code">move x y dir</code> to see position updates across clients</li>
+                <li class="list-item">Use <code class="inline-code">fire dir</code> to test projectile synchronization</li>
+            </ul>
+        </section>
+
+        <section id="cpp-server-implementation" class="md-section">
+            <h2 class="heading-2">3. การใช้งานเซิร์ฟเวอร์ C++ (ตัวเลือกเสริม)</h2>
+
+            <p class="paragraph">การอิมพลีเมนต์เซิร์ฟเวอร์ C++ ให้ <strong class="text-strong">ฟังก์ชันการทำงานเดียวกันทุกประการ</strong> กับเซิร์ฟเวอร์ C# พร้อมเสนอการรองรับข้ามแพลตฟอร์มและตัวเลือกการ deploy แบบ containerized นี่เป็นการอิมพลีเมนต์ขั้นสูงเสริมที่สาธิตความสามารถหลายภาษาของ ProudNet</p>
+
+            <h3 class="heading-3">ความเข้ากันได้ของโปรโตคอล</h3>
+            <p class="paragraph">เนื่องจากเซิร์ฟเวอร์ทั้ง C# และ C++ ใช้ <strong class="text-strong">ไฟล์ Tank.PIDL เดียวกัน</strong> พวกมันจึงเข้ากันได้อย่างสมบูรณ์:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ฟังก์ชัน RMI เดียวกัน</strong>: คำนิยามโปรโตคอลเครือข่ายเดียวกัน</li>
+                <li class="list-item"><strong class="text-strong">ความเข้ากันได้ของไคลเอนต์</strong>: ไคลเอนต์ C# สามารถเชื่อมต่อกับเซิร์ฟเวอร์ C# หรือ C++ ได้อย่างราบรื่น</li>
+                <li class="list-item"><strong class="text-strong">ความเท่าเทียมของฟีเจอร์</strong>: การเคลื่อนไหว การยิง การส่งข้อความ P2P และกลไกเกมทั้งหมดทำงานเหมือนกัน</li>
+            </ul>
+
+            <h3 class="heading-3">ข้อได้เปรียบหลักของการอิมพลีเมนต์ C++</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">รองรับข้ามแพลตฟอร์ม</strong>: ทำงานบน Windows, Linux และสภาพแวดล้อม containerized</li>
+                <li class="list-item"><strong class="text-strong">การปรับแต่งประสิทธิภาพ</strong>: ประสิทธิภาพ C++ แบบ native สำหรับสถานการณ์โหลดสูง</li>
+                <li class="list-item"><strong class="text-strong">การ deploy ใน production</strong>: Docker containerization สำหรับโครงสร้างเซิร์ฟเวอร์ที่ขยายได้</li>
+                <li class="list-item"><strong class="text-strong">ความเข้ากันได้กับ Linux</strong>: deploy บนเซิร์ฟเวอร์ Ubuntu/Linux โดยไม่ต้องพึ่งพา .NET</li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 1: สร้างคลาส Stub และ Proxy ของ C++</h3>
+            <p class="paragraph">ขั้นแรก สร้างโค้ดเครือข่าย C++ จากไฟล์ PIDL:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Common
+CompilePIDL_cpp.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Common [master +5 ~14 -15 !]> .\CompilePIDL_cpp.bat
+[INFO] Generating C++ files from Tank.PIDL...
+[INFO] PIDL C++ compilation complete!
+[INFO] Generated files in ..\Server_CPP\include directory.
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph">This will generate C++ stub/proxy classes in the <code class="inline-code">Server_CPP/include/</code> directory:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Tank_stub.cpp/.h</code> - จัดการกับการเรียก RMI ที่เข้ามา</li>
+                <li class="list-item"><code class="inline-code">Tank_proxy.cpp/.h</code> - ส่งการเรียก RMI ที่ออกไป</li>
+                <li class="list-item"><code class="inline-code">Tank_common.cpp/.h</code> - คำนิยามและค่าคงที่ทั่วไป</li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 2: สร้างเซิร์ฟเวอร์ C++ (Windows)</h3>
+
+            <h4 class="heading-4">ข้อกำหนดเบื้องต้นสำหรับการสร้างบน Windows</h4>
+            <p class="paragraph">ก่อนสร้างเซิร์ฟเวอร์ C++ ตรวจสอบให้แน่ใจว่าคุณได้ติดตั้งคอมโพเนนต์ต่อไปนี้:</p>
+
+            <p class="paragraph"><strong class="text-strong">ซอฟต์แวร์ที่จำเป็น:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Visual Studio 2022</strong> (Community/Professional/Enterprise)
+                    <ul class="unordered-list">
+                        <li class="list-item">รองรับ VS 2019, 2017, 2015 ด้วย</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">CMake 3.10 หรือสูงกว่า</strong></li>
+                <li class="list-item"><strong class="text-strong">Windows SDK 10.0</strong> (แนะนำเวอร์ชันล่าสุด)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">คอมโพเนนต์ Visual Studio ที่จำเป็น:</strong></p>
+            <p class="paragraph">เมื่อติดตั้ง Visual Studio ตรวจสอบให้แน่ใจว่าได้รวม workload และ component เหล่านี้:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Desktop development with C++</strong> workload</li>
+                <li class="list-item"><strong class="text-strong">MSVC v143 - VS 2022 C++ x64/x86 build tools</strong> (ล่าสุด)</li>
+                <li class="list-item"><strong class="text-strong">Windows 11 SDK</strong> (หรือ Windows 10 SDK)</li>
+                <li class="list-item"><strong class="text-strong">ATL for v143 build tools (x86 & x64)</strong> - <em class="text-emphasis">จำเป็นสำหรับการลิงก์ ProudNet</em></li>
+                <li class="list-item"><strong class="text-strong">CMake tools for C++</strong></li>
+                <li class="list-item"><strong class="text-strong">Git for Windows</strong> (ตัวเลือก สำหรับ version control)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">หมายเหตุสำคัญเกี่ยวกับ ATL:</strong></p>
+            <p class="paragraph">Active Template Library (ATL) มีความจำเป็นสำหรับการลิงก์ ProudNet บน Windows ใน CMakeLists.txt คุณสามารถเห็นได้ว่ามีการลิงก์อย่างชัดเจน:</p>
+            <div class="code-block">
+                <pre>target_link_libraries(TankGameServer
+    # ... other libraries ...
+    atls       # ATL library addition
+)</pre>
+            </div>
+
+            <h4 class="heading-4">กระบวนการสร้าง</h4>
+            <p class="paragraph">ไปยังไดเรกทอรี Server_CPP และสร้างโดยใช้สคริปต์ที่ให้มา:</p>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+build.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Build Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> .\build.bat
+[INFO] =========================================
+[INFO] Starting TankGameServer C++ Build...
+[INFO] =========================================
+[INFO] Detecting Visual Studio installation...
+[INFO] Visual Studio 2022 Community found
+[INFO] Setting up VS2022 environment...
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[INFO] Using Visual Studio 2022 with generator: NMake Makefiles
+[INFO] ProudNet Path: C:\Users\wayne\Documents\proud_tank\ProudNet
+[INFO] Build Type: Release
+[INFO] Using: Visual Studio 2022 with NMake Makefiles
+[INFO] Checking and generating PIDL files...
+[INFO] Compiling PIDL files...
+[INFO] Generating C++ files from Tank.PIDL...
+[INFO] PIDL C++ compilation complete
+[INFO] Generated files in ..\Server_CPP\include directory.
+Press any key to continue . . .
+[INFO] Creating build directory...
+[INFO] Removing existing build directory...
+[INFO] Configuring CMake...
+[INFO] Using NMake Makefiles generator
+-- The C compiler identification is MSVC 19.44.35207.1
+-- The CXX compiler identification is MSVC 19.44.35207.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building on Windows - Using OpenSSL and CURL from ProudNet
+-- System check: Windows
+-- Current working directory: C:/Users/wayne/Documents/proud_tank/tank_server/Server_CPP
+-- Build type: Release
+-- ProudNet Path: C:\Users\wayne\Documents\proud_tank\ProudNet
+-- Operating System: Windows
+-- Using Visual Studio version from command line: 2022
+-- Found Visual Studio installation: C:/Program Files/Microsoft Visual Studio/2022/Community
+-- Visual Studio Path: C:/Program Files/Microsoft Visual Studio/2022/Community
+-- Using Release Library Path: C:\Users\wayne\Documents\proud_tank\ProudNet/lib/x64/v140/Release
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/wayne/Documents/proud_tank/tank_server/Server_CPP/build
+[INFO] Building project...
+[ 33%] Building CXX object CMakeFiles/TankGameServer.dir/src/TankServer.cpp.obj
+TankServer.cpp
+[ 66%] Building CXX object CMakeFiles/TankGameServer.dir/C_/Users/wayne/Documents/proud_tank/tank_server/Common/Vars.cpp.obj
+Vars.cpp
+[100%] Linking CXX executable TankServer.exe
+[100%] Built target TankGameServer
+[INFO] Build successful
+[INFO] Executable: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\Release\TankGameServer.exe
+[INFO] Copying required DLL files...
+[INFO] =========================================
+[INFO] Build completed
+[INFO] Executable: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\TankServer.exe
+[INFO] =========================================
+Press any key to continue . . .</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์กระบวนการสร้าง:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การตรวจจับ Visual Studio</strong>: ตรวจจับการติดตั้ง VS 2022 Community โดยอัตโนมัติ</li>
+                <li class="list-item"><strong class="text-strong">การตั้งค่าสภาพแวดล้อม</strong>: เริ่มต้น VS 2022 Developer Command Prompt ด้วยเครื่องมือ x64</li>
+                <li class="list-item"><strong class="text-strong">การคอมไพล์ PIDL</strong>: สร้างคลาส stub/proxy ของ C++ โดยอัตโนมัติ</li>
+                <li class="list-item"><strong class="text-strong">การกำหนดค่า CMake</strong>: ใช้ NMake Makefiles generator สำหรับคอมไพเลอร์ MSVC</li>
+                <li class="list-item"><strong class="text-strong">การคอมไพล์</strong>: สร้าง <code class="inline-code">TankServer.cpp</code> และ <code class="inline-code">Vars.cpp</code> ด้วยมาตรฐาน C++17</li>
+                <li class="list-item"><strong class="text-strong">การลิงก์</strong>: ลิงก์กับไลบรารี ProudNet, ไลบรารีระบบ Windows และ ATL</li>
+                <li class="list-item"><strong class="text-strong">การคัดลอก DLL</strong>: คัดลอก DLL ของ ProudNet ที่จำเป็นไปยังไดเรกทอรี executable</li>
+            </ol>
+
+            <p class="paragraph">สคริปต์สร้างจะ:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ตรวจจับการติดตั้ง Visual Studio</strong> โดยอัตโนมัติ (2015-2022)</li>
+                <li class="list-item"><strong class="text-strong">ตั้งค่าสภาพแวดล้อมสร้าง</strong> ด้วย vcvarsall.bat</li>
+                <li class="list-item"><strong class="text-strong">สร้างไฟล์ PIDL</strong> โดยอัตโนมัติก่อนการกำหนดค่า CMake</li>
+                <li class="list-item"><strong class="text-strong">สร้างไดเรกทอรี build</strong> และกำหนดค่า CMake ด้วย NMake Makefiles</li>
+                <li class="list-item"><strong class="text-strong">คอมไพล์ไฟล์ source C++</strong> ด้วยคอมไพเลอร์ MSVC</li>
+                <li class="list-item"><strong class="text-strong">ลิงก์กับไลบรารี ProudNet</strong> และไลบรารีระบบ Windows:
+                    <ul class="unordered-list">
+                        <li class="list-item"><code class="inline-code">ProudNetServer.lib</code>, <code class="inline-code">ProudNetClient.lib</code></li>
+                        <li class="list-item"><code class="inline-code">ws2_32</code> (Windows Sockets), <code class="inline-code">winmm</code> (Multimedia), <code class="inline-code">iphlpapi</code> (IP Helper)</li>
+                        <li class="list-item"><code class="inline-code">atls</code> (Active Template Library)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">คัดลอก DLL ของ ProudNet ที่จำเป็น</strong> ไปยังไดเรกทอรีเอาท์พุต</li>
+            </ul>
+
+            <h3 class="heading-3">ขั้นตอนที่ 3: รันเซิร์ฟเวอร์ C++ (Windows)</h3>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Server Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> .\run.bat
+[INFO] Starting TankGameServer C++ Server...
+[INFO] Found executable at build\TankServer.exe (NMake build
+[INFO] Server is starting. Press 'q' to ออก.
+[INFO] Running: C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP\build\TankServer.exe
+========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients
+health [id]: Show tank health (all or specific ID)
+damage id amount: Apply damage to a tank
+heal id amount: Heal a tank
+respawn id x y: Respawn a tank at position (x,y)
+q: ออก server</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์การเริ่มต้นเซิร์ฟเวอร์:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การตรวจจับ Executable</strong>: <code class="inline-code">run.bat</code> ค้นหา executable ที่สร้างขึ้นโดยอัตโนมัติ</li>
+                <li class="list-item"><strong class="text-strong">การผูกเครือข่าย</strong>: เซิร์ฟเวอร์ผูกกับ network interface ทั้งหมด (0.0.0.0)
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">TCP Server</strong>: พอร์ต 33334 สำหรับการเชื่อมต่อเกม</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Server</strong>: พอร์ต 33335/ws สำหรับรองรับไคลเอนต์เว็บ</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">อินเทอร์เฟซคำสั่ง</strong>: คำสั่งเซิร์ฟเวอร์เดียวกับเวอร์ชัน C#</li>
+                <li class="list-item"><strong class="text-strong">สถานะพร้อม</strong>: เซิร์ฟเวอร์พร้อมรับการเชื่อมต่อไคลเอนต์</li>
+            </ol>
+
+            <h3 class="heading-3">ขั้นตอนที่ 4: การทดสอบความเข้ากันได้ของไคลเอนต์ C#</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔄 การตรวจสอบความเข้ากันได้ของโปรโตคอล:</strong></p>
+            <p class="paragraph">เซิร์ฟเวอร์ C++ เข้ากันได้อย่างสมบูรณ์กับไคลเอนต์ C# ที่มีอยู่ คุณสามารถเชื่อมต่อ <strong class="text-strong">ไคลเอนต์ C# เดียวกัน</strong> จากขั้นตอนที่ 2 กับเซิร์ฟเวอร์ C++ นี้ได้โดยไม่ต้องปรับเปลี่ยนใดๆ</p>
+
+            <p class="paragraph"><strong class="text-strong">เชื่อมต่อไคลเอนต์ C# กับเซิร์ฟเวอร์ C++:</strong></p>
+            <div class="code-block">
+                <pre># In another terminal, run the C# client
+cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">C++ Server Console Log (Client Connection):</strong></p>
+            <div class="code-block">
+                <pre>Client 3 connected from 127.0.0.1:52341
+New tank created for client 3 with tank type -1 and health 100/100
+Not enough clients to create P2P group (need at least 2)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Server Log Analysis:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Identical Client Processing</strong>: C++ server handles client connections exactly like C# server</li>
+                <li class="list-item"><strong class="text-strong">Same Tank Creation</strong>: Creates tank objects with identical initial state (health 100/100, type -1)</li>
+                <li class="list-item"><strong class="text-strong">Player Synchronization</strong>: Exchanges player information between clients identically</li>
+                <li class="list-item"><strong class="text-strong">P2P Group Management</strong>: Creates P2P groups with same logic and group ID assignment</li>
+                <li class="list-item"><strong class="text-strong">Protocol Compatibility</strong>: All RMI functions and message formats work seamlessly</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">✅ Complete Functional Parity:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">คำสั่งการเคลื่อนไหว การยิง และการส่งข้อความทำงานเหมือนกันทุกประการ</li>
+                <li class="list-item">การสร้างและจัดการกลุ่ม P2P ทำงานเหมือนกัน</li>
+                <li class="list-item">คำสั่งเซิร์ฟเวอร์ (<code class="inline-code">status</code>, <code class="inline-code">health</code>, <code class="inline-code">damage</code>, <code class="inline-code">heal</code>, <code class="inline-code">respawn</code>) ทำงานเหมือนกันทุกประการ</li>
+                <li class="list-item">การจัดการการเชื่อมต่อไคลเอนต์และการจัดการสถานะเหมือนกันทุกประการ</li>
+                <li class="list-item">การสร้างแท็งค์ การติดตามสุขภาพ และตรรกะเกมเหมือนกันทุกประการ</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎯 สิ่งนี้แสดงให้เห็นว่าเซิร์ฟเวอร์ C++ เป็นทางเลือกทดแทนที่สมบูรณ์สำหรับเซิร์ฟเวอร์ C# ด้วยความเข้ากันได้ของโปรโตคอล 100%</strong></p>
+
+            <h3 class="heading-3">ขั้นตอนที่ 5: การ Deploy ด้วย Docker (Linux/Ubuntu)</h3>
+
+            <p class="paragraph">เซิร์ฟเวอร์ C++ สามารถ deploy เป็น Docker container บน Ubuntu 24.04 สำหรับสภาพแวดล้อม production</p>
+
+            <h4 class="heading-4">ข้อกำหนดเบื้องต้นสำหรับการ Deploy ด้วย Docker</h4>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Docker Desktop</strong> (Windows) หรือ <strong class="text-strong">Docker Engine</strong> (Linux)</li>
+                <li class="list-item"><strong class="text-strong">Docker Compose</strong> สำหรับการ orchestration</li>
+            </ul>
+
+            <h4 class="heading-4">การตั้งค่า Docker บน Windows</h4>
+            <p class="paragraph">หากรันบน Windows ตรวจสอบให้แน่ใจว่า Docker ได้รับการกำหนดค่าสำหรับ Linux containers:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">ติดตั้ง Docker Desktop</strong> จากเว็บไซต์อย่างเป็นทางการ</li>
+                <li class="list-item"><strong class="text-strong">เปลี่ยนไปใช้ Linux containers</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">คลิกขวาที่ไอคอน Docker Desktop ใน system tray</li>
+                        <li class="list-item">เลือก "Switch to Linux containers..."</li>
+                        <li class="list-item">รอให้ Docker เริ่มต้นใหม่ในโหมด Linux container</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">การกำหนดค่าใบอนุญาต ProudNet (ตัวเลือก)</h4>
+
+            <p class="paragraph">โดยปกติ เซิร์ฟเวอร์จะทำงานใน <strong class="text-strong">โหมดจำกัด 50 CCU</strong> โดยไม่ต้องใช้ license key สำหรับการ deploy ใน production ที่มีผู้ใช้พร้อมกันไม่จำกัด คุณสามารถกำหนดค่าใบอนุญาต ProudNet:</p>
+
+            <p class="paragraph"><strong class="text-strong">ขั้นตอนที่ 1: การตั้งค่า License Key</strong></p>
+            <p class="paragraph">แก้ไขไฟล์ <code class="inline-code">tank_server/licensekey.txt</code>:</p>
+
+            <div class="code-block">
+                <pre># Default content (50 CCU limitation): Replace with your actual ProudNet license key:
+PUT_YOUR_PROUDNET_LICENSE_KEY_HERE</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ขั้นตอนที่ 2: การตรวจสอบใบอนุญาต</strong></p>
+            <p class="paragraph">กระบวนการสร้าง Docker จะตรวจจับและใช้ใบอนุญาตโดยอัตโนมัติ:</p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">มีใบอนุญาต</strong>: CCU ไม่จำกัด คุณสมบัติ ProudNet แบบเต็ม</li>
+                <li class="list-item"><strong class="text-strong">ไม่มีใบอนุญาต</strong>: จำกัด 50 CCU โหมดพัฒนา</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Docker Output with License:</strong></p>
+            <div class="code-block">
+                <pre>tank-server-1  | License key found: /app/licensekey.txt
+tank-server-1  | ProudNet license validation successful
+tank-server-1  | Starting server with full license (unlimited CCU)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Docker Output without License (Default):</strong></p>
+            <div class="code-block">
+                <pre>tank-server-1  | License key file not found: /app/licensekey.txt
+tank-server-1  | Building without ProudNet license.
+tank-server-1  | Starting server without license (50 CCU limitation mode).</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">🔑 ประโยชน์ของใบอนุญาต:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">เพิ่ม CCU</strong>: ขีดจำกัดการเชื่อมต่อพร้อมกันที่สูงขึ้นตามประเภทใบอนุญาต</li>
+                <li class="list-item"><strong class="text-strong">คุณสมบัติ Production</strong>: ความสามารถเซิร์ฟเวอร์ ProudNet แบบเต็ม</li>
+                <li class="list-item"><strong class="text-strong">การสนับสนุนเทคนิค</strong>: เข้าถึงการสนับสนุนเทคนิคของ ProudNet</li>
+                <li class="list-item"><strong class="text-strong">การปรับประสิทธิภาพ</strong>: คุณสมบัติการปรับประสิทธิภาพเซิร์ฟเวอร์ที่ปรับปรุงแล้ว</li>
+            </ul>
+
+            <h4 class="heading-4">คำสั่งการ Deploy ด้วย Docker</h4>
+
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+docker-compose up</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Docker Output:</strong></p>
+            <div class="code-block">
+                <pre>C:\Users\wayne\Documents\proud_tank\tank_server\Server_CPP [master +5 ~14 -15 !]> docker-compose up
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+[+] Building 2.3s (22/22)                                                                                                                                 docker:desktop-linux 
+[+] Building 2.3s (22/23)                                                                                                                                 docker:desktop-linux 
+[+] Building 2.3s (23/23) FINISHED                                                                                                                        docker:desktop-linux 
+ => [tank-server internal] load build definition from Dockerfile                                                                                                          0.0s 
+ => => transferring dockerfile: 6.39kB                                                                                                                                    0.0s 
+ => [tank-server internal] load metadata for docker.io/library/ubuntu:24.04                                                                                               1.9s 
+ => [tank-server auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                 0.0s 
+ => [tank-server internal] load .dockerignore                                                                                                                             0.0s 
+ => => transferring context: 2B                                                                                                                                           0.0s 
+ => [tank-server  1/16] FROM docker.io/library/ubuntu:24.04@sha256:6015f66923d7afbc53558d7ccffd325d43b4e249f41a6e93eef074c9505d2233                                       0.0s 
+ => [tank-server internal] load build context                                                                                                                             0.1s
+ => => transferring context: 106.41kB                                                                                                                                     0.0s
+ => CACHED [tank-server  2/16] RUN apt-get update && apt-get install -y     build-essential     cmake     git     libssl-dev     libssl3     libcurl4-openssl-dev     tz  0.0s
+ => CACHED [tank-server  3/16] WORKDIR /app                                                                                                                               0.0s
+ => CACHED [tank-server  4/16] COPY tank_server/Server_CPP/src /app/src/                                                                                                  0.0s
+ => CACHED [tank-server  5/16] COPY tank_server/Server_CPP/include /app/include/                                                                                          0.0s
+ => CACHED [tank-server  6/16] COPY tank_server/Server_CPP/CMakeLists.txt /app/CMakeLists.txt                                                                             0.0s
+ => CACHED [tank-server  7/16] COPY tank_server/Common/Vars.cpp /app/Common/Vars.cpp                                                                                      0.0s
+ => CACHED [tank-server  8/16] COPY tank_server/Common/Vars.h /app/Common/Vars.h                                                                                          0.0s
+ => CACHED [tank-server  9/16] COPY ProudNet/include /app/ProudNet/include/                                                                                               0.0s
+ => CACHED [tank-server 10/16] COPY ProudNet/lib/x86_x64-linux /app/ProudNet/lib/x86_x64-linux/                                                                           0.0s
+ => CACHED [tank-server 11/16] COPY ProudNet/util/PNLicenseAuth /app/ProudNet/util/                                                                                       0.0s 
+ => CACHED [tank-server 12/16] RUN if [ -f "tank_server/licensekey.txt" ] &&     [ "$(cat tank_server/licensekey.txt)" != "PUT_YOUR_PROUDNET_LICENSE_KEY_HERE" ]; then    0.0s 
+ => CACHED [tank-server 13/16] RUN chmod +x /app/ProudNet/util/PNLicenseAuth &&     echo "System information:" &&     uname -a &&     echo "Current directory:" &&     p  0.0s 
+ => CACHED [tank-server 14/16] RUN echo "Copied file structure:" &&     ls -la /app &&     echo "Common directory:" &&     ls -la /app/Common/ || echo "Failed to copy C  0.0s 
+ => CACHED [tank-server 15/16] RUN echo '#!/bin/bash \necho "Server build starting..." \n\ncheck_file() { \n  if [ ! -f "$1" ]; then \n    echo "File not found: $1" \n   0.0s
+ => CACHED [tank-server 16/16] RUN chmod +x /app/start.sh                                                                                                                 0.0s
+ => [tank-server] exporting to image                                                                                                                                      0.0s 
+ => => exporting layers                                                                                                                                                   0.0s 
+ => => writing image sha256:cf987b1363c26bf89aa7ced6c0eca898573679bc92001c3aedee2ff1fe7c649e                                                                              0.0s 
+ => => naming to docker.io/library/server_cpp-tank-server                                                                                                                 0.0s 
+ => [tank-server] resolving provenance for metadata file                                                                                                                  0.0s 
+[+] Running 2/2
+ ✔ tank-server                         Built                                                                                                                              0.0s 
+ ✔ Container server_cpp-tank-server-1  Created                                                                                                                            0.0s 
+Attaching to tank-server-1
+tank-server-1  | Server build starting...
+tank-server-1  | File found: /app/Common/Vars.cpp
+tank-server-1  | File found: /app/Common/Vars.h                                                                                                                                
+tank-server-1  | Directory found: /app/ProudNet/lib/x86_64-linux                                                                                                              
+tank-server-1  | ProudNet license check in progress...                                                                                                                         
+tank-server-1  | License file information:                                                                                                                                     
+tank-server-1  | total 18560                                                                                                                                                   
+tank-server-1  | drwxr-xr-x 1 root root     4096 Jun  2 15:03 .
+tank-server-1  | drwxr-xr-x 1 root root     4096 Jun  2 15:03 ..                                                                                                               
+tank-server-1  | -rwxr-xr-x 1 root root 18987960 May 20 23:14 PNLicenseAuth                                                                                                    
+tank-server-1  | License key file not found: /app/licensekey.txt                                                                                                               
+tank-server-1  | Building without ProudNet license.                                                                                                                            
+tank-server-1  | ODBC driver information:                                                                                                                                      
+tank-server-1  | /app/start.sh: line 72: odbcinst: command not found                                                                                                           
+tank-server-1  | Could not get ODBC information.
+tank-server-1  | -- OpenSSL found: /usr/include
+tank-server-1  | -- OpenSSL libraries: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so
+tank-server-1  | -- OpenSSL version: 3.0.13                                                                                                                                    
+tank-server-1  | -- CURL found: /usr/include/x86_64-linux-gnu                                                                                                                  
+tank-server-1  | -- CURL libraries: /usr/lib/x86_64-linux-gnu/libcurl.so
+tank-server-1  | -- CURL version: 8.5.0                                                                                                                                        
+tank-server-1  | -- System check: Linux                                                                                                                                        
+tank-server-1  | -- Current working directory: /app                                                                                                                            
+tank-server-1  | -- Build type:                                                                                                                                                
+tank-server-1  | -- ProudNet Path: /app/ProudNet                                                                                                                               
+tank-server-1  | -- Operating System: Linux
+tank-server-1  | -- Library path check: /app/ProudNet/lib/x86_64-linux                                                                                                        
+tank-server-1  | -- Found Linux ProudNet library: /app/ProudNet/lib/x86_64-linux                                                                                              
+tank-server-1  | -- Library file list: /app/ProudNet/lib/x86_64-linux/Debug;/app/ProudNet/lib/x86_64-linux/Release                                                           
+tank-server-1  | -- Found ODBC library: /usr/lib/x86_64-linux-gnu/libodbc.so                                                                                                   
+tank-server-1  | -- Found ODBCINST library: /usr/lib/x86_64-linux-gnu/libodbcinst.so
+tank-server-1  | -- Linking OpenSSL libraries: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so                                                      
+tank-server-1  | -- Linking CURL library: /usr/lib/x86_64-linux-gnu/libcurl.so                                                                                                 
+tank-server-1  | -- Configuring done (0.1s)                                                                                                                                    
+tank-server-1  | -- Generating done (0.0s)                                                                                                                                     
+tank-server-1  | -- Build files have been written to: /app/build                                                                                                               
+tank-server-1  | [100%] Built target TankGameServer
+tank-server-1  | Build completed, attempting to start server...
+tank-server-1  | Starting server without license (50 CCU limitation mode).                                                                                                     
+tank-server-1  | No NIC binding though multiple NIC detected##Process=/app/build                                                                                               
+tank-server-1  | ========== Tank Server Started ==========
+tank-server-1  | TCP Server listening on 0.0.0.0:33334                                                                                                                         
+tank-server-1  | WebSocket Server listening on 0.0.0.0:33335/ws                                                                                                                
+tank-server-1  | Ready to accept connections from all network interfaces                                                                                                       
+tank-server-1  | ==========================================                                                                                                                    
+tank-server-1  | Server is running. Commands:                                                                                                                                  
+tank-server-1  | status: Show connected clients                                                                                                                                
+tank-server-1  | health [id]: Show tank health (all or specific ID)
+tank-server-1  | damage id amount: Apply damage to a tank                                                                                                                      
+tank-server-1  | heal id amount: Heal a tank                                                                                                                                   
+tank-server-1  | respawn id x y: Respawn a tank at position (x,y)                                                                                                              
+tank-server-1  | q: ออก server</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Docker Build Process Analysis:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Multi-stage Build</strong>: Uses Ubuntu 24.04 base image with cached build layers</li>
+                <li class="list-item"><strong class="text-strong">Dependencies Installation</strong>: Installs build-essential, cmake, OpenSSL, CURL development libraries</li>
+                <li class="list-item"><strong class="text-strong">File Structure Copy</strong>: Copies source files, ProudNet libraries, and build configuration</li>
+                <li class="list-item"><strong class="text-strong">License Detection</strong>: Checks for ProudNet license key (falls back to 50 CCU limitation mode)</li>
+                <li class="list-item"><strong class="text-strong">Library Detection</strong>: Automatically finds and links system libraries:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">OpenSSL 3.0.13</strong>: SSL/TLS support</li>
+                        <li class="list-item"><strong class="text-strong">CURL 8.5.0</strong>: HTTP client support</li>
+                        <li class="list-item"><strong class="text-strong">ODBC</strong>: Database connectivity support</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">CMake Configuration</strong>: Configures build with Linux-specific ProudNet libraries</li>
+                <li class="list-item"><strong class="text-strong">Compilation</strong>: Successfully builds TankGameServer executable</li>
+                <li class="list-item"><strong class="text-strong">Server Startup</strong>: Starts in 50 CCU limitation mode (no license key provided)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">📋 รายละเอียด Docker Container:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Base image</strong>: Ubuntu 24.04 LTS</li>
+                <li class="list-item"><strong class="text-strong">Multi-stage build</strong>: ขนาด container ที่ปรับให้เหมาะสม</li>
+                <li class="list-item"><strong class="text-strong">การเปิดพอร์ต</strong>: 33334-33335 แมปกับพอร์ต host</li>
+                <li class="list-item"><strong class="text-strong">ไลบรารี ProudNet</strong>: คัดลอกและลิงก์โดยอัตโนมัติ</li>
+                <li class="list-item"><strong class="text-strong">พร้อมสำหรับ Production</strong>: dependency รันไทม์ขั้นต่ำ</li>
+            </ul>
+
+            <h4 class="heading-4">การจัดการ Docker Container</h4>
+
+            <p class="paragraph"><strong class="text-strong">ดู container ที่กำลังทำงาน:</strong></p>
+            <div class="code-block">
+                <pre>docker ps</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ผลลัพธ์ที่คาดหวัง:</strong></p>
+            <div class="code-block">
+                <pre>CONTAINER ID   IMAGE                    COMMAND                   CREATED       STATUS         PORTS                                  NAMES
+dd96172cd51d   server_cpp-tank-server   "/bin/bash /app/star…"   2 hours ago   Up 7 seconds   0.0.0.0:33334-33335->33334-33335/tcp   server_cpp-tank-server-1</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ดู log ของเซิร์ฟเวอร์:</strong></p>
+            <div class="code-block">
+                <pre>docker logs server_cpp-tank-server-1</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">หยุดเซิร์ฟเวอร์:</strong></p>
+            <div class="code-block">
+                <pre>docker-compose down</pre>
+            </div>
+
+            <h3 class="heading-3">ขั้นตอนที่ 6: การทดสอบไคลเอนต์ข้ามแพลตฟอร์ม</h3>
+
+            <p class="paragraph"><strong class="text-strong">🌐 ทดสอบไคลเอนต์ C# → เซิร์ฟเวอร์ C++ Docker:</strong></p>
+            <p class="paragraph">ไคลเอนต์ C# สามารถเชื่อมต่อกับเซิร์ฟเวอร์ C++ ที่ถูก dockerized ที่ทำงานบน Ubuntu:</p>
+
+            <div class="code-block">
+                <pre># In another terminal, run the C# client
+cd tank_server/Client/bin/Debug/net9.0
+TankClient.exe</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Client Connection:</strong></p>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 3</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Expected Docker Server Log:</strong></p>
+            <div class="code-block">
+                <pre>tank-server-cpp  | Client 3 connected from 172.17.0.1:52341
+tank-server-cpp  | New tank created for client 3 with tank type -1 and health 100/100</pre>
+            </div>
+
+            <h3 class="heading-3">ข้อได้เปรียบหลักของการใช้งาน C++:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🚀 ประสิทธิภาพ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">ประสิทธิภาพ C++ แบบ native สำหรับสถานการณ์ CCU สูง</li>
+                <li class="list-item">การจัดการหน่วยความจำและเครือข่ายที่ปรับให้เหมาะสม</li>
+                <li class="list-item">เหมาะสำหรับเซิร์ฟเวอร์เกมใน production</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🐧 ข้ามแพลตฟอร์ม:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">การพัฒนาบน Windows ด้วย Visual Studio/CMake</li>
+                <li class="list-item">การ deploy บน Linux ด้วย Docker containers</li>
+                <li class="list-item">Ubuntu 24.04 LTS สำหรับสภาพแวดล้อม production ที่เสถียร</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">📦 การทำ Containerization:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">การ deploy แบบ Dockerized สำหรับแพลตฟอร์ม cloud</li>
+                <li class="list-item">โครงสร้างพื้นฐานที่ขยายได้ด้วย container orchestration</li>
+                <li class="list-item">สภาพแวดล้อมรันไทม์ที่แยกได้ด้วย dependency ขั้นต่ำ</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🔄 ความเข้ากันได้ของโปรโตคอล:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">เข้ากันได้ 100% กับไคลเอนต์ C#</li>
+                <li class="list-item">คำนิยามโปรโตคอล PIDL เดียวกัน</li>
+                <li class="list-item">การโยกย้ายที่ราบรื่นระหว่างเซิร์ฟเวอร์ C# และ C++</li>
+            </ul>
+
+            <h3 class="heading-3">การผสานรวม WebSocket</h3>
+
+            <p class="paragraph"><strong class="text-strong">🌐 เซิร์ฟเวอร์ WebSocket เพิ่มเติม (พอร์ต 33335):</strong></p>
+            <p class="paragraph">การใช้งานเซิร์ฟเวอร์ C++ รวมเซิร์ฟเวอร์ WebSocket เพิ่มเติมที่ทำงานควบคู่กับเซิร์ฟเวอร์ TCP หลัก:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">TCP Server</strong>: พอร์ต 33334 (สำหรับไคลเอนต์ C# บนเดสก์ท็อป)</li>
+                <li class="list-item"><strong class="text-strong">WebSocket Server</strong>: พอร์ต 33335/ws (สำหรับไคลเอนต์ Unity WebGL)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 การรองรับไคลเอนต์ Unity WebGL:</strong></p>
+            <p class="paragraph">ฟังก์ชัน WebSocket นี้ได้รับการออกแบบมาโดยเฉพาะสำหรับไคลเอนต์แท็งค์ Unity ที่จะถูกสร้างเป็นแอปพลิเคชัน WebGL:</p>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">การเล่นเกมบนเว็บเบราว์เซอร์</strong>: ไคลเอนต์ Unity WebGL สามารถเชื่อมต่อโดยตรงผ่านเว็บเบราว์เซอร์</li>
+                <li class="list-item"><strong class="text-strong">โปรโตคอลเกมเดียวกัน</strong>: ใช้ฟังก์ชัน Tank.PIDL RMI เหมือนกันผ่านการขนส่ง WebSocket</li>
+                <li class="list-item"><strong class="text-strong">มัลติเพลเยอร์ข้ามแพลตฟอร์ม</strong>: ไคลเอนต์เดสก์ท็อป (TCP) และไคลเอนต์เว็บ (WebSocket) สามารถเล่นร่วมกันในเซสชันเกมเดียวกัน</li>
+                <li class="list-item"><strong class="text-strong">ไม่ต้องติดตั้ง</strong>: ผู้เล่นสามารถเข้าร่วมเกมได้ทันทีผ่านเว็บเบราว์เซอร์สมัยใหม่ใดๆ</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">ตัวอย่างการเชื่อมต่อ:</strong></p>
+            <div class="code-block">
+                <pre>ws://localhost:33335/ws  // การพัฒนาในเครื่อง
+ws://your-server.com:33335/ws  // การ deploy ใน production</pre>
+            </div>
+
+            <p class="paragraph">สถาปัตยกรรมแบบ dual-protocol นี้ช่วยให้เกิดการผสานรวมที่ราบรื่นระหว่างแอปพลิเคชันเดสก์ท็อปแบบดั้งเดิมและแพลตฟอร์มเกมบนเว็บสมัยใหม่</p>
+        </section>
+
+        <section id="multiplayer-movement-testing" class="md-section">
+            <h2 class="heading-2">4. การทดสอบการเคลื่อนไหวแบบผู้เล่นหลายคน</h2>
+
+            <p class="paragraph">ส่วนนี้สาธิตสถานการณ์จริงที่ไคลเอนต์สองตัวเชื่อมต่อพร้อมกันและทดสอบฟังก์ชันการเคลื่อนไหวของแท็งค์</p>
+
+            <h3 class="heading-3">สถานการณ์ทดสอบ</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ไคลเอนต์ 1 (ID=3)</strong>: ใช้คำสั่ง <code class="inline-code">move 1 1 0</code> เพื่อเคลื่อนที่ไปยังตำแหน่ง (1,1) ด้วยทิศทาง 0 องศา</li>
+                <li class="list-item"><strong class="text-strong">ไคลเอนต์ 2 (ID=4)</strong>: ใช้คำสั่ง <code class="inline-code">move 2 2 90</code> เพื่อเคลื่อนที่ไปยังตำแหน่ง (2,2) ด้วยทิศทาง 90 องศา</li>
+            </ul>
+
+            <h3 class="heading-3">Client 1 (ID=3) Console Log:</h3>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 3
+move 1 1 0
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100
+OnPlayerJoined: Tank 4 joined at (64.18131,34.385406) with tank type -1
+P2P: Member 3 joined group 5
+P2P: Member 4 joined group 5
+P2P: Added member 4 to group member list
+OnTankHealthUpdated: Tank 4 health: 100/100
+P2P: Received group info, Group ID: 5
+>>> OTHER TANK 4 MOVED TO (2,2) dir=90</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์ Log ของไคลเอนต์ 1:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การประมวลผลการเคลื่อนไหวของตนเอง</strong>: หลังจากดำเนินการคำสั่ง <code class="inline-code">move 1 1 0</code> สถานะแท็งค์ของตนเองจะถูกอัปเดต</li>
+                <li class="list-item"><strong class="text-strong">การตรวจจับผู้เล่นใหม่</strong>: รับเหตุการณ์ <code class="inline-code">OnPlayerJoined</code> เมื่อไคลเอนต์ 4 เชื่อมต่อกับเซิร์ฟเวอร์</li>
+                <li class="list-item"><strong class="text-strong">การก่อตัวกลุ่ม P2P</strong>: สร้างกลุ่ม P2P (ID: 5) เมื่อมีไคลเอนต์ 2+ ตัวเชื่อมต่อ</li>
+                <li class="list-item"><strong class="text-strong">การแจ้งเตือนการเคลื่อนไหวของแท็งค์อื่น</strong>: รับการเคลื่อนไหวของไคลเอนต์ 4 แบบเรียลไทม์และแสดงผล</li>
+            </ol>
+
+            <h3 class="heading-3">Client 2 (ID=4) Console Log:</h3>
+            <div class="code-block">
+                <pre>Connected to server. My ID: 4
+P2P: Member 4 joined group 5
+P2P: Member 3 joined group 5
+P2P: Added member 3 to group member list
+OnPlayerJoined: Tank 3 joined at (1,1) with tank type -1
+OnTankHealthUpdated: Tank 3 health: 100/100
+P2P: Received group info, Group ID: 5
+move 2 2 90
+Status: Tank ID=4, Position=(2,2), Type=0, Health=100/100</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์ Log ของไคลเอนต์ 2:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การเชื่อมต่อเซิร์ฟเวอร์</strong>: เชื่อมต่อกับเซิร์ฟเวอร์สำเร็จและได้รับมอบหมาย ID 4</li>
+                <li class="list-item"><strong class="text-strong">การเข้าร่วมกลุ่ม P2P</strong>: เข้าร่วมกลุ่ม P2P 5 ร่วมกับไคลเอนต์ 3 ที่มีอยู่แล้ว</li>
+                <li class="list-item"><strong class="text-strong">การรับข้อมูลผู้เล่นที่มีอยู่</strong>: รับข้อมูลแท็งค์ (ตำแหน่ง สุขภาพ) ของไคลเอนต์ 3 ที่เชื่อมต่ออยู่แล้ว</li>
+                <li class="list-item"><strong class="text-strong">การดำเนินการเคลื่อนไหวของตนเอง</strong>: ใช้คำสั่ง <code class="inline-code">move 2 2 90</code> เพื่อเคลื่อนย้ายแท็งค์ไปยังตำแหน่ง (2,2) ด้วยทิศทาง 90 องศา</li>
+            </ol>
+
+            <h3 class="heading-3">Server Console Log:</h3>
+            <div class="code-block">
+                <pre>New tank created for client 4 with tank type -1 and health 100/100
+Sending existing player info to new client: ID=3, Type=-1, Health=100/100
+Notifying existing client 3 about new player: ID=4, Type=-1, Health=100/100
+P2P group created with 2 members, Group ID: 5
+Sent P2P group info to client 3: P2P_GROUP_INFO:5
+Sent P2P group info to client 4: P2P_GROUP_INFO:5
+SendMove from client 4: pos=(2,2), direction=90</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์ Server Log:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การประมวลผลไคลเอนต์ใหม่</strong>: สร้างอ็อบเจกต์แท็งค์ใหม่สำหรับไคลเอนต์ 4 (สุขภาพเริ่มต้น 100/100)</li>
+                <li class="list-item"><strong class="text-strong">การซิงโครไนซ์ข้อมูลผู้เล่น</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">ส่งข้อมูลผู้เล่นที่มีอยู่ (ID=3) ไปยังไคลเอนต์ใหม่ (ID=4)</li>
+                        <li class="list-item">แจ้งไคลเอนต์ที่มีอยู่ (ID=3) เกี่ยวกับผู้เล่นใหม่ (ID=4)</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">การจัดการกลุ่ม P2P</strong>: สร้างกลุ่ม P2P (ID: 5) เมื่อมีไคลเอนต์ 2+ ตัวและแจกจ่ายข้อมูลกลุ่ม</li>
+                <li class="list-item"><strong class="text-strong">การประมวลผลคำสั่งการเคลื่อนไหว</strong>: รับและประมวลผลการเรียก RMI <code class="inline-code">SendMove</code> ของไคลเอนต์ 4</li>
+            </ol>
+
+            <h3 class="heading-3">การตรวจสอบคุณสมบัติแกนหลักของมัลติเพลเยอร์:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔄 การซิงโครไนซ์แบบเรียลไทม์:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">การเคลื่อนไหวจากไคลเอนต์หนึ่งจะส่งต่อไปยังไคลเอนต์อื่นๆ ทั้งหมดทันที</li>
+                <li class="list-item">เซิร์ฟเวอร์จัดการสถานะแบบรวมศูนย์และแพร่ภาพไปยังไคลเอนต์ทั้งหมด</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🌐 เครือข่าย P2P:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">กลุ่ม P2P จะก่อตัวขึ้นโดยอัตโนมัติเมื่อมีไคลเอนต์ 2+ ตัวเชื่อมต่อ</li>
+                <li class="list-item">การสื่อสารไคลเอนต์ต่อไคลเอนต์โดยตรงช่วยปรับปรุงประสิทธิภาพเครือข่าย</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">📊 การจัดการสถานะ:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">ตำแหน่ง ทิศทาง และสุขภาพของแท็งค์แต่ละคันจะซิงโครไนซ์ในไคลเอนต์ทั้งหมด</li>
+                <li class="list-item">ไคลเอนต์ที่เชื่อมต่อใหม่จะรับสถานะเกมที่มีอยู่โดยอัตโนมัติ</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🎮 ตรรกะเกม:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">ประเภทแท็งค์ ตำแหน่ง และทิศทางจะถูกส่งและแสดงผลอย่างแม่นยำ</li>
+                <li class="list-item">การกระทำของผู้เล่นแต่ละคนจะสะท้อนแบบเรียลไทม์ในสภาพแวดล้อมมัลติเพลเยอร์</li>
+            </ul>
+        </section>
+
+        <section id="fire-and-messaging-testing" class="md-section">
+            <h2 class="heading-2">5. การทดสอบการยิงและการส่งข้อความ</h2>
+
+            <p class="paragraph">นอกจากการเคลื่อนไหวแล้ว ไคลเอนต์สามารถทดสอบฟังก์ชันการยิงกระสุนและการส่งข้อความ P2P ได้</p>
+
+            <h3 class="heading-3">คำสั่งทดสอบเพิ่มเติม</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">คำสั่งการยิง</strong>: <code class="inline-code">fire 180 10</code> - ยิงกระสุนในทิศทาง 180 องศา ด้วยแรง 10</li>
+                <li class="list-item"><strong class="text-strong">คำสั่งข้อความ</strong>: <code class="inline-code">msg hi</code> - ส่งข้อความ P2P "hi" ไปยังไคลเอนต์อื่นที่เชื่อมต่อ</li>
+            </ul>
+
+            <h3 class="heading-3">Client 1 (ID=3) Fire and Message Commands:</h3>
+            <div class="code-block">
+                <pre>fire 180 10
+Fire request sent: direction=180, force=10, position=(1, 1, 1)
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100
+msg hi
+P2P message sent via server: hi
+Status: Tank ID=3, Position=(1,1), Type=0, Health=100/100</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์คำสั่งของไคลเอนต์ 1:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">การดำเนินการคำสั่งยิง</strong>: <code class="inline-code">fire 180 10</code> ส่งกระสุนด้วยทิศทาง 180 องศาและค่าแรง 10</li>
+                <li class="list-item"><strong class="text-strong">การยืนยันการยิง</strong>: ไคลเอนต์รับการยืนยันพร้อมตำแหน่งยิงและพารามิเตอร์</li>
+                <li class="list-item"><strong class="text-strong">การดำเนินการคำสั่งข้อความ</strong>: <code class="inline-code">msg hi</code> ส่งข้อความ P2P ไปยังไคลเอนต์ที่เชื่อมต่อทั้งหมด</li>
+                <li class="list-item"><strong class="text-strong">การยืนยันข้อความ</strong>: ไคลเอนต์รับการยืนยันว่าข้อความถูกส่งผ่านการส่งต่อของเซิร์ฟเวอร์</li>
+            </ol>
+
+            <h3 class="heading-3">Client 2 (ID=4) Receiving Fire and Message Events:</h3>
+            <div class="code-block">
+                <pre>OnSpawnBullet: Tank 3 fired from (1,1) dir=180, force=10
+Fire position: (1, 1, 1), shooter ID=3
+P2P Message from Client ID 3 (relayed): hi</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">การวิเคราะห์การรับข้อมูลของไคลเอนต์ 2:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">เหตุการณ์การสร้างกระสุน</strong>: รับการเรียก RMI <code class="inline-code">OnSpawnBullet</code> พร้อมตำแหน่งแท็งค์ที่ยิงและพารามิเตอร์กระสุน</li>
+                <li class="list-item"><strong class="text-strong">รายละเอียดการยิง</strong>: ได้รับข้อมูลครบถ้วนเกี่ยวกับ ID ผู้ยิง ตำแหน่ง ทิศทาง และแรง</li>
+                <li class="list-item"><strong class="text-strong">การรับข้อความ P2P</strong>: รับข้อความ P2P จากไคลเอนต์ 3 ที่ส่งผ่านเซิร์ฟเวอร์</li>
+            </ol>
+
+            <h3 class="heading-3">คุณสมบัติหลักของการสื่อสารมัลติเพลเยอร์:</h3>
+
+            <p class="paragraph"><strong class="text-strong">🔫 ระบบกระสุน:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">คำสั่งยิงจะซิงโครไนซ์ในไคลเอนต์ทั้งหมดแบบเรียลไทม์</li>
+                <li class="list-item">ไคลเอนต์แต่ละตัวจะรับข้อมูลกระสุนครบถ้วน (ตำแหน่ง ทิศทาง แรง ID ผู้ยิง)</li>
+                <li class="list-item">เหตุการณ์การสร้างกระสุนจะถูกแพร่ภาพอย่างถูกต้องเพื่อรักษาความสอดคล้องของสถานะเกม</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">💬 การส่งข้อความ P2P:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">ข้อความจะส่งผ่านการส่งต่อของเซิร์ฟเวอร์เพื่อให้แน่ใจว่าส่งถึง</li>
+                <li class="list-item">ไคลเอนต์ที่เชื่อมต่อทั้งหมดจะรับข้อความจากผู้ส่งคนใดก็ได้</li>
+                <li class="list-item">การระบุแหล่งที่มาของข้อความ (ID ไคลเอนต์ผู้ส่ง) จะถูกเก็บรักษาไว้</li>
+                <li class="list-item">การส่งข้อความที่เชื่อถือได้ผ่านโครงสร้างพื้นฐาน P2P ของ ProudNet</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">🔄 การแพร่ภาพเหตุการณ์:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">การกระทำในเกมทั้งหมด (การเคลื่อนไหว การยิง การส่งข้อความ) จะส่งต่อทันที</li>
+                <li class="list-item">สถานะเกมที่สอดคล้องกันจะถูกรักษาไว้ในไคลเอนต์ที่เชื่อมต่อทั้งหมด</li>
+                <li class="list-item">การโต้ตอบมัลติเพลเยอร์แบบเรียลไทม์โดยไม่มีความล่าช้าที่เห็นได้ชัด</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">การแก้ปัญหา</h2>
+
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ข้อผิดพลาดในการสร้าง</strong>: ตรวจสอบให้แน่ใจว่า DLL ของ ProudNet อยู่ในเส้นทางที่ถูกต้อง</li>
+                <li class="list-item"><strong class="text-strong">การเชื่อมต่อล้มเหลว</strong>: ตรวจสอบว่าเซิร์ฟเวอร์กำลังทำงานและการตั้งค่าไฟร์วอลล์</li>
+                <li class="list-item"><strong class="text-strong">ข้อผิดพลาดในการคอมไพล์ PIDL</strong>: ตรวจสอบว่า <code class="inline-code">ProudNet/util/PIDL.exe</code> มีอยู่และสามารถเข้าถึงได้</li>
+                <li class="list-item"><strong class="text-strong">ข้อผิดพลาดขณะรันไทม์</strong>: ยืนยันว่า DLL ของ ProudNet ทั้งหมดถูกคัดลอกไปยังไดเรกทอรีเอาท์พุต</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html>
+ 

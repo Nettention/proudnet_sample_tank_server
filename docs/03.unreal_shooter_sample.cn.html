@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProudNet UE5 示例</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/syntax-highlighting.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/syntax-highlighting.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>ProudNet UE5 示例</h1>
+            <p class="paragraph">使用 ProudNet 网络库和虚幻引擎 5 实现多人游戏的综合指南。涵盖聊天系统、角色网络和高级多人游戏功能。</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 目录</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#project-setup" class="link">1. 项目设置</a>
+                    <p class="paragraph">准备和配置虚幻引擎 5 项目以集成 ProudNet</p>
+                </li>
+                <li class="list-item"><a href="#local-chat" class="link">2. 创建本地聊天</a>
+                    <p class="paragraph">创建用于测试和基础的本地聊天系统</p>
+                </li>
+                <li class="list-item"><a href="#online-chat" class="link">3. 创建在线聊天</a>
+                    <p class="paragraph">使用 ProudNet 实现网络聊天功能</p>
+                </li>
+                <li class="list-item"><a href="#mirage-character" class="link">4. 实现幻影角色</a>
+                    <p class="paragraph">构建具有增强游戏功能的幻影角色</p>
+                </li>
+                <li class="list-item"><a href="#mirage-online" class="link">5. 幻影角色在线集成</a>
+                    <p class="paragraph">将幻影角色与 ProudNet 网络集成以实现多人游戏</p>
+                </li>
+                <li class="list-item"><a href="#project-build" class="link">6. 最终项目构建和测试</a>
+                    <p class="paragraph">项目完成、构建和综合测试程序</p>
+                    <ul class="unordered-list">
+                        <li class="list-item"><a href="#test-code-modification" class="link">6.1. 测试代码修改</a></li>
+                        <li class="list-item"><a href="#project-build-section" class="link">6.2. 项目构建</a></li>
+                        <li class="list-item"><a href="#testing" class="link">6.3. 测试</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <section id="project-setup" class="md-section">
+            <h2 class="heading-2">1. 项目设置</h2>
+            <p class="paragraph">本节介绍创建启用 ProudNet 的虚幻引擎 5 项目所需的初始设置和配置。</p>
+
+            <h3 class="heading-3">1.1. ProudNet 安装</h3>
+            <ol class="ordered-list">
+                <li class="list-item">从 https://github.com/Nettention/ProudNet 存储库安装最新版本。
+                    <ol class="ordered-list">
+                        <li class="list-item">默认安装路径为 "C:\Program Files (x86)\Nettention\ProudNet"。本指南和 UE5 插件都基于此路径配置，如果您更改安装路径，需要修改插件源代码并仔细检查指南。</li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">1.2. Visual Studio 项目配置</h3>
+            <ol class="ordered-list">
+                <li class="list-item">在 Visual Studio 中创建空白项目
+                    <ul class="unordered-list">
+                        <li class="list-item">本指南使用以下路径/名称。</li>
+                    </ul>
+                    <img src="img/image_017-1.png" alt="Visual Studio 项目创建" class="image">
+                    <p class="image-caption">Visual Studio 项目创建</p>
+                </li>
+                <li class="list-item">向 chat_server 项目添加 3 个新项目：main.cpp、setting.cpp、setting.h。
+                    <img src="img/image_017.png" alt="添加项目文件" class="image">
+                    <p class="image-caption">添加项目文件</p>
+                    
+                    <img src="img/image_018.png" alt="项目结构" class="image">
+                    <p class="image-caption">项目结构</p>
+                </li>
+                <li class="list-item">修改 chat_server 项目的属性。
+                    <ol class="ordered-list">
+                        <li class="list-item">"C/C++ - 语言 - C++ 语言标准"
+                            <ol class="ordered-list">
+                                <li class="list-item">从下拉菜单中选择 "ISO C++20 标准 (/std:C++20)"</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">"C/C++ - 常规 - 附加包含目录"
+                            <ol class="ordered-list">
+                                <li class="list-item">从下拉菜单中选择 &lt;编辑…&gt;</li>
+                                <li class="list-item">在弹出窗口中添加以下路径</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"链接器 - 常规 - 附加库目录"
+                            <ol class="ordered-list">
+                                <li class="list-item">从下拉菜单中选择 &lt;编辑…&gt;</li>
+                                <li class="list-item">在弹出窗口中添加以下路径</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"链接器 - 输入 - 附加依赖项"
+                            <ol class="ordered-list">
+                                <li class="list-item">从下拉菜单中选择 &lt;编辑…&gt;</li>
+                                <li class="list-item">在弹出窗口中添加以下文件名</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>ProudNetServer.lib
+ProudNetClient.lib</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"生成事件 - 生成后事件 - 命令行"
+                            <ol class="ordered-list">
+                                <li class="list-item">从下拉菜单中选择 &lt;编辑…&gt;</li>
+                                <li class="list-item">在弹出窗口中添加以下命令</li>
+                            </ol>
+                            <div class="code-block">
+                                <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
+xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libssl-3-x64.dll" "$(OutDir)"</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">在每个源文件中输入代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">setting.h (差异)
+                            <div class="code-block">
+                                <pre>+ #pragma once
++ 
++ namespace ProudSetting
++ {
++     namespace CHAT
++     {
++         extern const ::Proud::Guid version;
++         extern const int server_port;
++     }
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">setting.cpp (差异)
+                            <div class="code-block">
+                                <pre>+ #include &lt;ProudNetClient.h&gt;
++ #include "setting.h"
++ 
++ namespace ProudSetting
++ {
++     namespace CHAT
++     {
++         const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
++         const ::Proud::Guid version = ::Proud::Guid(guid);
++         const int server_port = 33337;
++     }
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">main.cpp (差异)
+                            <div class="code-block">
+                                <pre>+ #include &lt;iostream&gt;
++ #include &lt;format&gt;
++ #include &lt;memory&gt;
++ 
++ #include &lt;ProudNetServer.h&gt;
++ #include "setting.h"
++ 
++ std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
++ 
++ int main()
++ {
++ 	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
++ 
++ 	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
++ 		{
++ 			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
++ 		};
++ 	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
++ 		{
++ 			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
++ 		};
++ 
++ 	Proud::CStartServerParameter start_param;
++ 	start_param.m_protocolVersion = ProudSetting::CHAT::version;
++ 	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
++ 
++ 	try
++ 	{
++ 		net_server-&gt;Start(start_param);
++ 	}
++ 	catch (Proud::Exception&amp; error)
++ 	{
++ 		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
++ 		return 0;
++ 	}
++ 
++ 	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
++ 	std::cout &lt;&lt; ("-q : Quit.\n");
++ 	std::string input;
++ 	while (true)
++ 	{
++ 		std::cin &gt;&gt; input;
++ 		if (input[0] == '-')
++ 		{
++ 			if (input == "-q")
++ 				break;
++ 		}
++ 	}
++ 
++ 	std::cout &lt;&lt; "Stopping server...\n";
++ 	net_server-&gt;Stop();
++ 	net_server = nullptr;
++ 	std::cout &lt;&lt; "Server stopped.\n";
++ 	return 0;
++ }</pre>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <p class="paragraph"><strong class="text-strong">完整代码</strong></p>
+                    <ul class="unordered-list">
+                        <li class="list-item">setting.h
+                            <div class="code-block">
+                                <pre>#pragma once
+
+namespace ProudSetting
+{
+    namespace CHAT
+    {
+        extern const ::Proud::Guid version;
+        extern const int server_port;
+    }
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">setting.cpp
+                            <div class="code-block">
+                                <pre>#include &lt;ProudNetClient.h&gt;
+#include "setting.h"
+
+namespace ProudSetting
+{
+    namespace CHAT
+    {
+        const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
+        const ::Proud::Guid version = ::Proud::Guid(guid);
+        const int server_port = 33337;
+    }
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">main.cpp
+                            <div class="code-block">
+                                <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+		};
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">构建并运行项目 (F5) 查看以下界面。
+                    <img src="img/image_018-1.png" alt="服务器运行界面" class="image">
+                    <p class="image-caption">服务器运行界面</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">1.3. 虚幻引擎项目配置</h3>
+            <ol class="ordered-list">
+                <li class="list-item">将 <a href="https://www.fab.com/listings/6a0af880-2b74-480c-a82c-8e597918dffe" class="link">Infima Games 的免费 FPS 模板</a> 添加到您的库中。</li>
+                <li class="list-item">按照以下步骤创建模板项目。
+                    <ol class="ordered-list">
+                        <li class="list-item">启动 Epic Games 启动器</li>
+                        <li class="list-item">导航至虚幻引擎选项卡</li>
+                        <li class="list-item">导航至库选项卡</li>
+                        <li class="list-item">在 Fab 库列表中点击"免费 FPS 模板和教程"的"创建项目"</li>
+                        <li class="list-item">更改名称和文件夹，然后点击创建
+                            <ul class="unordered-list">
+                                <li class="list-item">本指南使用以下名称和路径。</li>
+                            </ul>
+                            <img src="img/image_019-0.png" alt="虚幻项目创建" class="image">
+                            <p class="image-caption">虚幻项目创建</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">按照以下步骤创建 C++ 类。
+                    <ol class="ordered-list">
+                        <li class="list-item">顶部工具栏 - 工具 - 新建 C++ 类
+                            <img src="img/image_019.png" alt="C++ 类创建菜单" class="image">
+                            <p class="image-caption">C++ 类创建菜单</p>
+                        </li>
+                        <li class="list-item">显示所有类，然后选择 GameInstanceSubsystem
+                            <img src="img/image_020.png" alt="GameInstanceSubsystem 选择" class="image">
+                            <p class="image-caption">GameInstanceSubsystem 选择</p>
+                        </li>
+                        <li class="list-item">类类型 - 选择 Public 并输入类名，然后创建类
+                            <ol class="ordered-list">
+                                <li class="list-item">本指南使用 GissChatNet。
+                                    <img src="img/image_021.png" alt="输入类名" class="image">
+                                    <p class="image-caption">输入类名</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">按照以下步骤为虚幻项目生成 VS 解决方案。
+                    <ol class="ordered-list">
+                        <li class="list-item">关闭虚幻引擎编辑器。</li>
+                        <li class="list-item">导航至虚幻项目文件夹。</li>
+                        <li class="list-item">右键点击 PdnUE5ExampleClient.uproject 并选择生成 Visual Studio 项目文件</li>
+                    </ol>
+                </li>
+                <li class="list-item">Change the startup project (recommended)
+                    <ul class="unordered-list">
+                        <li class="list-item">Guide image</li>
+                    </ul>
+                    <img src="img/image_022.png" alt="Change Startup Project" class="image">
+                    <p class="image-caption">Change Startup Project</p>
+                </li>
+                <li class="list-item">Apply the UE5 ProudNet plugin following the procedure below.
+                    <ol class="ordered-list">
+                        <li class="list-item">Open the Unreal project folder.
+                            <p class="paragraph">Shortcut: Epic Games Launcher → My Projects → Right-click project → Show in Folder</p>
+                        </li>
+                        <li class="list-item">Extract the following file and place it in the Plugins folder.
+                            <p class="paragraph">Create a new Plugins folder if it doesn't exist.</p>
+                            <p class="paragraph"><strong class="text-strong"><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample/ProudNet.UE5.Linker.Plugin.zip">ProudNet UE5 Lib Linker Plugin.zip</a></strong></p>
+                            <img src="img/image_023.png" alt="Plugin Folder Structure" class="image">
+                            <p class="image-caption">Plugin Folder Structure</p>
+                        </li>
+                        <li class="list-item">Regenerate the Visual Studio project solution.
+                            <ol class="ordered-list">
+                                <li class="list-item">Close the Visual Studio IDE.</li>
+                                <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">Modify the PdnUE5ExampleClient.Build.cs code.
+                            <ul class="unordered-list">
+                                <li class="list-item">Guide image
+                                    <img src="img/image_023-0.png" alt="Build.cs File Location" class="image">
+                                    <p class="image-caption">Build.cs File Location</p>
+                                </li>
+                                <li class="list-item">Modifications
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+using UnrealBuildTool;
+
+public class PdnUE5ExampleClient : ModuleRules
+{
+	public PdnUE5ExampleClient(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+	
+-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
++		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProudNet" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+		// Uncomment if you are using Slate UI
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		// Uncomment if you are using online features
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+	}
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">Complete Code
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+using UnrealBuildTool;
+
+public class PdnUE5ExampleClient : ModuleRules
+{
+	public PdnUE5ExampleClient(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+	
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProudNet" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+		// Uncomment if you are using Slate UI
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		// Uncomment if you are using online features
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+	}
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Modify the GissChatNet.h and .cpp code.
+                    <ul class="unordered-list">
+                        <li class="list-item">Guide image
+                            <img src="img/image_023-1.png" alt="GissChatNet Files" class="image">
+                            <p class="image-caption">GissChatNet Files</p>
+                        </li>
+                        <li class="list-item">GissChatNet.h (diff)
+                            <div class="code-block">
+                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
++ private:
++	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
++	virtual void Deinitialize() override;
+};</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">GissChatNet.cpp (diff)
+                            <div class="code-block">
+                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GissChatNet.h"
+
++ #include &lt;format&gt;
++ #include &lt;functional&gt;
++ 
++ #include &lt;ProudNetClient.h&gt;
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.cpp"
++ 
++ static void LogPrint(const std::string& str)
++ {
++ 	UE_LOG(LogTemp, Log, TEXT("%s"), UTF8_TO_TCHAR(str.c_str()));
++ }
++ 
++ static Proud::CriticalSection global_critical_section;
++ static std::shared_ptr&lt;Proud::CNetClient&gt; net_client;
++ static FDelegateHandle update_handle;
++ 
++ void UGissChatNet::Initialize(FSubsystemCollectionBase& Collection)
++ {
++ 	net_client = std::shared_ptr&lt;Proud::CNetClient&gt;(Proud::CNetClient::Create());
++ 
++ 	bool connected = false;
++ 
++ 	net_client-&gt;OnJoinServerComplete = [&](Proud::ErrorInfo* info, const Proud::ByteArray& replyFromServer)
++ 		{
++ 			Proud::CriticalSectionLock lock(global_critical_section, true);
++ 
++ 			if (info-&gt;m_errorType == Proud::ErrorType::Ok)
++ 			{
++ 				auto log = std::format("Succeed to connect server. Allocated hostID={}\n", (int)net_client-&gt;GetLocalHostID());
++ 				LogPrint(log);
++ 
++ 				connected = true;
++ 			}
++ 			else
++ 			{
++ 				auto log = "Failed to connect to server.\n";
++ 				LogPrint(log);
++ 			}
++ 		};
++ 
++ 	net_client-&gt;OnLeaveServer = [&](Proud::ErrorInfo* errorInfo)
++ 		{
++ 			Proud::CriticalSectionLock lock(global_critical_section, true);
++ 
++ 			auto log = std::format("OnLeaveServer. {}  \n", StringT2A(errorInfo-&gt;m_comment).GetString());
++ 			LogPrint(log);
++ 
++ 			connected = false;
++ 			if (update_handle.IsValid())
++ 			{
++ 				FCoreDelegates::OnEndFrame.Remove(update_handle);
++ 				update_handle.Reset();
++ 			}
++ 		};
++ 
++ 	Proud::CNetConnectionParam connection_param;
++ 	connection_param.m_protocolVersion = ProudSetting::CHAT::version;
++ 	connection_param.m_serverIP = _PNT("localhost");
++ 	connection_param.m_serverPort = ProudSetting::CHAT::server_port;
++ 	connection_param.m_closeNoPingPongTcpConnections = false;
++ 
++ 	net_client-&gt;Connect(connection_param);
++ 
++ 	update_handle = FCoreDelegates::OnEndFrame.AddStatic([]()
++ 		{
++ 			if (net_client)
++ 				net_client-&gt;FrameMove();
++ 		}
++ 	);
++ }
++ 
++ void UGissChatNet::Deinitialize()
++ {
++ 	net_client-&gt;Disconnect();
++ 	net_client = nullptr;
++ }</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">Complete Code
+                            <ul class="unordered-list">
+                                <li class="list-item">GissChatNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">GissChatNet.cpp
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GissChatNet.h"
+
+#include &lt;format&gt;
+#include &lt;functional&gt;
+
+#include &lt;ProudNetClient.h&gt;
+#include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.h"
+#include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_server/setting.cpp"
+
+static void LogPrint(const std::string& str)
+{
+	UE_LOG(LogTemp, Log, TEXT("%s"), UTF8_TO_TCHAR(str.c_str()));
+}
+
+static Proud::CriticalSection global_critical_section;
+static std::shared_ptr&lt;Proud::CNetClient&gt; net_client;
+static FDelegateHandle update_handle;
+
+void UGissChatNet::Initialize(FSubsystemCollectionBase& Collection)
+{
+	net_client = std::shared_ptr&lt;Proud::CNetClient&gt;(Proud::CNetClient::Create());
+
+	bool connected = false;
+
+	net_client-&gt;OnJoinServerComplete = [&](Proud::ErrorInfo* info, const Proud::ByteArray& replyFromServer)
+		{
+			Proud::CriticalSectionLock lock(global_critical_section, true);
+
+			if (info-&gt;m_errorType == Proud::ErrorType::Ok)
+			{
+				auto log = std::format("Succeed to connect server. Allocated hostID={}\n", (int)net_client-&gt;GetLocalHostID());
+				LogPrint(log);
+
+				connected = true;
+			}
+			else
+			{
+				auto log = "Failed to connect to server.\n";
+				LogPrint(log);
+			}
+		};
+
+	net_client-&gt;OnLeaveServer = [&](Proud::ErrorInfo* errorInfo)
+		{
+			Proud::CriticalSectionLock lock(global_critical_section, true);
+
+			auto log = std::format("OnLeaveServer. {}  \n", StringT2A(errorInfo-&gt;m_comment).GetString());
+			LogPrint(log);
+
+			connected = false;
+			if (update_handle.IsValid())
+			{
+				FCoreDelegates::OnEndFrame.Remove(update_handle);
+				update_handle.Reset();
+			}
+		};
+
+	Proud::CNetConnectionParam connection_param;
+	connection_param.m_protocolVersion = ProudSetting::CHAT::version;
+	connection_param.m_serverIP = _PNT("localhost");
+	connection_param.m_serverPort = ProudSetting::CHAT::server_port;
+	connection_param.m_closeNoPingPongTcpConnections = false;
+
+	net_client-&gt;Connect(connection_param);
+
+	update_handle = FCoreDelegates::OnEndFrame.AddStatic([]()
+		{
+			if (net_client)
+				net_client-&gt;FrameMove();
+		}
+	);
+}
+
+void UGissChatNet::Deinitialize()
+{
+	net_client-&gt;Disconnect();
+	net_client = nullptr;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">Testing
+                    <ol class="ordered-list">
+                        <li class="list-item">Build and run chat_server from PdnUE5ExampleServer.
+                            <img src="img/image_024.png" alt="chat_server Execution" class="image">
+                            <p class="image-caption">chat_server Execution</p>
+                        </li>
+                        <li class="list-item">Build PdnUE5ExampleClient and run the level in the Unreal Engine editor.
+                            <img src="img/image_025.png" alt="Unreal Editor Execution" class="image">
+                            <p class="image-caption">Unreal Editor Execution</p>
+                        </li>
+                        <li class="list-item">Success if client and server connect as shown below.
+                            <img src="img/image_026.png" alt="Server Connection Success" class="image">
+                            <p class="image-caption">Server Connection Success</p>
+                            
+                            <img src="img/image_027.png" alt="Client Connection Success" class="image">
+                            <p class="image-caption">Client Connection Success</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+        </section>
+
+        <section id="local-chat" class="md-section">
+            <h2 class="heading-2">2. 创建本地聊天</h2>
+            <p class="paragraph">本节介绍如何在虚幻引擎 5 中创建本地聊天窗口并实现基本聊天功能。</p>
+
+            <h3 class="heading-3">2.1. 创建聊天控件</h3>
+            <ol class="ordered-list">
+                <li class="list-item">按照以下步骤创建 BP_ChatWidget 控件蓝图
+                    <ol class="ordered-list">
+                        <li class="list-item">在内容浏览器的空白区域右键单击打开上下文菜单。</li>
+                        <li class="list-item">选择"创建高级资产 - 用户界面 - 控件蓝图"。
+                            <img src="img/image_028.png" alt="控件蓝图创建" class="image">
+                            <p class="image-caption">控件蓝图创建</p>
+                        </li>
+                        <li class="list-item">选择"用户控件"</li>
+                        <li class="list-item">将名称更改为 BP_ChatWidget
+                            <img src="img/image_029.png" alt="控件名称更改" class="image">
+                            <p class="image-caption">控件名称更改</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Configure the appearance of the BP_ChatWidget widget following the procedure below.
+                    <ol class="ordered-list">
+                        <li class="list-item">Double-click BP_ChatWidget to open the Blueprint editor.</li>
+                        <li class="list-item">Configure the widget according to the structure below.
+                            <ul class="unordered-list">
+                                <li class="list-item">Widget Element Structure
+                                    <div class="directory-tree">
+                                        <pre>&gt;&gt; Canvas Panel
+	&gt;&gt; Canvas Panel
+		- Anchor: Bottom Left
+		- Position: [x: 100, y: -200]
+		- Size: [x: 640, y: 360]
+		- Alignment: [x: 0, y: 1]
+		&gt;&gt; Scroll Box
+			- Anchor: Top
+			- Position: [x: 0, y: 0]
+			- Size: [x: 640, y: 300]
+			- Alignment: [x: 0.5, y: 0]
+		&gt;&gt; Canvas Panel
+			- Anchor: Bottom
+			- Position: [x: 0, y: 0]
+			- Size: [x: 640, y: 48]
+			- Alignment: [x: 0.5, y: 1]
+			&gt;&gt; Text Box
+				- Anchor: Left
+				- Position: [x: 0, y: 0]
+				- Size: [x: 520, y: 48]
+				- Alignment: [x: 0, y: 0.5]
+			&gt;&gt; Button
+				- Anchor: Right
+				- Position: [x: 0, y: 0]
+				- Size: [x: 100, y: 48]
+				- Alignment: [x: 1, y: 0.5]
+				&gt;&gt; Text
+					- Text: "Send"</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
+                            <img src="img/image_030.png" alt="Chat Widget Configuration" class="image">
+                            <p class="image-caption">Chat Widget Configuration</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Add BP_ChatWidget to viewport following the procedure below.
+                    <ol class="ordered-list">
+                        <li class="list-item">Open the Level Blueprint editor.
+                            <img src="img/image_031.png" alt="Opening Level Blueprint Editor" class="image">
+                            <p class="image-caption">Opening Level Blueprint Editor</p>
+                        </li>
+                        <li class="list-item">Add Create Widget node and change the class to BP_ChatWidget.
+                            <img src="img/image_032.png" alt="Adding Create Widget Node" class="image">
+                            <p class="image-caption">Adding Create Widget Node</p>
+                            
+                            <img src="img/image_033.png" alt="Class Setting" class="image">
+                            <p class="image-caption">Class Setting</p>
+                        </li>
+                        <li class="list-item">Add Add to Viewport node and connect them.
+                            <img src="img/image_034.png" alt="Adding Add to Viewport Node" class="image">
+                            <p class="image-caption">Adding Add to Viewport Node</p>
+                            
+                            <img src="img/image_035.png" alt="Node Connection" class="image">
+                            <p class="image-caption">Node Connection</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Run the level and confirm that the chat window has been added.
+                    <img src="img/image_036.png" alt="Screen with Chat Window Added" class="image">
+                    <p class="image-caption">Screen with Chat Window Added</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">2.2. Implementing Chat Functionality</h3>
+            <ol class="ordered-list">
+                <li class="list-item">Create a new widget blueprint BP_ChatBlock and configure its appearance.
+                    <ol class="ordered-list">
+                        <li class="list-item">Configure the widget according to the structure below.
+                            <ul class="unordered-list">
+                                <li class="list-item">Widget Element Structure
+                                    <div class="directory-tree">
+                                        <pre>&gt;&gt; Canvas Panel
+	&gt;&gt; Border
+		- Anchor: Top Left
+		- Position: [x: 0, y: 0]
+		- Size: [x: 640, y: 40]
+		- Alignment: [x: 0, y: 0]
+		- Brush Color: [R: 1, G: 1, B: 1, A: 0.5]
+		&gt;&gt; Text
+			&gt; Name: ChatText
+			&gt; Check Variable
+			- Horizontal Alignment: Left
+			- Vertical Alignment: Center
+			- Font-Size: 20</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
+                            <img src="img/image_037.png" alt="BP_ChatBlock Configuration" class="image">
+                            <p class="image-caption">BP_ChatBlock Configuration</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Configure the Blueprint for BP_ChatBlock widget following the procedure below.
+                    <ol class="ordered-list">
+                        <li class="list-item">Switch to Blueprint Graph mode.
+                            <img src="img/image_038.png" alt="Blueprint Graph Mode" class="image">
+                            <p class="image-caption">Blueprint Graph Mode</p>
+                        </li>
+                        <li class="list-item">Configure the SetChatText function.
+                            <ol class="ordered-list">
+                                <li class="list-item">Create a function in the Blueprint window.
+                                    <img src="img/image_039.png" alt="Function Creation" class="image">
+                                    <p class="image-caption">Function Creation</p>
+                                </li>
+                                <li class="list-item">Set function parameters in the Details window.
+                                    <img src="img/image_040.png" alt="Function Parameter Setting" class="image">
+                                    <p class="image-caption">Function Parameter Setting</p>
+                                </li>
+                                <li class="list-item">Drag ChatText from the variable list in the Blueprint window and select Get ChatText.</li>
+                                <li class="list-item">Create and connect SetText (Text) node. Be careful not to accidentally select other items.
+                                    <img src="img/image_041.png" alt="Adding SetText Node" class="image">
+                                    <p class="image-caption">Adding SetText Node</p>
+                                    
+                                    <img src="img/image_042.png" alt="Node Connection Complete" class="image">
+                                    <p class="image-caption">Node Connection Complete</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Configure the BP_ChatWidget widget following the procedure below.
+                    <ol class="ordered-list">
+                        <li class="list-item">Open the BP_ChatWidget Blueprint editor and switch to Designer mode.</li>
+                        <li class="list-item">Modify the widget referring to the following.
+                            <ul class="unordered-list">
+                                <li class="list-item">Widget Element Structure
+                                    <div class="directory-tree">
+                                        <pre>-&gt; Canvas Panel
+	-&gt; Canvas Panel
+		-&gt; Scroll Box
+			&gt; Name: ChatBlockArea
+			&gt; Check Variable
+		-&gt; Canvas Panel
+			-&gt; Button
+				&gt; Name: SendButton
+				&gt; Check Variable
+			-&gt; Text Box
+				&gt; Name: ChatTextBox
+				&gt; Check Variable</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p class="paragraph">The appearance after modification is as follows.</p>
+                            <img src="img/image_043.png" alt="BP_ChatWidget Modification Complete" class="image">
+                            <p class="image-caption">BP_ChatWidget Modification Complete</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Switch the Blueprint editor to Graph mode.</li>
+                <li class="list-item">Configure the PrintChat function.
+                    <ol class="ordered-list">
+                        <li class="list-item">Add a function.
+                            <img src="img/image_044.png" alt="Adding PrintChat Function" class="image">
+                            <p class="image-caption">Adding PrintChat Function</p>
+                        </li>
+                        <li class="list-item">Add Create Widget node and specify BP_ChatBlock for the class.</li>
+                        <li class="list-item">Add and connect BP_ChatBlock's SetChatText node.</li>
+                        <li class="list-item">Drag and add the ChatBlockArea variable.</li>
+                        <li class="list-item">Add Add Child node and connect.
+                            <img src="img/image_045.png" alt="PrintChat Function Configuration" class="image">
+                            <p class="image-caption">PrintChat Function Configuration</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Implement the chat message sending event.
+                    <ol class="ordered-list">
+                        <li class="list-item">Select SendButton from variables and add a click event.
+                            <img src="img/image_046.png" alt="Adding Button Click Event" class="image">
+                            <p class="image-caption">Adding Button Click Event</p>
+                        </li>
+                        <li class="list-item">Drag and add the ChatTextBox variable and PrintChat function.</li>
+                        <li class="list-item">Add Get Text (Text Box) node and connect all.
+                            <img src="img/image_047.png" alt="Chat Send Event Complete" class="image">
+                            <p class="image-caption">Chat Send Event Complete</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Additional features can be implemented by modifying the Blueprint graph as follows (optional).
+                    <img src="img/image_048.png" alt="Additional Feature Implementation 1" class="image">
+                    <p class="image-caption">Additional Feature Implementation 1</p>
+                    
+                    <img src="img/image_049.png" alt="Additional Feature Implementation 2" class="image">
+                    <p class="image-caption">Additional Feature Implementation 2</p>
+                    
+                    <ol class="ordered-list">
+                        <li class="list-item">Ignore sending if no message is entered</li>
+                        <li class="list-item">Automatically delete the input message after sending</li>
+                        <li class="list-item">Auto-scroll chat window to bottom when new chat arrives</li>
+                    </ol>
+                </li>
+                <li class="list-item">Run the level and confirm that chat functionality has been added.
+                    <img src="img/image_050.png" alt="Chat Function Verification" class="image">
+                    <p class="image-caption">Chat Function Verification</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="online-chat" class="md-section">
+            <h2 class="heading-2">3. 创建在线聊天</h2>
+            <p class="paragraph">本节介绍如何使用 ProudNet 实现网络聊天功能。</p>
+
+            <h3 class="heading-3">3.1. Visual Studio 项目工作</h3>
+            <ol class="ordered-list">
+                <li class="list-item">Add a new empty project chat_pidl in PdnUE5ExampleServer.</li>
+                <li class="list-item">Add two files C2S.PIDL, S2C.PIDL and modify their properties.
+                    <ol class="ordered-list">
+                        <li class="list-item">Select "Custom Build Tool" from "General - Item Type" dropdown</li>
+                        <li class="list-item">Enter text in "Custom Build Tool - General - Command Line"
+                            <div class="code-block">
+                                <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">Enter text in "Custom Build Tool - General - Description"
+                            <div class="code-block">
+                                <pre>%(Filename).PIDL Compiling...</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">Select &lt;Edit…&gt; from "Custom Build Tool - General - Outputs" dropdown and add the following paths in the popup window
+                            <div class="code-block">
+                                <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
+%(RootDir)%(Directory)\%(Filename)_common.h
+%(RootDir)%(Directory)\%(Filename)_proxy.cpp
+%(RootDir)%(Directory)\%(Filename)_proxy.h
+%(RootDir)%(Directory)\%(Filename)_stub.cpp
+%(RootDir)%(Directory)\%(Filename)_stub.h</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Enter code in each file.
+                    <ul class="unordered-list">
+                        <li class="list-item">Complete Code
+                            <ul class="unordered-list">
+                                <li class="list-item">C2S.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global CHAT_C2S 3000
+{
+    Chat([in] Proud::String message);
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">S2C.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global CHAT_S2C 4000
+{
+    SystemChat([in] Proud::String message);
+    BroadcastChat([in] int sender_id, [in] Proud::String message);
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">Build the chat_pidl project. You can check the built source code files in the chat_pidl project folder.
+                    <img src="img/image_051.png" alt="PIDL Build Results" class="image">
+                    <p class="image-caption">PIDL Build Results</p>
+                </li>
+                <li class="list-item">Modify the main.cpp source code of the chat_server project.
+                    <ul class="unordered-list">
+                        <li class="list-item">Modifications
+                            <div class="code-block">
+                                <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
++ #include "../chat_pidl/S2C_common.h"
++ #include "../chat_pidl/S2C_common.cpp"
++ #include "../chat_pidl/S2C_proxy.h"
++ #include "../chat_pidl/S2C_proxy.cpp"
++ 
++ #include "../chat_pidl/C2S_common.h"
++ #include "../chat_pidl/C2S_common.cpp"
++ #include "../chat_pidl/C2S_stub.h"
++ #include "../chat_pidl/C2S_stub.cpp"
++ 
++ 
++ Proud::HostID group_host_id = Proud::HostID_None;
++ CHAT_S2C::Proxy s2c_proxy;
++ 
++ struct CHAT_C2S_Stub : public CHAT_C2S::Stub
++ {
++ public:
++ 	DECRMI_CHAT_C2S_Chat;
++ };
++ 
++ DEFRMI_CHAT_C2S_Chat(CHAT_C2S_Stub)
++ {
++ 	Proud::RmiContext rmi_context;
++ 	rmi_context.m_enableLoopback = false;
++ 	s2c_proxy.BroadcastChat(group_host_id, rmi_context, (int)remote, message);
++ 	std::cout &lt;&lt; std::format("Player[{}] say {}\n", (int)remote, StringT2A(message).GetString());
++ 	return true;
++ }
++ 
++ CHAT_C2S_Stub c2s_stub;
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
++ 
++ 			Proud::HostID list[100];
++ 			int listCount = net_server-&gt;GetClientHostIDs(list, 100);
++ 			group_host_id = net_server-&gt;CreateP2PGroup(list, listCount, Proud::ByteArray());
++ 
++ 			auto message = std::format("Player[{}] has joined.", (int)clientInfo-&gt;m_HostID);
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
++ 
++ 			auto message = std::format("Player[{}] has left the game.", (int)clientInfo-&gt;m_HostID);
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+
++ 	net_server-&gt;AttachProxy(&amp;s2c_proxy);
++ 	net_server-&gt;AttachStub(&amp;c2s_stub);
++ 
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
++ 		else
++ 		{
++ 			Proud::RmiContext rmi_context;
++ 			s2c_proxy.SystemChat(group_host_id, rmi_context, input);
++ 		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">Complete Code
+                            <ul class="unordered-list">
+                                <li class="list-item">main.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+#include "../chat_pidl/S2C_common.h"
+#include "../chat_pidl/S2C_common.cpp"
+#include "../chat_pidl/S2C_proxy.h"
+#include "../chat_pidl/S2C_proxy.cpp"
+
+#include "../chat_pidl/C2S_common.h"
+#include "../chat_pidl/C2S_common.cpp"
+#include "../chat_pidl/C2S_stub.h"
+#include "../chat_pidl/C2S_stub.cpp"
+
+Proud::HostID group_host_id = Proud::HostID_None;
+CHAT_S2C::Proxy s2c_proxy;
+
+struct CHAT_C2S_Stub : public CHAT_C2S::Stub
+{
+public:
+	DECRMI_CHAT_C2S_Chat;
+};
+
+DEFRMI_CHAT_C2S_Chat(CHAT_C2S_Stub)
+{
+	Proud::RmiContext rmi_context;
+	rmi_context.m_enableLoopback = false;
+	s2c_proxy.BroadcastChat(group_host_id, rmi_context, (int)remote, message);
+	std::cout &lt;&lt; std::format("Player[{}] say {}\n", (int)remote, StringT2A(message).GetString());
+	return true;
+}
+
+CHAT_C2S_Stub c2s_stub;
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+
+			Proud::HostID list[100];
+			int listCount = net_server-&gt;GetClientHostIDs(list, 100);
+			group_host_id = net_server-&gt;CreateP2PGroup(list, listCount, Proud::ByteArray());
+
+			auto message = std::format("Player[{}] has joined.", (int)clientInfo-&gt;m_HostID);
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+
+			auto message = std::format("Player[{}] has left the game.", (int)clientInfo-&gt;m_HostID);
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, message);
+		};
+
+	net_server-&gt;AttachProxy(&amp;s2c_proxy);
+	net_server-&gt;AttachStub(&amp;c2s_stub);
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::CHAT::version;
+	start_param.m_tcpPorts.Add(ProudSetting::CHAT::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+		else
+		{
+			Proud::RmiContext rmi_context;
+			s2c_proxy.SystemChat(group_host_id, rmi_context, input);
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">3.2. Unreal Project Work</h3>
+            <ol class="ordered-list">
+                <li class="list-item">Create a C++ class BaseChatWidget that inherits from UserWidget in the Unreal Engine editor.</li>
+                <li class="list-item">Modify the source code of the created BaseChatWidget class.
+                    <ul class="unordered-list">
+                        <li class="list-item">Modifications
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseChatWidget.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "BaseChatWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
+{
+	GENERATED_BODY()
+
++ public:
++ 	UFUNCTION(BlueprintImplementableEvent)
++ 	void PrintChat(const FText&amp; message);
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-item">Complete Code
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseChatWidget.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "BaseChatWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UBaseChatWidget : public UUserWidget
+{
+	GENERATED_BODY()
+	
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrintChat(const FText&amp; message);
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">Modify the source code of the GissChatNet class.
+                    <ul class="unordered-list">
+                        <li class="list-item">Modifications (showing main parts only)
+                            <ul class="unordered-list">
+                                <li class="list-item">GissChatNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissChatNet.generated.h"
+
+/**
+ *
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
++ public:
++ 	UFUNCTION(BlueprintCallable)
++ 	void SendChat(const FText&amp; message);
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase&amp; Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">GissChatNet.cpp (main addition parts)
+                                    <div class="code-block">
+                                        <pre>+ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_common.cpp"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_proxy.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/C2S_proxy.cpp"
++ 
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_common.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_common.cpp"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_stub.h"
++ #include "C:/proudnet_ue5_example/PdnUE5ExampleServer/chat_pidl/S2C_stub.cpp"
++ 
++ static Proud::HostID pop_group_host_id = Proud::HostID_None;
++ static CHAT_C2S::Proxy c2s_proxy;
++ 
++ void UGissChatNet::SendChat(const FText&amp; message)
++ {
++ 	Proud::String message_pstr(*message.ToString());
++ 	Proud::RmiContext context;
++ 	context.m_enableLoopback = true;
++ 	c2s_proxy.Chat(Proud::HostID_Server, context, message_pstr);
++ }</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">Modify the Blueprint graph of BP_ChatWidget.
+                    <ol class="ordered-list">
+                        <li class="list-item">Convert the PrintChat function to an event.
+                            <img src="img/image_052.png" alt="PrintChat Event Conversion" class="image">
+                            <p class="image-caption">PrintChat Event Conversion</p>
+                        </li>
+                        <li class="list-item">Change the parent class of BP_ChatWidget to BaseChatWidget.
+                            <img src="img/image_053.png" alt="Parent Class Change" class="image">
+                            <p class="image-caption">Parent Class Change</p>
+                        </li>
+                        <li class="list-item">Modify the event graph when SendButton is clicked.
+                            <ol class="ordered-list">
+                                <li class="list-item">Add Get GissChatNet node and Send Chat node
+                                    <img src="img/image_054.png" alt="Adding GissChatNet Node" class="image">
+                                    <p class="image-caption">Adding GissChatNet Node</p>
+                                </li>
+                                <li class="list-item">Replace the existing Print Chat node with Send Chat node.</li>
+                            </ol>
+                        </li>
+                        <li class="list-item">The final appearance of the BP_ChatWidget Blueprint graph is as follows.
+                            <img src="img/image_055.png" alt="BP_ChatWidget Final Appearance" class="image">
+                            <p class="image-caption">BP_ChatWidget Final Appearance</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">3.3. Chat Testing</h3>
+            <ol class="ordered-list">
+                <li class="list-item">Build and run the chat_server project.</li>
+                <li class="list-item">Run the Unreal Engine project level and verify the chat functionality.
+                    <img src="img/image_056.png" alt="Chat Function Test 1" class="image">
+                    <p class="image-caption">Chat Function Test 1</p>
+                    
+                    <img src="img/image_057.png" alt="Chat Function Test 2" class="image">
+                    <p class="image-caption">Chat Function Test 2</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="mirage-character" class="md-section">
+            <h2 class="heading-2">4. 实现幻影角色</h2>
+            <p class="paragraph">本节介绍如何构建具有增强游戏功能的幻影角色。</p>
+
+            <h3 class="heading-3">4.1. 添加幻影蓝图角色</h3>
+            <ol class="ordered-list">
+                <li class="list-item">Duplicate two Blueprint classes.
+                    <ol class="ordered-list">
+                        <li class="list-item">Navigate to "All - Content - InfimaGames - FreeFPSTemplate - Core" in the Content Browser.</li>
+                        <li class="list-item">Duplicate the two Blueprint classes BP_Character and ABP_Character.</li>
+                        <li class="list-item">Rename them to BP_MirageCharacter and ABP_MirageCharacter respectively.</li>
+                    </ol>
+                </li>
+                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and proceed with the following steps.
+                    <ol class="ordered-list">
+                        <li class="list-item">Select CharacterArms in the Components window.</li>
+                        <li class="list-item">Change the Anim Class of Animation to ABP_MirageCharacter.</li>
+                        <li class="list-item">Set the Skeletal Mesh Asset of the mesh to SKM_Manny_Simple.
+                            <img src="img/image_058.png" alt="BP_MirageCharacter Configuration" class="image">
+                            <p class="image-caption">BP_MirageCharacter Configuration</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">Place BP_MirageCharacter in the level and run to verify.
+                    <p class="paragraph">If placed as shown below, it is normal based on the current point in time.</p>
+                    <img src="img/image_059.png" alt="Mirage Character Placement Verification" class="image">
+                    <p class="image-caption">Mirage Character Placement Verification</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.2. 移动动画镜像</h3>
+
+            <h4 class="heading-4">4.2.1. 动画变量复制</h4>
+            <ol class="ordered-list">
+                <li class="list-item">实现 C++ 类 BaseMirageCharacter。
+                    <ol class="ordered-list">
+                        <li class="list-item">创建继承自 Character 的 BaseMirageCharacter 类</li>
+                        <li class="list-item">修改生成的类的源代码。
+                            <ul class="unordered-list">
+                                <li class="list-item">修改内容
+                                    <ul class="unordered-list">
+                                        <li class="list-item">BaseMirageCharacter.h
+                                            <div class="code-block">
+                                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+};</pre>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="list-item">完整代码
+                                    <ul class="unordered-list">
+                                        <li class="list-item">BaseMirageCharacter.h
+                                            <div class="code-block">
+                                                <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+};</pre>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">将 BaseMirageCharacter 指定为 BP_MirageCharacter 的父类</li>
+                <li class="list-item">实现使用事件函数的动画变量复制。
+                    <ol class="ordered-list">
+                        <li class="list-item">修改 ABP_Character 蓝图。
+                            <ol class="ordered-list">
+                                <li class="list-item">打开 ABP_Character 蓝图编辑器并切换到事件图表选项卡。</li>
+                                <li class="list-item">移动到 BlueprintUpdateAnimation 事件执行流程的末尾部分。
+                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation 事件" class="image">
+                                    <p class="image-caption">BlueprintUpdateAnimation 事件</p>
+                                </li>
+                                <li class="list-item">创建并连接 Get Actor Of Class 节点，并将 Class 指定为 BP_MirageCharacter。</li>
+                                <li class="list-item">创建并连接 Update Animation Parameter 节点，并连接所有变量。所有变量都可以从蓝图的变量列表中获取。
+                                    <img src="img/image_061.png" alt="Update Animation Parameter 节点" class="image">
+                                    <p class="image-caption">Update Animation Parameter 节点</p>
+                                    
+                                    <img src="img/image_062.png" alt="变量连接完成" class="image">
+                                    <p class="image-caption">变量连接完成</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">修改 BP_MirageCharacter 蓝图。
+                            <ol class="ordered-list">
+                                <li class="list-item">打开 BP_MirageCharacter 蓝图编辑器并切换到事件图表选项卡。</li>
+                                <li class="list-item">添加 4 个变量。
+                                    <img src="img/image_063.png" alt="添加变量" class="image">
+                                    <p class="image-caption">添加变量</p>
+                                </li>
+                                <li class="list-item">添加 Event UpdateAnimationParameter 节点。</li>
+                                <li class="list-item">将事件的参数保存到蓝图变量中。
+                                    <img src="img/image_064.png" alt="参数保存" class="image">
+                                    <p class="image-caption">参数保存</p>
+                                </li>
+                                <li class="list-item">断开 Event Tick 节点的连接。
+                                    <img src="img/image_065.png" alt="Event Tick 连接断开" class="image">
+                                    <p class="image-caption">Event Tick 连接断开</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">修改 ABP_MirageCharacter 蓝图。
+                            <ol class="ordered-list">
+                                <li class="list-item">打开 ABP_MirageCharacter 蓝图编辑器并切换到事件图表选项卡。</li>
+                                <li class="list-item">添加 Try Get Pawn Owner 节点。</li>
+                                <li class="list-item">添加 Cast To BP_MirageCharacter 节点并连接。</li>
+                                <li class="list-item">从类型转换的角色中获取变量并保存到动画蓝图变量中。
+                                    <img src="img/image_066.png" alt="动画变量连接" class="image">
+                                    <p class="image-caption">动画变量连接</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">执行关卡并确认动画复制动作
+                    <p class="paragraph">可以观察到幻影角色在跑步、跳跃、瞄准等动作时模仿动作的样子。</p>
+                    <img src="img/image_067.png" alt="动画复制确认" class="image">
+                    <p class="image-caption">动画复制确认</p>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">4.2.2. 应用校正动画</h4>
+            <ol class="ordered-list">
+                <li class="list-item">准备校正动画
+                    <ol class="ordered-list">
+                        <li class="list-item">下载动画文件。
+                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (需要下载文件)</p>
+                        </li>
+                        <li class="list-item">将下载的文件拖拽到虚幻编辑器的内容浏览器中。</li>
+                        <li class="list-item">在 Animations 选项卡的骨架项目中指定 SKEL_UE5_Mannequin。
+                            <img src="img/image_068.png" alt="指定骨架" class="image">
+                            <p class="image-caption">指定骨架</p>
+                        </li>
+                        <li class="list-item">点击导入按钮。</li>
+                        <li class="list-item">删除生成的两个动画中的一个。(可选)
+                            <img src="img/image_069.png" alt="删除动画" class="image">
+                            <p class="image-caption">删除动画</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">보정 애니메이션을 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Inver_Anim_Scene 애니메이션 시퀀스의 블루프린트 에디터를 엽니다.</li>
+                        <li class="list-item">에셋 디테일 창의 애디티브 세팅을 수정합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">애디티브 애님 타입 - Mesh Space 선택</li>
+                                <li class="list-item">베이스 포즈 타입 - Selected animation frame 선택</li>
+                                <li class="list-item">베이스 포즈 애니메이션 - A_FP_AssaultRifle_Idle_Loop 선택
+                                    <img src="img/image_070.png" alt="애디티브 세팅" class="image">
+                                    <p class="image-caption">애디티브 세팅</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">修改 ABP_MirageCharacter 蓝图图表。
+                    <ol class="ordered-list">
+                        <li class="list-item">添加 Apply Additive 节点和 Invert_Anim_Scene 动画节点。</li>
+                        <li class="list-item">与 A_FP_AssaultRifle_Idle_Loop 动画节点连接。
+                            <img src="img/image_071.png" alt="Apply Additive 节点连接" class="image">
+                            <p class="image-caption">Apply Additive 节点连接</p>
+                        </li>
+                        <li class="list-item">对其余 4 个动画节点进行相同操作。所有节点都同样使用 Inver_Anim_Scene 和 Apply Additive。
+                            <img src="img/image_072.png" alt="修改所有动画节点" class="image">
+                            <p class="image-caption">修改所有动画节点</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">执行关卡并确认动画校正结果
+                    <p class="paragraph">可以确认手臂骨架的位置已校正到正常范围内。</p>
+                    <img src="img/image_073.png" alt="动画校正结果" class="image">
+                    <p class="image-caption">动画校正结果</p>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">4.2.3. 移动时应用腿部动画</h4>
+            <ol class="ordered-list">
+                <li class="list-item">按照以下步骤修改 ABP_MirageCharacter - AnimGraph 蓝图图表中与 A_FP_AssaultRifle_Run_Loop 连接的部分。
+                    <ol class="ordered-list">
+                        <li class="list-item">添加 Layered blend per bone 节点。</li>
+                        <li class="list-item">修改添加节点的详细信息。
+                            <ol class="ordered-list">
+                                <li class="list-item">在设置 - 图层设置 - 索引[0]中添加两个分支过滤器。</li>
+                                <li class="list-item">分别将骨骼名称指定为 thigh_l、thigh_r。
+                                    <img src="img/image_074.png" alt="Layered blend per bone 设置" class="image">
+                                    <p class="image-caption">Layered blend per bone 设置</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">将现有的 Apply Additive 节点连接到上述节点的 Base Pose。</li>
+                        <li class="list-item">添加 MM_Run_Fwd 动画节点并连接到上述节点的 Blend Poses 0。</li>
+                        <li class="list-item">在 MM_Run_Fwd 节点的详细信息窗口中启用动画循环。
+                            <img src="img/image_075.png" alt="激活动画循环" class="image">
+                            <p class="image-caption">激活动画循环</p>
+                        </li>
+                        <li class="list-item">最终效果如下。注释节点的大小调整是可选的。
+                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop 最终效果" class="image">
+                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop 最终效果</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">对其余 4 个动画节点同样应用上述过程。
+                    <ol class="ordered-list">
+                        <li class="list-item">Layered blend per bone 节点的设置相同，因此可以复制使用。</li>
+                        <li class="list-item">代替 MM_Run_Fwd 节点，需要根据情况使用 MM_Walk_Fwd 或 MM_Idle。</li>
+                        <li class="list-item">完成所有过程后的图表如下。
+                            <img src="img/image_077.png" alt="整体图表 1" class="image">
+                            <p class="image-caption">整体图表 1</p>
+                            
+                            <img src="img/image_078.png" alt="整体图表 2" class="image">
+                            <p class="image-caption">整体图表 2</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">执行关卡并确认腿部动画应用
+                    <p class="paragraph">可以确认播放了行走和跑步动画。</p>
+                    <img src="img/image_079.png" alt="腿部动画确认" class="image">
+                    <p class="image-caption">腿部动画确认</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.3. 动作动画和行为复制</h3>
+            <ol class="ordered-list">
+                <li class="list-item">修改 BaseMirageCharacter 类的源代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void OnFired();
++ 
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">재장전 시 미라지 캐릭터의 재장전 이벤트를 호출하는 그래프를 작성합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.
+                                    <img src="img/image_080.png" alt="Reload 관련 구역" class="image">
+                                    <p class="image-caption">Reload 관련 구역</p>
+                                </li>
+                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                <li class="list-item">On Reloaded 함수 노드로 연계합니다.
+                                    <img src="img/image_081.png" alt="On Reloaded 노드 추가" class="image">
+                                    <p class="image-caption">On Reloaded 노드 추가</p>
+                                </li>
+                                <li class="list-item">Reload와 Delay 함수 사이로 연결합니다.
+                                    <img src="img/image_082.png" alt="Reload 이벤트 연결" class="image">
+                                    <p class="image-caption">Reload 이벤트 연결</p>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="list-item">발사 시 미라지 캐릭터의 발사 이벤트를 호출하는 그래프를 작성합니다.
+                            <ol class="ordered-list">
+                                <li class="list-item">그래프 우측에서 Shoot과 관련된 구역의 종단부로 이동합니다.
+                                    <img src="img/image_083.png" alt="Shoot 관련 구역" class="image">
+                                    <p class="image-caption">Shoot 관련 구역</p>
+                                </li>
+                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                <li class="list-item">On Fired 함수 노드로 연계합니다.</li>
+                                <li class="list-item">(Current Ammunition) Set 과 Delay 함수 사이로 연결합니다.
+                                    <img src="img/image_084.png" alt="Shoot 이벤트 연결" class="image">
+                                    <p class="image-caption">Shoot 이벤트 연결</p>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.</li>
+                        <li class="list-item">Play Montage 노드의 앞에 On Reloaded 이벤트 노드를 연결합니다
+                            <img src="img/image_085.png" alt="On Reloaded 이벤트 연결" class="image">
+                            <p class="image-caption">On Reloaded 이벤트 연결</p>
+                        </li>
+                        <li class="list-item">그래프 우측에서 Shoot과 관련된 구역으로 이동합니다.</li>
+                        <li class="list-item">Shoot 노드의 앞에 On Fired 이벤트 노드를 연결합니다
+                            <img src="img/image_086.png" alt="On Fired 이벤트 연결" class="image">
+                            <p class="image-caption">On Fired 이벤트 연결</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 미라지 캐릭터가 장전과 발사를 따라하는 모습을 볼 수 있습니다.
+                    <img src="img/image_087.png" alt="액션 애니메이션 테스트" class="image">
+                    <p class="image-caption">액션 애니메이션 테스트</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">4.4. 位置、旋转等其他复制</h3>
+            <ol class="ordered-list">
+                <li class="list-item">修改 BaseMirageCharacter 类的源代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">수정 내역
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
++ 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
++ 	void UpdateTransform(FVector3f position, FQuat4f orientation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnFired();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-item">전체 코드
+                            <ul class="unordered-list">
+                                <li class="list-item">BaseMirageCharacter.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "BaseMirageCharacter.generated.h"
+
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API ABaseMirageCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	ABaseMirageCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateTransform(FVector3f position, FQuat4f orientation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnFired();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void OnReloaded();
+
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 타입의 AimPitch 변수를 추가합니다.
+                            <img src="img/image_088.png" alt="AimPitch 변수 추가" class="image">
+                            <p class="image-caption">AimPitch 변수 추가</p>
+                        </li>
+                        <li class="list-item">Tick 이벤트의 코드가 끝나는 부분으로 이동합니다.</li>
+                        <li class="list-item">두 개의 라우트 노드를 생성하고 Branch 노드의 False, Stop Running 두 노드를 연결합니다.
+                            <img src="img/image_089.png" alt="라우트 노드 1" class="image">
+                            <p class="image-caption">라우트 노드 1</p>
+                            
+                            <img src="img/image_090.png" alt="라우트 노드 2" class="image">
+                            <p class="image-caption">라우트 노드 2</p>
+                        </li>
+                        <li class="list-item">라우트 노드를 이동합니다.
+                            <img src="img/image_091.png" alt="라우트 노드 이동" class="image">
+                            <p class="image-caption">라우트 노드 이동</p>
+                        </li>
+                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 작성합니다
+                            
+                            그래프 작성이 끝난 모습은 다음과 같으며, 아래에서 과정을 확인할 수 있습니다.
+                            
+                            <img src="img/image_092.png" alt="Update Transform 그래프 완성" class="image">
+                            <p class="image-caption">Update Transform 그래프 완성</p>
+                            
+                            <details class="expandable-section">
+                                <summary>과정 보기</summary>
+                                <ol class="ordered-list">
+                                    <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
+                                    <li class="list-item">Update Transform 함수 노드로 연계합니다.
+                                        <img src="img/image_093.png" alt="Update Transform 노드 추가" class="image">
+                                        <p class="image-caption">Update Transform 노드 추가</p>
+                                    </li>
+                                    <li class="list-item">Get Actor Location, Get Actor Rotation으로 이동/회전 값을 얻는 노드를 생성합니다.
+                                        <img src="img/image_094.png" alt="위치/회전 노드 추가" class="image">
+                                        <p class="image-caption">위치/회전 노드 추가</p>
+                                    </li>
+                                    <li class="list-item">Get Actor Rotation은 To Quaternion 노드로 연계합니다.
+                                        <img src="img/image_095.png" alt="To Quaternion 연결" class="image">
+                                        <p class="image-caption">To Quaternion 연결</p>
+                                    </li>
+                                    <li class="list-item">Get Character Arms 노드를 생성하고, 속도와 각속도를 얻는 노드로 연계합니다.
+                                        <img src="img/image_096.png" alt="Character Arms 노드" class="image">
+                                        <p class="image-caption">Character Arms 노드</p>
+                                        
+                                        <img src="img/image_097.png" alt="속도/각속도 노드" class="image">
+                                        <p class="image-caption">속도/각속도 노드</p>
+                                    </li>
+                                    <li class="list-item">Get Control Rotation 노드를 생성하고, 반환값으로 부터 Pitch 회전 값을 연산합니다.
+                                        모든 노드는 노드 이름을 통해 연계 가능합니다.
+                                        중간의 곱셉 노드는 Multiply로 생성 가능합니다.
+                                        
+                                        <img src="img/image_098.png" alt="Control Rotation과 Pitch 계산" class="image">
+                                        <p class="image-caption">Control Rotation과 Pitch 계산</p>
+                                    </li>
+                                    <li class="list-item">추가된 모든 노드를 Update Transform의 알맞은 인자와 연결합니다.
+                                        Get Physics Linear Velocity 노드는 실행 핀이 연결되어야 합니다.</li>
+                                </ol>
+                            </details>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
+                        <li class="list-item">UpdateTransform 이벤트 노드를 추가합니다.</li>
+                        <li class="list-item">이벤트 노드에 맞는 각 노드를 추가하고 연결합니다.
+                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 구현" class="image">
+                            <p class="image-caption">BP_MirageCharacter UpdateTransform 구현</p>
+                        </li>
+                        <li class="list-item">Position 노드의 연결을 끊고, Make Vector노드를 추가하여 연결합니다.
+                            
+                            싱글 테스트 환경에서의 버그동작을 방지하기 위한 조치입니다.
+                            
+                            <img src="img/image_100.png" alt="Position Make Vector 연결" class="image">
+                            <p class="image-caption">Position Make Vector 연결</p>
+                        </li>
+                        <li class="list-item">Shoot과 관련된 부분으로 이동합니다.</li>
+                        <li class="list-item">아래와 같이 그래프를 구성하고 연결합니다.
+                            <img src="img/image_101.png" alt="Shoot 관련 그래프 구성" class="image">
+                            <p class="image-caption">Shoot 관련 그래프 구성</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">ABP_MirageCharacter 블루프린트의 이벤트그래프를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
+                        <li class="list-item">형변환된 BP_MirageCharacter로부터 값을 불러와 저장합니다.
+                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 변수" class="image">
+                            <p class="image-caption">ABP_MirageCharacter AimPitch 변수</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">ABP_MirageCharacter 블루프린트의 AnimGraph를 수정합니다.
+                    <ol class="ordered-list">
+                        <li class="list-item">Mouse Sway 관련 부분으로 이동합니다.
+                            <img src="img/image_103.png" alt="Mouse Sway 관련 부분" class="image">
+                            <p class="image-caption">Mouse Sway 관련 부분</p>
+                        </li>
+                        <li class="list-item">Trasnform (Modify) Bone 노드를 추가하고 Mouse Sway 코멘트 노드의 앞에 연결합니다.</li>
+                        <li class="list-item">AimPitch 변수값으로 Rotator를 만들고 노드의 Rotation에 적용합니다.
+                            <img src="img/image_104.png" alt="Transform Bone 노드 적용" class="image">
+                            <p class="image-caption">Transform Bone 노드 적용</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">레벨을 실행하고 기능을 테스트합니다.
+                    
+                    미라지 캐릭터가 플레이어 캐릭터와 같은 방향을 조준하며 발사하게 되었습니다.
+
+                    <img src="img/image_105.png" alt="위치 회전 복제 테스트" class="image">
+                    <p class="image-caption">위치 회전 복제 테스트</p>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 第5节：幻影角色在线集成 -->
+        <section id="section-5" class="section">
+            <h2 class="heading-2">5. 幻影角色在线集成</h2>
+            <p class="description">本节介绍如何将幻影角色与 ProudNet 网络集成以实现多人游戏。</p>
+
+            <h3 class="heading-3">5.1. Visual Studio 项目工作</h3>
+
+            <h4 class="heading-4">5.1.1. 创建 game_server 项目</h4>
+            <ol class="ordered-list">
+                <li class="list-item">在 VisualStudio 中创建空白项目 game_server</li>
+                
+                <li class="list-item">向 game_server 项目添加 3 个新项目 main.cpp、setting.cpp、setting.h。</li>
+                
+                <li class="list-item">修改 game_server 项目的属性。
+                    <ol class="ordered-list">
+                        <li class="list-item">"C/C++ - 语言 - C++ 语言标准"
+                            从下拉菜单中选择 "ISO C++20 标准 (/std:C++20)"</li>
+                        <li class="list-item">"C/C++ - 常规 - 附加包含目录"
+                            从下拉菜单中选择 &lt;编辑…&gt;
+                            在弹出窗口中添加以下路径
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"链接器 - 常规 - 附加库目录"
+                            从下拉菜单中选择 &lt;编辑…&gt;
+                            在弹出窗口中添加以下路径
+                            <div class="code-block">
+                                <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"链接器 - 输入 - 附加依赖项"
+                            从下拉菜单中选择 &lt;编辑…&gt;
+                            在弹出窗口中添加以下文件名
+                            <div class="code-block">
+                                <pre>ProudNetServer.lib
+ProudNetClient.lib</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"生成事件 - 生成后事件 - 命令行"
+                            从下拉菜单中选择 &lt;编辑…&gt;
+                            在弹出窗口中添加以下命令
+                            <div class="code-block">
+                                <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
+xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libssl-3-x64.dll" "$(OutDir)"</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">在每个源文件中输入代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">完整代码
+                            <ul class="unordered-list">
+                                <li class="list-item">setting.h
+                                    <div class="code-block">
+                                        <pre>#pragma once
+
+namespace ProudSetting
+{
+    namespace GAME
+    {
+        extern const ::Proud::Guid version;
+        extern const int server_port;
+    }
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">setting.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;ProudNetClient.h&gt;
+#include "setting.h"
+
+namespace ProudSetting
+{
+    namespace GAME
+    {
+        const ::Proud::PNGUID guid = { 0x3ae33249, 0xecc6, 0x4980, { 0xbc, 0x5d, 0x7b, 0xa, 0x99, 0x9c, 0x7, 0x39 } };
+        const ::Proud::Guid version = ::Proud::Guid(guid);
+        const int server_port = 33338;
+    }
+}</pre>
+                                    </div>
+                                </li>
+                                <li class="list-item">main.cpp
+                                    <div class="code-block">
+                                        <pre>#include &lt;iostream&gt;
+#include &lt;format&gt;
+#include &lt;memory&gt;
+
+#include &lt;ProudNetServer.h&gt;
+#include "setting.h"
+
+std::shared_ptr&lt;Proud::CNetServer&gt; net_server;
+
+int main()
+{
+	net_server = std::shared_ptr&lt;Proud::CNetServer&gt;(Proud::CNetServer::Create());
+
+	net_server-&gt;OnClientJoin = [](Proud::CNetClientInfo* clientInfo)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] connected.\n";
+		};
+	net_server-&gt;OnClientLeave = [](Proud::CNetClientInfo* clientInfo, Proud::ErrorInfo* error, const Proud::ByteArray byte_arr)
+		{
+			std::cout &lt;&lt; "Client[" &lt;&lt; (int)clientInfo-&gt;m_HostID &lt;&lt; "] disconnected.\n";
+		};
+
+	Proud::CStartServerParameter start_param;
+	start_param.m_protocolVersion = ProudSetting::GAME::version;
+	start_param.m_tcpPorts.Add(ProudSetting::GAME::server_port);
+
+	try
+	{
+		net_server-&gt;Start(start_param);
+	}
+	catch (Proud::Exception&amp; error)
+	{
+		std::cout &lt;&lt; "Server start failed: " &lt;&lt; error.what() &lt;&lt; endl;
+		return 0;
+	}
+
+	std::cout &lt;&lt; ("Server started. Enterable commands:\n");
+	std::cout &lt;&lt; ("-q : Quit.\n");
+	std::string input;
+	while (true)
+	{
+		std::cin &gt;&gt; input;
+		if (input[0] == '-')
+		{
+			if (input == "-q")
+				break;
+		}
+	}
+
+	std::cout &lt;&lt; "Stopping server...\n";
+	net_server-&gt;Stop();
+	net_server = nullptr;
+	std::cout &lt;&lt; "Server stopped.\n";
+	return 0;
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4 class="heading-4">5.1.2. 创建 game_pidl 项目</h4>
+            <ol class="ordered-list">
+                <li class="list-item">在 PdnUE5ExampleServer 中添加新的空白项目 game_pidl。</li>
+
+                <li class="list-item">添加文件 P2P.PIDL，并修改其属性。
+                    <ol class="ordered-list">
+                        <li class="list-item">"常规 - 项目类型"
+                            从下拉菜单中选择"自定义生成工具"</li>
+                        <li class="list-item">"自定义生成工具 - 常规 - 命令行"
+                            输入文本
+                            <div class="code-block">
+                                <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"自定义生成工具 - 常规 - 描述"
+                            输入文本
+                            <div class="code-block">
+                                <pre>%(Filename).PIDL Compiling...</pre>
+                            </div>
+                        </li>
+                        <li class="list-item">"自定义生成工具 - 常规 - 输出"
+                            从下拉菜单中选择 &lt;编辑…&gt;
+                            在弹出窗口中添加以下路径
+                            <div class="code-block">
+                                <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
+%(RootDir)%(Directory)\%(Filename)_common.h
+%(RootDir)%(Directory)\%(Filename)_proxy.cpp
+%(RootDir)%(Directory)\%(Filename)_proxy.h
+%(RootDir)%(Directory)\%(Filename)_stub.cpp
+%(RootDir)%(Directory)\%(Filename)_stub.h</pre>
+                            </div>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">在文件中输入代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">完整代码
+                            <ul class="unordered-list">
+                                <li class="list-item">P2P.PIDL
+                                    <div class="code-block">
+                                        <pre>[access=public]
+global GAME_P2P 3000
+{
+    Transform([in] Proud::CharacterTransformData transformData);
+    AnimationParams([in] Proud::CharacterAnimationParams animationParams);
+    Action([in] Proud::CharacterAction actionId);
+}</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="list-item">构建 game_pidl 项目。</li>
+            </ol>
+
+            <h4 class="heading-4">5.1.3. 修改 game_server 项目源代码</h4>
+            <ol class="ordered-list">
+                <li class="list-item">修改 game_server 项目的源代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">应用修改内容，添加 P2P 组管理功能。</li>
+                        <li class="list-item">在 setting.h 和 setting.cpp 中添加数据结构和序列化函数。</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">5.2. 虚幻项目工作</h3>
+            <ol class="ordered-list">
+                <li class="list-item">创建 GissGameNet C++ 类
+                    <ol class="ordered-list">
+                        <li class="list-item">创建继承自 GameInstanceSubsystem 的 C++ 类 GissGameNet。</li>
+                        <li class="list-item">修改 GissGameNet 类的源代码。
+                            <ul class="unordered-list">
+                                <li class="list-item">GissGameNet.h
+                                    <div class="code-block">
+                                        <pre>// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "GissGameNet.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PDNUE5EXAMPLECLIENT_API UGissGameNet : public UGameInstanceSubsystem
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UpdateCharacterTransform(FVector3f position, FQuat4f rotation, FVector3f linearVelocity, FVector3f angularVelocity, float aimPitch);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateCharacterAnimationParameter(bool aiming, bool closeToWall, bool moving, bool running, float jumpVelocity, FVector3f mouseSwayLocation, FVector3f moveSwayLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void SendCharacterFired();
+
+	UFUNCTION(BlueprintCallable)
+	void SendCharacterReloaded();
+
+private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+};</pre>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">修改 BP_Character 蓝图图表。
+                    <ol class="ordered-list">
+                        <li class="list-item">将调用 BP_MirageCharacter 的 Update Transform 的图表替换为调用 GissGameNet 的 Update Character Transform 的图表。
+                            <img src="img/image_106.png" alt="更改 Update Character Transform" class="image">
+                            <p class="image-caption">更改 Update Character Transform</p>
+                        </li>
+                        <li class="list-item">将调用 BP_MirageCharacter 的 On Fired 的图表替换为调用 GissGameNet 的 Send Character Fired 的图表。
+                            <img src="img/image_107.png" alt="更改 Send Character Fired" class="image">
+                            <p class="image-caption">更改 Send Character Fired</p>
+                        </li>
+                        <li class="list-item">将调用 BP_MirageCharacter 的 On Reloaded 的图表替换为调用 GissGameNet 的 Send Character Reloaded 的图表。
+                            <img src="img/image_108.png" alt="更改 Send Character Reloaded" class="image">
+                            <p class="image-caption">更改 Send Character Reloaded</p>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">修改 ABP_Character 蓝图的事件图表。
+                    <ol class="ordered-list">
+                        <li class="list-item">将调用 BP_MirageCharacter 的 Update Animation Parameter 的图表替换为调用 GissGameNet 的 Update Character Animation Parameter 的图表。
+                            <img src="img/image_109.png" alt="更改 Update Character Animation Parameter" class="image">
+                            <p class="image-caption">更改 Update Character Animation Parameter</p>
+                        </li>
+                    </ol>
+                </li>
+
+                <li class="list-item">构建并运行服务器后执行关卡时，可以确认与集成工作之前相同的结果。</li>
+            </ol>
+        </section>
+
+        <!-- 第6节：最终项目构建和测试 -->
+        <section id="section-6" class="section">
+            <h2 class="heading-2">6. 最终项目构建和测试</h2>
+            <p class="description">本节介绍项目完成、构建和综合测试程序。</p>
+
+            <h3 class="heading-3">6.1. 测试代码修改</h3>
+            <ol class="ordered-list">
+                <li class="list-item">修改 BaseMirageCharacter 类代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">添加用于角色 ID 管理的 SetId 和 GetId 函数。</li>
+                    </ul>
+                </li>
+                <li class="list-item">修改 GissGameNet 类代码。
+                    <ul class="unordered-list">
+                        <li class="list-item">实现多人游戏环境中基于 ID 的角色识别管理系统。</li>
+                        <li class="list-item">添加 P2P 成员加入时自动创建幻影角色的功能。</li>
+                        <li class="list-item">通过禁用回环，修改使自己的动作不会重新发送给自己。</li>
+                    </ul>
+                </li>
+                <li class="list-item">修改 BP_MirageCharacter 蓝图类。
+                    <ol class="ordered-list">
+                        <li class="list-item">将 Update Transform 事件的 Position 重新直接连接到 Set Actor Location。
+                            <img src="img/image_110.png" alt="Position 直接连接" class="image">
+                            <p class="image-caption">Position 直接连接</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">在关卡编辑器的大纲窗口中删除 BP_MirageCharacter 实例。
+                    <img src="img/image_111.png" alt="删除 MirageCharacter 实例" class="image">
+                    <p class="image-caption">删除 MirageCharacter 实例</p>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">6.2. 项目构建</h3>
+            <ol class="ordered-list">
+                <li class="list-item">构建服务器可执行文件
+                    <ol class="ordered-list">
+                        <li class="list-item">通过 Visual Studio 顶部的下拉菜单更改构建配置。
+                            <img src="img/image_112.png" alt="更改构建配置" class="image">
+                            <p class="image-caption">更改构建配置</p>
+                        </li>
+                        <li class="list-item">分别构建 chat_server 和 game_server 项目。</li>
+                        <li class="list-item">可以在解决方案的子文件夹中确认已构建的可执行文件。
+                            <img src="img/image_113.png" alt="已构建的可执行文件" class="image">
+                            <p class="image-caption">已构建的可执行文件</p>
+                        </li>
+                    </ol>
+                </li>
+                <li class="list-item">构建客户端可执行文件
+                    <ol class="ordered-list">
+                        <li class="list-item">可以通过虚幻编辑器的关卡执行旁边的按钮构建虚幻项目。
+                            <img src="img/image_114.png" alt="虚幻项目构建" class="image">
+                            <p class="image-caption">虚幻项目构建</p>
+                        </li>
+                        <li class="list-item">可以通过指定的路径确认已构建的文件。
+                            <img src="img/image_115.png" alt="已构建的客户端文件" class="image">
+                            <p class="image-caption">已构建的客户端文件</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">6.3. 测试</h3>
+            <ol class="ordered-list">
+                <li class="list-item">运行服务器项目中构建的 chat_server.exe 和 game_server.exe。</li>
+                <li class="list-item">运行虚幻项目中构建的 Windows 文件夹下的 PdnUE5ExampleClient.exe。
+                    
+                    根据 PC 规格，可能会对计算机造成严重负载，需要注意。
+                </li>
+                <li class="list-item">可以确认使用聊天服务器和游戏服务器的两个客户端的状态。
+                    <img src="img/image_116.png" alt="最终测试结果" class="image">
+                    <p class="image-caption">最终测试结果</p>
+                </li>
+            </ol>
+        </section>
+
+    </div>
+
+    
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js와 js/syntax-highlighting.js에서 자동 로드됨 -->
+</body>
+</html> 

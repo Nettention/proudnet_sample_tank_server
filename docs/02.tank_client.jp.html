@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タンクゲームUnityクライアントプロジェクトドキュメント</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/webgl-embed.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/webgl-embed.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>タンクゲームUnityクライアントプロジェクト</h1>
+            <p class="paragraph">ProudNetネットワークライブラリを使用したマルチプレイヤータンクゲームUnityクライアント実装。Unityの公式タンクチュートリアルテンプレートをベースに、マルチプレイヤーとチャット機能を強化。</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 目次</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">前提条件</a></li>
+                <li class="list-item"><a href="#webgl-demo" class="link">ゲームWebGLビルドデモ</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">プロジェクト構造</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">開発ノート</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">はじめに</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Unityプロジェクトの作成と設定</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. ProudNet Unity統合</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. PIDL統合ワークフロー</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. タンクマルチプレイヤー統合</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. マルチプレイヤー機能のテスト</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. マルチプレイヤー機能テスト</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. WebGLデプロイ（オプション）</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">トラブルシューティング</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">前提条件</h2>
+            <p class="paragraph">このUnityクライアントプロジェクトを構築する前に、前のドキュメントから<strong class="text-strong">タンクサーバーセットアップ</strong>を完了し、以下のコンポーネントをインストールしている必要があります。</p>
+
+            <h3 class="heading-3">必要なディレクトリ構造</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # サーバープロジェクト（前の設定から）
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # 必須：ProudNetインストールからのファイル
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # このUnityプロジェクト（作成予定）
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">必要なソフトウェアインストール</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong>と<strong class="text-strong">Unity Editor</strong>（2021.3 LTS以上推奨）</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity Tank Client Sample Package</strong> - https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99 からGitHubで入手可能</li>
+                <li class="list-item"><strong class="text-strong">完成したタンクサーバー</strong> - 前のサーバーセットアップドキュメントから</li>
+            </ol>
+
+            <h3 class="heading-3">ProudNet Unity Tank Client Sample Package の場所</h3>
+            <p class="paragraph">ProudNet Unity Tank Client Sample Package は以下からダウンロードできます：</p>
+            <div class="code-block">
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+ファイル: tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <h3 class="heading-3">完全なUnity 6サンプルリポジトリ</h3>
+            <p class="paragraph">手動セットアップ過程をスキップしたい方のために、すべての統合ステップが既に完了した完全なUnity 6サンプルプロジェクトが以下で利用可能です：</p>
+
+            <p class="paragraph"><strong class="text-strong">GitHubリポジトリ：</strong> <a href="https://github.com/Nettention/proudnet_sample_tank_unity_client" class="link">https://github.com/Nettention/proudnet_sample_tank_unity_client</a></p>
+
+            <p class="paragraph">この完全なサンプルリポジトリには以下が含まれます：</p>
+            <ul class="unordered-list">
+                <li class="list-item">すべてのProudNetコンポーネントが事前統合されたUnity 6プロジェクト</li>
+                <li class="list-item">事前設定されたネットワークシーンとスクリプト</li>
+                <li class="list-item">すぐに実行可能なマルチプレイヤータンクゲーム</li>
+                <li class="list-item">必要なすべてのDLLとプラットフォーム設定が構成済み</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">完全サンプルでのクイックスタート：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">リポジトリをクローン： <code class="inline-code">git clone https://github.com/Nettention/proudnet_sample_tank_unity_client.git</code></li>
+                <li class="list-item">Unity 6（またはUnity 2021.3 LTS+）でプロジェクトを開く</li>
+                <li class="list-item">シーンを開く： <code class="inline-code">Assets/Proundnet_Demo/DemoScene/Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">タンクサーバーが実行中であることを確認</li>
+                <li class="list-item">Playをクリックしてすぐにテスト</li>
+            </ol>
+
+            <p class="paragraph">このオプションは、この資料で説明する完全な統合過程を経ずに、マルチプレイヤー機能を迅速にテストしたい開発者におすすめです。</p>
+        </section>
+
+        <section id="webgl-demo" class="md-section">
+            <h2 class="heading-2">ゲームWebGLビルドデモ</h2>
+            <p class="paragraph">ProudNetタンクゲームをブラウザで直接体験！これはAWSでホストされた実際のマルチプレイヤーサーバーに接続するUnityクライアントのライブWebGLビルドです。</p>
+            
+            <div id="webgl-game-demo" class="webgl-game-container">
+                <!-- Game will be loaded here by JavaScript -->
+            </div>
+            
+            <p class="paragraph"><strong class="text-strong">実証されたゲーム機能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">リアルタイムマルチプレイヤー</strong>：このページを訪問する他のユーザーと接続してプレイ</li>
+                <li class="list-item"><strong class="text-strong">ProudNetネットワーキング</strong>：WebSocketベースのネットワーキングを実際に体験</li>
+                <li class="list-item"><strong class="text-strong">タンク戦闘</strong>：WASDで移動、マウスで照準、クリック/スペースで発砲</li>
+                <li class="list-item"><strong class="text-strong">P2Pチャット</strong>：Enterを押して他のプレイヤーとチャット</li>
+                <li class="list-item"><strong class="text-strong">クロスプラットフォームプレイ</strong>：スタンドアロンビルドのプレイヤーも同じゲームに参加可能</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">技術詳細：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Unity 6で構築、WebGLにコンパイル</li>
+                <li class="list-item">ブラウザ互換性のためProudNet WebSocketトランスポートを使用</li>
+                <li class="list-item">CloudFront CDNを使用したAWS S3でホスト</li>
+                <li class="list-item">DockerでAWS EC2上で動作するサーバーバックエンド</li>
+                <li class="list-item">ダウンロード可能なUnityプロジェクトと同じコードベース</li>
+            </ul>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">プロジェクト構造</h2>
+
+            <h3 class="heading-3">🎮 Unityプロジェクトアセット</h3>
+            <p class="paragraph">Unity固有のゲームアセットとProudNet統合コンポーネントを含みます。</p>
+
+            <p class="paragraph"><strong class="text-strong">内容：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">タンクテンプレート</strong> - Unityの公式タンクチュートリアルプロジェクト（シングルプレイヤーベース）</li>
+                <li class="list-item"><strong class="text-strong">ProudNet統合</strong> - ネットワークスクリプトとDLLプラグイン</li>
+                <li class="list-item"><strong class="text-strong">マルチプレイヤースクリプト</strong> - ネットワーク同期による強化されたタンクゲームロジック</li>
+                <li class="list-item"><strong class="text-strong">チャットシステム</strong> - P2Pメッセージング機能</li>
+                <li class="list-item"><strong class="text-strong">ネットワークマネージャー</strong> - サーバー接続とP2Pグループ管理</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">主要コンポーネント：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - Unity用ProudNet DLLファイル</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - ProudNet統合スクリプト</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - マルチプレイヤーサポート付きサンプルゲームシーン</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 ネットワーク機能</h3>
+            <p class="paragraph">ProudNetネットワーキングによるUnityクライアント実装。</p>
+
+            <p class="paragraph"><strong class="text-strong">機能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">リアルタイムマルチプレイヤータンクゲームクライアント</li>
+                <li class="list-item">タンクの移動、発砲、健康状態の同期</li>
+                <li class="list-item">効率的なネットワーキングのためのP2Pグループ参加</li>
+                <li class="list-item">P2Pメッセージング付きゲーム内チャットシステム</li>
+                <li class="list-item">サーバー接続管理</li>
+                <li class="list-item">クロスプラットフォーム互換性（Windows、Mac、Linuxビルド）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">サポートプラットフォーム：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows Standalone</strong> - デスクトップアプリケーション</li>
+                <li class="list-item"><strong class="text-strong">Mac Standalone</strong> - macOSアプリケーション</li>
+                <li class="list-item"><strong class="text-strong">Linux Standalone</strong> - Linuxアプリケーション</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - Webブラウザデプロイ（WebSocket経由）</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 プロトコル互換性</h3>
+            <p class="paragraph">タンクサーバープロジェクトと同一のプロトコル定義を使用。</p>
+
+            <p class="paragraph"><strong class="text-strong">共有コンポーネント：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">同じTank.PIDL</strong> - 同一のRMI関数定義</li>
+                <li class="list-item"><strong class="text-strong">互換メッセージフォーマット</strong> - C#およびC++サーバーと同じネットワークプロトコル</li>
+                <li class="list-item"><strong class="text-strong">同期されたゲームロジック</strong> - 移動、発砲、健康システムがサーバー実装と一致</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">開発ノート</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Unityバージョン：2021.3 LTS以上推奨</li>
+                <li class="list-item">ProudNet UnityパッケージはネイティブDLL統合を提供</li>
+                <li class="list-item">すべてのタンクサーバー実装（C#およびC++）と互換</li>
+                <li class="list-item">WebGLビルドはWebブラウザ互換性のためWebSocketトランスポートを使用</li>
+                <li class="list-item">デスクトップビルドは最適なパフォーマンスのためTCPトランスポートを使用</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">はじめに</h2>
+
+            <h3 class="heading-3">前提条件の確認</h3>
+            <p class="paragraph">開始前に以下があることを確認してください：</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">タンクサーバーセットアップ完了</strong> - サーバードキュメントに従ってC#またはC++サーバーをセットアップ</li>
+                <li class="list-item"><strong class="text-strong">実行中のタンクサーバー</strong> - タンクサーバーが実行中でアクセス可能</li>
+                <li class="list-item"><strong class="text-strong">ProudNetインストール</strong> - Unityパッケージが利用可能なProudNetフォルダ</li>
+                <li class="list-item"><strong class="text-strong">Unity HubとEditor</strong> - Unity 2021.3 LTS以上がインストール済み</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Unityプロジェクトの作成と設定</h2>
+
+            <h3 class="heading-3">ステップ1：新しいUnityプロジェクトの作成</h3>
+            <p class="paragraph">タンククライアント用の新しいUnityプロジェクトを作成します：</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Hubを使用：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong>を開く</li>
+                <li class="list-item"><strong class="text-strong">"New Project"</strong>をクリック</li>
+                <li class="list-item"><strong class="text-strong">"3D"</strong>テンプレートを選択</li>
+                <li class="list-item"><strong class="text-strong">プロジェクト名</strong>を設定：<code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item"><strong class="text-strong">場所</strong>を設定：<code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item"><strong class="text-strong">"Create project"</strong>をクリック</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">期待されるプロジェクト構造：</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">ステップ2：Unityタンクテンプレートのインポート</h3>
+            <p class="paragraph">Unityの公式タンクチュートリアルプロジェクトをベーステンプレートとしてインポートします：</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Asset Store経由：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Unity Editorで<strong class="text-strong">Window > Asset Store</strong>を開く</li>
+                <li class="list-item"><strong class="text-strong">"Tanks! Complete Project"</strong>を検索</li>
+                <li class="list-item">次のURLに移動：https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item"><strong class="text-strong">"Add to My Assets"</strong>をクリック（まだ所有していない場合）</li>
+                <li class="list-item">Unity Editorで<strong class="text-strong">Window > Package Manager</strong>を開く</li>
+                <li class="list-item">ドロップダウンから<strong class="text-strong">"My Assets"</strong>を選択</li>
+                <li class="list-item"><strong class="text-strong">"Tanks! Complete Project"</strong>を見つける</li>
+                <li class="list-item"><strong class="text-strong">"Download"</strong>をクリックしてから<strong class="text-strong">"Import"</strong>をクリック</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">インポートオプション：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">完全なプロジェクトをインポートするため<strong class="text-strong">"All"</strong>を選択</li>
+                <li class="list-item">すべてのタンクゲームアセットを追加するため<strong class="text-strong">"Import"</strong>をクリック</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">ステップ3：シングルプレイヤーテンプレートのテスト</h3>
+            <p class="paragraph">インポートしたタンクテンプレートが正しく動作することを確認します：</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">メインシーンを開く</strong>：<code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code>に移動</li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Unity Tank Demo Scene</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">プレイモードに入る</strong>：Unity Editorで<strong class="text-strong">Play</strong>ボタンをクリック</li>
+                <li class="list-item"><strong class="text-strong">コントロールをテスト</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>：タンクを移動</li>
+                        <li class="list-item"><strong class="text-strong">スペース</strong>：ホールドして弾薬パワーをチャージ、リリースして砲弾を発射</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">期待されるシングルプレイヤーの動作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">タンクがWASDコントロールでスムーズに移動</li>
+                <li class="list-item">キャノンがマウス位置に向けて照準</li>
+                <li class="list-item">砲弾が発射され、衝撃時に爆発を生成</li>
+                <li class="list-item">砲弾に当たるとタンクの健康度が減少</li>
+                <li class="list-item">タンクの健康度がゼロになるとゲーム終了</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. ProudNet Unity統合</h2>
+
+            <h3 class="heading-3">ステップ1：ProudNet Unity Tank Client Sample Packageのインポート</h3>
+            <p class="paragraph">ネットワーク機能を追加するためProudNet Unity Tank Client Sample Packageをインポートします：</p>
+
+            <p class="paragraph"><strong class="text-strong">期待されるパッケージファイル：</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unityでパッケージをインポート：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">GitHubリリースから<code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code>をダウンロード</li>
+                <li class="list-item">Unity Editorで<strong class="text-strong">Assets > Import Package > Custom Package...</strong>に移動</li>
+                <li class="list-item">ダウンロードした<code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code>に移動</li>
+                <li class="list-item">パッケージファイルを選択し<strong class="text-strong">"Open"</strong>をクリック</li>
+                <li class="list-item">インポートダイアログで、すべてのコンポーネントをインポートするため<strong class="text-strong">"All"</strong>を選択</li>
+                <li class="list-item">ProudNetをプロジェクトに追加するため<strong class="text-strong">"Import"</strong>をクリック</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">ProudNet Unity Tank Client Sample Package Import</p>
+
+            <h3 class="heading-3">ステップ2：ProudNetインストールの確認</h3>
+            <p class="paragraph">ProudNetコンポーネントが適切に統合されていることを確認します：</p>
+
+            <p class="paragraph"><strong class="text-strong">サンプルアセットのインストール確認：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">以下のフォルダ構造が存在することを確認：
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # ProudNet DLLsを含む
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # デモシーンとスクリプト
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # ネットワーク関連スクリプト</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">プラットフォーム設定の確認：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/</code>内の各DLLを選択</li>
+                <li class="list-item">Inspectorで<strong class="text-strong">プラットフォーム設定</strong>を確認：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>：x86_64（Standalone Windows）が有効</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">ステップ3：ネットワーク設定の構成</h3>
+            <p class="paragraph">タンクゲーム用の基本ネットワーク構成を設定します：</p>
+
+            <p class="paragraph"><strong class="text-strong">ネットワーク構成の作成：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Projectウィンドウで右クリック</li>
+                <li class="list-item"><strong class="text-strong">Create > ProudNet > Network Config</strong>を選択</li>
+                <li class="list-item"><code class="inline-code">TankNetworkConfig</code>と名前を付ける</li>
+                <li class="list-item">以下の設定を構成：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>：<code class="inline-code">127.0.0.1</code>（テスト用のlocalhost）</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>：<code class="inline-code">33334</code>（タンクサーバーポートと一致）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">ネットワーク構成詳細：</strong></p>
+            <p class="paragraph">TankNetworkConfig接続設定：</p>
+            <ul class="unordered-list">
+                <li class="list-item">Server IP：127.0.0.1</li>
+                <li class="list-item">TCP Port：33334（スタンドアロンビルド用）</li>
+                <li class="list-item">WebSocket Port：33335（WebGLビルド用、C++サーバーのみサポート）</li>
+            </ul>
+
+            <p class="paragraph">注意：最初はスタンドアロンビルド用にポート33334を使用します。後でWebGLビルド用にはWebSocketポート33335を使用しますが、これはC++サーバー実装でのみ利用可能です（C#サーバーはWebSocket接続をサポートしません）。</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. PIDL統合ワークフロー（オプションですが推奨）</h2>
+
+            <p class="paragraph">前のドキュメントからサーバーセットアップを完了した場合、生成されたPIDLファイルを再利用できます：</p>
+
+            <p class="paragraph"><strong class="text-strong">オプションA：サーバープロジェクトからコピー（推奨）</strong></p>
+            <p class="paragraph">タンクサーバープロジェクトが利用可能な場合、便利なバッチスクリプトを使用：</p>
+
+            <div class="code-block">
+                <pre># tank_serverディレクトリに移動
+cd tank_server
+
+# コピースクリプトを実行
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">スクリプトが実行すること：</strong></p>
+            <div class="code-block">
+                <pre>tank_server/からコピー：
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">期待される出力：</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+コピー完了！以下のファイルがUnityプロジェクトにコピーされました：
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+続行するには何かキーを押してください...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">オプションB：手動PIDL生成（サーバープロジェクトがない場合）</strong></p>
+            <p class="paragraph">サーバープロジェクトがない場合、以下が必要になります：</p>
+            <ol class="ordered-list">
+                <li class="list-item">Commonフォルダから<code class="inline-code">Tank.PIDL</code>ファイルにアクセス</li>
+                <li class="list-item"><code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code>を実行</li>
+                <li class="list-item">生成されたファイルをUnityディレクトリに手動でコピー</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">プロトコル互換性の利点：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">同一メッセージID</strong>：Unityクライアントがサーバーと同じRMI IDを使用</li>
+                <li class="list-item"><strong class="text-strong">型安全性</strong>：ネットワークメッセージパラメータのコンパイル時チェック</li>
+                <li class="list-item"><strong class="text-strong">バージョン同期</strong>：プロトコルバージョンが自動的にサーバーと一致</li>
+                <li class="list-item"><strong class="text-strong">ゼロ構成</strong>：追加のネットワーク設定不要</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. タンクマルチプレイヤー統合</h2>
+
+            <h3 class="heading-3">ステップ1：ネットワークスクリプトの概要</h3>
+            <p class="paragraph">タンクUnityクライアントは、ProudNet RMI（Remote Method Invocation）に基づく包括的なネットワークシステムを使用します。実際のスクリプト構造は以下の通りです：</p>
+
+            <p class="paragraph"><strong class="text-strong">コアネットワークスクリプト：</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # メインネットワークマネージャー（シングルトン）
+│   └── NetworkTank.cs           # 個別タンクネットワーク同期
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # プロトコルバージョンとサーバー構成
+│   └── Generated/               # Tank.PIDLから自動生成
+│       ├── Tank_common.cs       # RMIメッセージIDと定数
+│       ├── Tank_proxy.cs        # クライアントからサーバーへのRMI呼び出し
+│       └── Tank_stub.cs         # サーバーからクライアントへのRMIハンドラー</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - メイン機能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">サーバー接続管理</strong>：タンクサーバーへの接続を処理（TCP/WebSocket）</li>
+                <li class="list-item"><strong class="text-strong">P2Pグループ管理</strong>：ピアツーピア通信グループを管理</li>
+                <li class="list-item"><strong class="text-strong">タンクライフサイクル</strong>：ローカルおよびリモートタンクのスポーン/デストロイ</li>
+                <li class="list-item"><strong class="text-strong">RMI通信</strong>：タンクの移動、発砲、健康度更新の送受信</li>
+                <li class="list-item"><strong class="text-strong">チャットシステム</strong>：他のプレイヤーとのP2Pメッセージング</li>
+                <li class="list-item"><strong class="text-strong">マルチプラットフォームサポート</strong>：TCP（スタンドアロン）とWebSocket（WebGL）の自動選択</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - 個別タンク機能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">位置補間</strong>：リモートタンクのスムーズな移動同期</li>
+                <li class="list-item"><strong class="text-strong">ローカルプレイヤー制御</strong>：あなたのタンクのWASD移動と発砲</li>
+                <li class="list-item"><strong class="text-strong">リモートプレイヤーレンダリング</strong>：ネットワークデータで他のプレイヤーのタンクを表示</li>
+                <li class="list-item"><strong class="text-strong">健康度同期</strong>：すべてのクライアント間でのリアルタイム健康度更新</li>
+                <li class="list-item"><strong class="text-strong">発射物同期</strong>：砲弾の発射と衝撃効果を処理</li>
+                <li class="list-item"><strong class="text-strong">衝突検出</strong>：砲弾爆発からのダメージを追跡</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Generated RMI Classes (from Tank.PIDL):</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>: Methods to send data to server (<code class="inline-code">SendMove</code>, <code class="inline-code">SendFire</code>, <code class="inline-code">SendTankHealthUpdated</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>: Handlers to receive data from server (<code class="inline-code">OnTankPositionUpdated</code>, <code class="inline-code">OnSpawnBullet</code>, <code class="inline-code">OnPlayerJoined</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>: Message IDs and RMI constants shared between client and server</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Important Note:</strong> The files in <code class="inline-code">Generated/</code> folder are the <strong class="text-strong">exact same files</strong> generated during the C# server implementation in the previous documentation. This ensures 100% protocol compatibility between the server and Unity client. The Unity client reuses the identical PIDL-generated networking code.</p>
+
+            <p class="paragraph"><strong class="text-strong">Key Network Features Implemented:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Real-time Movement Sync</strong>: 20Hz position updates with interpolation</li>
+                <li class="list-item"><strong class="text-strong">Projectile Synchronization</strong>: Shells fired by other players appear instantly</li>
+                <li class="list-item"><strong class="text-strong">Health Management</strong>: Damage and healing synchronized across all clients</li>
+                <li class="list-item"><strong class="text-strong">P2P Chat System</strong>: Direct messaging between players in the same group</li>
+                <li class="list-item"><strong class="text-strong">Tank Type Selection</strong>: Different tank models synchronized across clients</li>
+                <li class="list-item"><strong class="text-strong">Automatic Reconnection</strong>: Handles network disconnection gracefully</li>
+            </ul>
+
+            <h3 class="heading-3">ステップ2：事前設定されたマルチプレイヤーシーンを開く</h3>
+            <p class="paragraph">Unity タンククライアントには、ProudNet統合済みの事前設定されたマルチプレイヤーシーンが含まれています：</p>
+
+            <p class="paragraph"><strong class="text-strong">ネットワーク対応シーンを開く：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code>に移動</li>
+                <li class="list-item"><code class="inline-code">Demo_Networkd_Game_Desert.unity</code>シーンを開く</li>
+                <li class="list-item">このシーンは必要なネットワークコンポーネントがすべて<strong class="text-strong">既に設定済み</strong></li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">ProudNet Network Demo Scene</p>
+
+            <h3 class="heading-3">ステップ3：ネットワーク構成の確認（オプション）</h3>
+            <p class="paragraph">シーンは事前設定済みですが、必要に応じてネットワーク設定を確認または変更できます：</p>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager設定（既に設定済み）：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">ヒエラルキーで<strong class="text-strong">GameNetworkManager</strong> GameObjectを選択</li>
+                <li class="list-item">Inspectorで<strong class="text-strong">GameNetworkManager</strong>コンポーネント設定を確認：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>：<code class="inline-code">127.0.0.1</code>（テスト用のlocalhost）</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>：<code class="inline-code">33334</code>（スタンドアロンビルド用のTCP）</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Port</strong>：<code class="inline-code">33335</code>（WebGLビルドのみ）[注意：この設定はスタンドアロンビルドのインスペクターでは非表示ですが、WebGLビルド時に使用されます]</li>
+                        <li class="list-item"><strong class="text-strong">Auto Connect On Start</strong>：自動接続のため有効</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">GameNetworkManager Inspector</p>
+
+            <p class="paragraph"><strong class="text-strong">カスタマイズオプション：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server IP</strong>：サーバーが別のマシンで実行されている場合は変更</li>
+                <li class="list-item"><strong class="text-strong">Ports</strong>：サーバーが異なるポートを使用している場合は変更</li>
+                <li class="list-item"><strong class="text-strong">Auto Connect</strong>：手動接続制御が必要な場合は無効化</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. マルチプレイヤー機能のテスト</h2>
+
+            <h3 class="heading-3">ステップ1：タンクサーバーの開始</h3>
+            <p class="paragraph">Unityクライアントをテストする前に、タンクサーバーが実行中であることを確認します：</p>
+
+            <p class="paragraph"><strong class="text-strong">C++サーバー</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">期待されるサーバー出力：</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">ステップ2：Unityクライアント接続のテスト</h3>
+            <p class="paragraph">Unityクライアントのタンクサーバーへの接続をテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity Editorテスト：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Unity Editorで<strong class="text-strong">Play</strong>ボタンをクリック</li>
+                <li class="list-item">Unity ConsoleとGame viewで接続状態を観察</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">期待されるサーバー応答：</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity Game View：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">接続状態</strong>：「サーバーに接続済み」インジケーター</li>
+                <li class="list-item"><strong class="text-strong">タンク選択</strong>：スポーン可能な4種類のタンクタイプから選択</li>
+                <li class="list-item"><strong class="text-strong">プレイヤータンク</strong>：選択したタンクがゲーム世界にスポーン</li>
+                <li class="list-item"><strong class="text-strong">チャットインターフェース</strong>：EnterキーでP2Pメッセージ用チャットウィンドウを開く</li>
+                <li class="list-item"><strong class="text-strong">タンクコントロール</strong>：WASD移動、マウス照準、クリック/スペースキー発砲</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Unity Game Initial Screen</p>
+
+            <h3 class="heading-3">ステップ3：マルチクライアントテスト</h3>
+            <p class="paragraph">複数のUnityクライアントでマルチプレイヤー機能をテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">2番目のUnityインスタンス：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unityプロジェクトのビルド</strong>：<strong class="text-strong">File > Build and Run</strong>に移動</li>
+                <li class="list-item"><strong class="text-strong">Build Settingsの設定</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Target Platform</strong>：PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">Architecture</strong>：x86_64</li>
+                        <li class="list-item"><strong class="text-strong">Scenes</strong>：<code class="inline-code">Demo_Networkd_Game_Desert.unity</code>シーンを追加</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">ビルド</strong>：「Build and Run」をクリックしてスタンドアロン実行ファイルを作成</li>
+                <li class="list-item"><strong class="text-strong">スタンドアロン実行</strong>：これで2番目のクライアントインスタンスが作成されます。ビルド成功後、ビルド場所から直接ゲームを実行できます（例：<code class="inline-code">Build/unity_tank_client.exe</code>）</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows Standalone Build Settings</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">ビルド完了</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">マルチクライアントゲームプレイ</p>
+
+            <p class="paragraph"><strong class="text-strong">代替テスト方法：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong>（Unityアセット）：複数のUnity Editorインスタンスを可能にする</li>
+                <li class="list-item"><strong class="text-strong">プロジェクトクローン</strong>：同時テスト用にプロジェクトのクローンを作成</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">期待されるマルチクライアント動作：</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">複数クライアント時のサーバーログ：</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. マルチプレイヤー機能テスト</h2>
+
+            <h3 class="heading-3">移動同期テスト</h3>
+            <p class="paragraph">複数クライアント間でのリアルタイムタンク移動をテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">クライアント1の操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WASD</strong>を使ってマップ上でタンクを移動</li>
+                <li class="list-item">ローカルクライアントでの滑らかな移動を観察</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">クライアント2の観察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">クライアント1のタンクがリアルタイムで移動するのを確認</li>
+                <li class="list-item">移動は滑らかで同期されている</li>
+                <li class="list-item">位置更新は20Hz（設定可能）で発生</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">期待されるネットワークメッセージ：</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Client 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">発砲・弾丸テスト</h3>
+            <p class="paragraph">砲弾発射の同期をテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">クライアント1の操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">マウス</strong>でターゲットに照準</li>
+                <li class="list-item"><strong class="text-strong">左マウスボタン</strong>をクリックするか<strong class="text-strong">スペース</strong>キーを押して発砲</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">クライアント2の観察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">クライアント1のタンクから砲弾が生成されるのを確認</li>
+                <li class="list-item">砲弾の軌道が物理法則に正確に従う</li>
+                <li class="list-item">着弾地点で爆発エフェクトが発生</li>
+                <li class="list-item">砲弾がクライアント2のタンクに命中した場合、体力が減少</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">期待されるネットワークメッセージ：</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Client 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → All: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">P2Pチャットシステムテスト</h3>
+            <p class="paragraph">プレイヤー間のリアルタイムメッセージングをテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">クライアント1の操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">画面下部の<strong class="text-strong">チャット入力フィールド</strong>をクリック</li>
+                <li class="list-item">メッセージを入力：<code class="inline-code">"Hello from Client 1!"</code></li>
+                <li class="list-item"><strong class="text-strong">Enter</strong>キーを押して送信</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">クライアント2の観察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">チャットログにメッセージが表示：<code class="inline-code">"Player: Hello from Client 1!"</code></li>
+                <li class="list-item">チャットログが自動的にスクロール</li>
+                <li class="list-item">メッセージのタイムスタンプが表示</li>
+            </ul>
+
+            <h3 class="heading-3">体力・ダメージテスト</h3>
+            <p class="paragraph">体力同期とダメージエフェクトをテストします：</p>
+
+            <p class="paragraph"><strong class="text-strong">ダメージシナリオ：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">クライアント1がクライアント2のタンクに砲弾を発射</li>
+                <li class="list-item">砲弾が命中してダメージを与える</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">期待される結果：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">クライアント2</strong>：体力が減少（例：100 → 75）</li>
+                <li class="list-item"><strong class="text-strong">クライアント1</strong>：クライアント2の体力更新を確認</li>
+                <li class="list-item"><strong class="text-strong">体力UI</strong>：両クライアントで更新された体力値を表示</li>
+                <li class="list-item"><strong class="text-strong">視覚エフェクト</strong>：ダメージエフェクトとパーティクルを表示</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. WebGLデプロイメント（オプション）</h2>
+
+            <h3 class="heading-3">WebGLビルド設定</h3>
+            <p class="paragraph">Unity タンククライアントをWebアプリケーションとしてデプロイします：</p>
+
+            <p class="paragraph"><strong class="text-strong">ビルド設定：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">File > Build Settings</strong>に移動</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong>プラットフォームを選択</li>
+                <li class="list-item"><strong class="text-strong">"Switch Platform"</strong>をクリック</li>
+                <li class="list-item"><strong class="text-strong">シーンを追加</strong>：<code class="inline-code">Demo_Networkd_Game_Desert.unity</code>が含まれていることを確認</li>
+                <li class="list-item"><strong class="text-strong">ProudNetプラグイン設定を構成</strong>（重要！）</li>
+                <li class="list-item"><strong class="text-strong">WebGLプレイヤー設定を構成</strong>（重要！）</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">WebGL Build Settings</p>
+
+            <h3 class="heading-3">WebGL用ProudNetプラグイン設定</h3>
+            <p class="paragraph">WebGLプラットフォームに切り替えた後、ProudNetプラグイン設定を構成する必要があります：</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">重要なWebGL制限</strong>：ProudNetはWebGLプラットフォームが選択されている場合、エディター内プレイモードをサポートしません。ネットワーク機能をテストするには、WebGLバージョンをビルドしてデプロイする必要があります。WebGLプラットフォームでのネットワークテストでは、エディタープレイモードは機能しません。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ステップ1：.NET DLLのEditor無効化</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/</code>に移動</li>
+                <li class="list-item"><code class="inline-code">ProudDotNetClientUnity.dll</code>を選択</li>
+                <li class="list-item">Inspector → <strong class="text-strong">プラットフォーム設定</strong>で：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：❌（チェック解除）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet .NET DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">ステップ2：x86_64 DLLsのEditor無効化</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code>に移動</li>
+                <li class="list-item"><code class="inline-code">ProudNetClient.dll</code>を選択：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：❌（チェック解除）</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">ProudNetClientPlugin.dll</code>を選択：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：❌（チェック解除）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet x86_64 DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">ステップ3：WebGLファイルのEditor有効化</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code>に移動</li>
+                <li class="list-item"><code class="inline-code">JSClient.jslib</code>を選択：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：✓（チェック済み）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（チェック済み）</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">NewJSClient.jslib</code>を選択：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：✓（チェック済み）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（チェック済み）</li>
+                    </ul>
+                </li>
+                <li class="list-item"><code class="inline-code">ProudNetClientPlugin-webgl.dll</code>を選択：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>：✓（チェック済み）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（チェック済み）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">ProudNet WebGL Files Platform Settings</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Critical</strong>: If these settings are not configured correctly, the WebGL build will fail or the networking will not function properly.</p>
+            </div>
+
+            <h3 class="heading-3">WebGL Player Settings Configuration</h3>
+            <p class="paragraph">Configure Unity's WebGL-specific settings for optimal local testing:</p>
+
+            <p class="paragraph"><strong class="text-strong">Publishing Settings (Critical for Local Testing):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Go to <strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">Expand <strong class="text-strong">Publishing Settings</strong> section</li>
+                <li class="list-item">Set <strong class="text-strong">Compression Format</strong>: <strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">This is essential for local web server testing</li>
+                        <li class="list-item">Compressed builds may not work with simple HTTP servers</li>
+                        <li class="list-item">Can be re-enabled for production deployment</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">WebGL Publishing Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Recommended WebGL Settings:</strong></p>
+            <div class="code-block">
+                <pre>Publishing Settings:
+├── Compression Format: Disabled (for local testing)
+├── Name Files As Hashes: ❌ (unchecked)
+├── Data Caching: ❌ (unchecked)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Memory Settings:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">ヒント</strong>：本番デプロイメントでは、ダウンロードサイズを削減するために<strong class="text-strong">Gzip</strong>圧縮形式を有効にできますが、サーバー互換性の問題を避けるためにローカルテストでは無効にしてください。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">WebGL用ネットワーク構成：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">トランスポート</strong>：WebSocket（WebGLで自動使用）</li>
+                <li class="list-item"><strong class="text-strong">サーバーURL</strong>：<code class="inline-code">ws://localhost:33335/ws</code>（ローカルテスト）</li>
+                <li class="list-item"><strong class="text-strong">本番URL</strong>：<code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL Network Configuration" class="image">
+            <p class="image-caption">WebGLネットワーク構成</p>
+
+            <h3 class="heading-3">WebGLテスト</h3>
+            <p class="paragraph">タンククライアントのWeb版をテストします：</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">注意</strong>：WebGLプラットフォームが選択されている場合、ProudNetネットワークはUnity Editorプレイモードで機能しないことを覚えておいてください。ネットワーク機能をテストするには完全なビルドプロセスを完了する必要があります。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">ビルドプロセス：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Build Settingsで<strong class="text-strong">"Build"</strong>をクリック</li>
+                <li class="list-item">出力フォルダ用のフォルダを作成または選択：例- <code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">ビルド完了まで待機（数分かかる場合があります）</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">ローカルWebサーバーセットアップ：</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">重要</strong>：WebGLビルドはWebサーバーでホストする必要があり、HTMLファイルをローカルで直接開いてプレイすることはできません。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">方法1：Python HTTPサーバー</strong></p>
+            <div class="code-block">
+                <pre># WebGLビルドフォルダに移動
+cd WebGL_Build/
+
+# Python 3（推奨）
+python -m http.server 8000
+
+# Python 2（Python 3が利用できない場合）
+python -m SimpleHTTPServer 8000
+
+# カスタムポートの例
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">期待されるPython出力：</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">方法2：VS Code Live Server拡張機能</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">拡張機能のインストール</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item">VS Codeを開く</li>
+                        <li class="list-item">拡張機能に移動（Ctrl+Shift+X）</li>
+                        <li class="list-item">Ritwick Deyの「Live Server」を検索</li>
+                        <li class="list-item">「インストール」をクリック</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">WebGLビルドのホスト</strong>：
+                    <div class="code-block">
+                        <pre>1. VS CodeでWebGL_Build/フォルダを開く
+2. index.htmlを右クリック
+3. 「Open with Live Server」を選択
+4. ブラウザが自動的にhttp://127.0.0.1:5500で開く</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">方法3：Node.js http-server（代替）</strong></p>
+            <div class="code-block">
+                <pre># グローバルインストール（一回限りのセットアップ）
+npm install -g http-server
+
+# ビルドフォルダに移動してサーブ
+cd WebGL_Build/
+http-server -p 8000
+
+# CORS有効（必要な場合）
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">アクセスURL：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>：http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>：http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>：http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Webブラウザテスト：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Webブラウザを開く</li>
+                <li class="list-item"><code class="inline-code">http://localhost:8000</code>に移動</li>
+                <li class="list-item">ゲームがWebGLでブラウザに読み込まれる</li>
+                <li class="list-item">デスクトップ版と同じマルチプレイヤー機能</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">期待されるWebGLの動作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WebSocket接続</strong>：WebSocket経由でタンクサーバーに接続（ポート33335）</li>
+                <li class="list-item"><strong class="text-strong">クロスプラットフォームプレイ</strong>：WebGLクライアントがデスクトップクライアントと一緒にプレイ可能</li>
+                <li class="list-item"><strong class="text-strong">同じゲームロジック</strong>：同一の移動、発砲、チャット機能</li>
+                <li class="list-item"><strong class="text-strong">ブラウザ互換性</strong>：Chrome、Firefox、Safari、Edgeで動作</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL Browser Gameplay" class="image">
+            <p class="image-caption">WebGLブラウザゲームプレイ</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">トラブルシューティング</h2>
+
+            <p class="paragraph"><strong class="text-strong">よくある問題と解決策：</strong></p>
+
+            <h3 class="heading-3">接続の問題</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"サーバーへの接続に失敗しました"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">タンクサーバーが実行中でアクセス可能であることを確認</li>
+                        <li class="list-item">ポート33334-33335のファイアウォール設定を確認</li>
+                        <li class="list-item">NetworkManager設定でサーバーIPアドレスを確認</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ProudNet統合の問題</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"ProudNet DLLが見つかりません"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">DLLが<code class="inline-code">Assets/Plugins/</code>フォルダにあることを確認</li>
+                        <li class="list-item">各DLLファイルのプラットフォーム設定を確認</li>
+                        <li class="list-item">DLL変更後にUnity Editorを再起動</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ビルドの問題</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"ネットワークエラーでビルドに失敗しました"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">すべてのProudNetスクリプトがエラーなくコンパイルされることを確認</li>
+                        <li class="list-item">Unity Consoleで具体的なエラーメッセージを確認</li>
+                        <li class="list-item">PluginsフォルダのProudNet DLLのプラットフォーム設定を確認：
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows：スタンドアロンビルド用にx86_64を有効</li>
+                                <li class="list-item">WebGL：ブラウザビルド用にWebGLプラットフォームを有効</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">WebGLの問題</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"WebSocket接続に失敗しました"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">タンクサーバーがWebSocket（ポート33335）をサポートしていることを確認</li>
+                        <li class="list-item">ブラウザコンソールで具体的なエラーメッセージを確認</li>
+                        <li class="list-item">サーバーでCORSヘッダーが適切に設定されていることを確認</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"WebGLプラットフォーム選択時にUnity Editorでネットワークが動作しない"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">期待される動作</strong>：ProudNetはWebGLプラットフォームのエディター内プレイモードをサポートしません</li>
+                        <li class="list-item"><strong class="text-strong">解決策</strong>：プロジェクトをWebGLとしてビルドし、代わりにWebブラウザでテスト</li>
+                        <li class="list-item"><strong class="text-strong">代替案</strong>：エディターテスト用にWindows/Mac/Linux Standaloneプラットフォームに戻す</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">デバッグツール：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Console</strong>：ネットワーク接続とエラーメッセージ</li>
+                <li class="list-item"><strong class="text-strong">Server Console</strong>：クライアント接続とゲーム状態ログ</li>
+                <li class="list-item"><strong class="text-strong">Network Profiler</strong>：Unityの組み込みネットワークパフォーマンス分析</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Monitor</strong>：リアルタイムネットワーク統計（利用可能な場合）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">ヘルプを得る：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unityドキュメント</strong>：https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">ProudNetドキュメント</strong>：<code class="inline-code">ProudNet/doc/</code>フォルダで利用可能</li>
+                <li class="list-item"><strong class="text-strong">Unityフォーラム</strong>：Unity開発のコミュニティサポート</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>：バグ報告と機能リクエスト（該当する場合）</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 

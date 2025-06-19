@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克游戏Unity客户端项目文档</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/webgl-embed.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/webgl-embed.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>坦克游戏Unity客户端项目</h1>
+            <p class="paragraph">使用ProudNet网络库实现的多人坦克游戏Unity客户端，基于Unity官方坦克教程模板构建，增强了多人游戏和聊天功能。</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 目录</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">前置条件</a></li>
+                <li class="list-item"><a href="#webgl-demo" class="link">游戏WebGL构建演示</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">项目结构</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">开发说明</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">开始使用</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Unity项目创建和设置</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. ProudNet Unity集成</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. PIDL集成工作流程</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. 坦克多人游戏集成</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. 测试多人游戏功能</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. 多人游戏功能测试</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. WebGL部署（可选）</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">故障排除</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">前置条件</h2>
+            <p class="paragraph">在构建此Unity客户端项目之前，您必须完成前面文档中的<strong class="text-strong">坦克服务器设置</strong>并安装以下组件。</p>
+
+            <h3 class="heading-3">所需目录结构</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # Server project (from previous setup)
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # Required: Files from ProudNet installation
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # This Unity project (to be created)
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">所需软件安装</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong>和<strong class="text-strong">Unity Editor</strong>（推荐2021.3 LTS或更新版本）</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Unity坦克客户端示例包</strong> - 可从GitHub获取：https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99</li>
+                <li class="list-item"><strong class="text-strong">已完成的坦克服务器</strong> - 来自前面的服务器设置文档</li>
+            </ol>
+
+            <h3 class="heading-3">ProudNet Unity坦克客户端示例包位置</h3>
+            <p class="paragraph">可以从以下位置下载ProudNet Unity坦克客户端示例包：</p>
+            <div class="code-block">
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+File: tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <h3 class="heading-3">完整Unity 6示例仓库</h3>
+            <p class="paragraph">对于希望跳过手动设置过程的用户，可以使用已完成所有集成步骤的完整Unity 6示例项目：</p>
+
+            <p class="paragraph"><strong class="text-strong">GitHub仓库：</strong> <a href="https://github.com/Nettention/proudnet_sample_tank_unity_client" class="link">https://github.com/Nettention/proudnet_sample_tank_unity_client</a></p>
+
+            <p class="paragraph">此完整示例仓库包括：</p>
+            <ul class="unordered-list">
+                <li class="list-item">预集成所有ProudNet组件的Unity 6项目</li>
+                <li class="list-item">预配置的网络场景和脚本</li>
+                <li class="list-item">即用型多人坦克游戏</li>
+                <li class="list-item">所有必要的DLL和平台设置已配置</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">完整示例快速开始：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">克隆仓库：<code class="inline-code">git clone https://github.com/Nettention/proudnet_sample_tank_unity_client.git</code></li>
+                <li class="list-item">在Unity 6（或Unity 2021.3 LTS+）中打开项目</li>
+                <li class="list-item">打开场景：<code class="inline-code">Assets/Proundnet_Demo/DemoScene/Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">确保坦克服务器正在运行</li>
+                <li class="list-item">点击播放立即测试</li>
+            </ol>
+
+            <p class="paragraph">对于希望快速测试多人游戏功能而无需完成本文档中描述的完整集成过程的开发者，推荐使用此选项。</p>
+        </section>
+
+        <section id="webgl-demo" class="md-section">
+            <h2 class="heading-2">游戏WebGL构建演示</h2>
+            <p class="paragraph">在浏览器中直接体验ProudNet坦克游戏！这是Unity客户端的实时WebGL构建，连接到AWS上托管的真实多人游戏服务器。</p>
+            
+            <div id="webgl-game-demo" class="webgl-game-container">
+                <!-- Game will be loaded here by JavaScript -->
+            </div>
+            
+            <p class="paragraph"><strong class="text-strong">演示的游戏功能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">实时多人游戏</strong>：与访问此页面的其他用户连接并一起游戏</li>
+                <li class="list-item"><strong class="text-strong">ProudNet网络</strong>：体验基于WebSocket的网络功能</li>
+                <li class="list-item"><strong class="text-strong">坦克战斗</strong>：使用WASD移动，鼠标瞄准，点击/空格键射击</li>
+                <li class="list-item"><strong class="text-strong">P2P聊天</strong>：按Enter键与其他玩家聊天</li>
+                <li class="list-item"><strong class="text-strong">跨平台游戏</strong>：独立构建版本的玩家可以加入同一游戏</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">技术详情：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">使用Unity 6构建并编译为WebGL</li>
+                <li class="list-item">使用ProudNet WebSocket传输以兼容浏览器</li>
+                <li class="list-item">托管在AWS S3上，使用CloudFront CDN</li>
+                <li class="list-item">服务器后端在AWS EC2上使用Docker运行</li>
+                <li class="list-item">与可下载的Unity项目使用相同的代码库</li>
+            </ul>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">项目结构</h2>
+
+            <h3 class="heading-3">🎮 Unity项目资源</h3>
+            <p class="paragraph">包含Unity特定的游戏资源和ProudNet集成组件。</p>
+
+            <p class="paragraph"><strong class="text-strong">内容：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">坦克模板</strong> - Unity官方坦克教程项目（单人游戏基础）</li>
+                <li class="list-item"><strong class="text-strong">ProudNet集成</strong> - 网络脚本和DLL插件</li>
+                <li class="list-item"><strong class="text-strong">多人游戏脚本</strong> - 具有网络同步功能的增强坦克游戏逻辑</li>
+                <li class="list-item"><strong class="text-strong">聊天系统</strong> - P2P消息功能</li>
+                <li class="list-item"><strong class="text-strong">网络管理器</strong> - 服务器连接和P2P群组管理</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">关键组件：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - Unity的ProudNet DLL文件</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - ProudNet集成脚本</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - 支持多人游戏的示例游戏场景</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 网络功能</h3>
+            <p class="paragraph">使用ProudNet网络的Unity客户端实现。</p>
+
+            <p class="paragraph"><strong class="text-strong">功能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">实时多人坦克游戏客户端</li>
+                <li class="list-item">坦克移动、射击和生命值同步</li>
+                <li class="list-item">P2P群组参与以实现高效网络</li>
+                <li class="list-item">带P2P消息的游戏内聊天系统</li>
+                <li class="list-item">服务器连接管理</li>
+                <li class="list-item">跨平台兼容性（Windows、Mac、Linux构建）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">支持的平台：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows独立版</strong> - 桌面应用程序</li>
+                <li class="list-item"><strong class="text-strong">Mac独立版</strong> - macOS应用程序</li>
+                <li class="list-item"><strong class="text-strong">Linux独立版</strong> - Linux应用程序</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - Web浏览器部署（通过WebSocket）</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 协议兼容性</h3>
+            <p class="paragraph">使用与坦克服务器项目相同的协议定义。</p>
+
+            <p class="paragraph"><strong class="text-strong">共享组件：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">相同的Tank.PIDL</strong> - 相同的RMI函数定义</li>
+                <li class="list-item"><strong class="text-strong">兼容的消息格式</strong> - 与C#和C++服务器相同的网络协议</li>
+                <li class="list-item"><strong class="text-strong">同步的游戏逻辑</strong> - 移动、射击和生命值系统与服务器实现匹配</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">开发说明</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Unity版本：推荐2021.3 LTS或更新版本</li>
+                <li class="list-item">ProudNet Unity包提供原生DLL集成</li>
+                <li class="list-item">与所有坦克服务器实现兼容（C#和C++）</li>
+                <li class="list-item">WebGL构建使用WebSocket传输以兼容Web浏览器</li>
+                <li class="list-item">桌面构建使用TCP传输以获得最佳性能</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">开始使用</h2>
+
+            <h3 class="heading-3">前置条件验证</h3>
+            <p class="paragraph">开始之前，请确保您具备：</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">已完成坦克服务器设置</strong> - 按照服务器文档设置C#或C++服务器</li>
+                <li class="list-item"><strong class="text-strong">运行中的坦克服务器</strong> - 有一个正在运行且可访问的坦克服务器</li>
+                <li class="list-item"><strong class="text-strong">ProudNet安装</strong> - 带有Unity包的ProudNet文件夹</li>
+                <li class="list-item"><strong class="text-strong">Unity Hub和编辑器</strong> - 已安装Unity 2021.3 LTS或更新版本</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Unity项目创建和设置</h2>
+
+            <h3 class="heading-3">步骤1：创建新的Unity项目</h3>
+            <p class="paragraph">为坦克客户端创建一个新的Unity项目：</p>
+
+            <p class="paragraph"><strong class="text-strong">使用Unity Hub：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">打开<strong class="text-strong">Unity Hub</strong></li>
+                <li class="list-item">点击<strong class="text-strong">"新建项目"</strong></li>
+                <li class="list-item">选择<strong class="text-strong">"3D"</strong>模板</li>
+                <li class="list-item">设置<strong class="text-strong">项目名称</strong>：<code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item">设置<strong class="text-strong">位置</strong>：<code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item">点击<strong class="text-strong">"创建项目"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">预期项目结构：</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">步骤2：导入Unity坦克模板</h3>
+            <p class="paragraph">导入Unity官方坦克教程项目作为基础模板：</p>
+
+            <p class="paragraph"><strong class="text-strong">通过Unity Asset Store：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">在Unity编辑器中打开<strong class="text-strong">Window > Asset Store</strong></li>
+                <li class="list-item">搜索<strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">导航到：https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item">点击<strong class="text-strong">"Add to My Assets"</strong>（如果尚未拥有）</li>
+                <li class="list-item">在Unity编辑器中，打开<strong class="text-strong">Window > Package Manager</strong></li>
+                <li class="list-item">从下拉菜单中选择<strong class="text-strong">"My Assets"</strong></li>
+                <li class="list-item">找到<strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">点击<strong class="text-strong">"Download"</strong>然后<strong class="text-strong">"Import"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">导入选项：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">选择<strong class="text-strong">"All"</strong>以导入完整项目</li>
+                <li class="list-item">点击<strong class="text-strong">"Import"</strong>以添加所有坦克游戏资源</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">步骤3：测试单人游戏模板</h3>
+            <p class="paragraph">验证导入的坦克模板是否正常工作：</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">打开主场景</strong>：导航到<code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code></li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Unity坦克演示场景</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">进入播放模式</strong>：在Unity编辑器中点击<strong class="text-strong">播放</strong>按钮</li>
+                <li class="list-item"><strong class="text-strong">测试控制</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>：移动坦克</li>
+                        <li class="list-item"><strong class="text-strong">空格键</strong>：按住蓄力，松开发射炮弹</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">预期单人游戏行为：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">坦克使用WASD控制平滑移动</li>
+                <li class="list-item">炮管朝向鼠标位置</li>
+                <li class="list-item">炮弹发射并在撞击时产生爆炸</li>
+                <li class="list-item">被炮弹击中时坦克生命值减少</li>
+                <li class="list-item">坦克生命值归零时游戏结束</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. ProudNet Unity集成</h2>
+
+            <h3 class="heading-3">步骤1：导入ProudNet Unity坦克客户端示例包</h3>
+            <p class="paragraph">导入ProudNet Unity坦克客户端示例包以添加网络功能：</p>
+
+            <p class="paragraph"><strong class="text-strong">预期包文件：</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">在Unity中导入包：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">从GitHub发布页面下载<code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code></li>
+                <li class="list-item">在Unity编辑器中，转到<strong class="text-strong">Assets > Import Package > Custom Package...</strong></li>
+                <li class="list-item">导航到下载的<code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code></li>
+                <li class="list-item">选择包文件并点击<strong class="text-strong">"Open"</strong></li>
+                <li class="list-item">在导入对话框中，选择<strong class="text-strong">"All"</strong>以导入所有组件</li>
+                <li class="list-item">点击<strong class="text-strong">"Import"</strong>将ProudNet添加到项目中</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">ProudNet Unity Tank Client Sample Package Import</p>
+
+            <h3 class="heading-3">步骤2：验证ProudNet安装</h3>
+            <p class="paragraph">检查ProudNet组件是否正确集成：</p>
+
+            <p class="paragraph"><strong class="text-strong">示例资源安装验证：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">验证以下文件夹结构是否存在：
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # Contains ProudNet DLLs
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # Demo scene and scripts
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # Network-related scripts</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">平台设置验证：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">选择<code class="inline-code">Assets/Plugins/</code>中的每个DLL</li>
+                <li class="list-item">在检查器中，验证<strong class="text-strong">平台设置</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>：为x86_64（独立Windows）启用</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">步骤3：配置网络设置</h3>
+            <p class="paragraph">为坦克游戏设置基础网络配置：</p>
+
+            <p class="paragraph"><strong class="text-strong">创建网络配置：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">在项目窗口中右键点击</li>
+                <li class="list-item">选择<strong class="text-strong">Create > ProudNet > Network Config</strong></li>
+                <li class="list-item">将其命名为<code class="inline-code">TankNetworkConfig</code></li>
+                <li class="list-item">配置以下设置：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">服务器IP</strong>：<code class="inline-code">127.0.0.1</code>（测试用本地主机）</li>
+                        <li class="list-item"><strong class="text-strong">服务器端口</strong>：<code class="inline-code">33334</code>（匹配坦克服务器端口）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">网络配置详情：</strong></p>
+            <p class="paragraph">TankNetworkConfig连接设置：</p>
+            <ul class="unordered-list">
+                <li class="list-item">服务器IP：127.0.0.1</li>
+                <li class="list-item">TCP端口：33334（用于独立构建）</li>
+                <li class="list-item">WebSocket端口：33335（用于WebGL构建，仅C++服务器支持）</li>
+            </ul>
+
+            <p class="paragraph">注意：我们将首先对独立构建使用端口33334。稍后对于WebGL构建，我们将使用WebSocket端口33335，该端口仅在C++服务器实现中可用（C#服务器不支持WebSocket连接）。</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. PIDL集成工作流程（可选但推荐）</h2>
+
+            <p class="paragraph">如果您完成了前面文档中的服务器设置，可以重用生成的PIDL文件：</p>
+
+            <p class="paragraph"><strong class="text-strong">选项A：从服务器项目复制（推荐）</strong></p>
+            <p class="paragraph">如果您有可用的坦克服务器项目，请使用便利的批处理脚本：</p>
+
+            <div class="code-block">
+                <pre># Navigate to tank_server directory
+cd tank_server
+
+# Run the copy script
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">脚本功能：</strong></p>
+            <div class="code-block">
+                <pre>从tank_server/复制：
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">预期输出：</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+Copy completed! The following files have been copied to Unity project:
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+Press any key to continue...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">选项B：手动PIDL生成（如果没有服务器项目）</strong></p>
+            <p class="paragraph">如果您没有服务器项目，则需要：</p>
+            <ol class="ordered-list">
+                <li class="list-item">可以访问Common文件夹中的<code class="inline-code">Tank.PIDL</code>文件</li>
+                <li class="list-item">运行<code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code></li>
+                <li class="list-item">手动将生成的文件复制到Unity目录</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">协议兼容性优势：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">相同的消息ID</strong>：Unity客户端使用与服务器相同的RMI ID</li>
+                <li class="list-item"><strong class="text-strong">类型安全</strong>：网络消息参数的编译时检查</li>
+                <li class="list-item"><strong class="text-strong">版本同步</strong>：协议版本自动匹配服务器</li>
+                <li class="list-item"><strong class="text-strong">零配置</strong>：无需额外的网络设置</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. 坦克多人游戏集成</h2>
+
+            <h3 class="heading-3">步骤1：网络脚本概述</h3>
+            <p class="paragraph">坦克Unity客户端使用基于ProudNet RMI（远程方法调用）构建的综合网络系统。以下是实际的脚本结构：</p>
+
+            <p class="paragraph"><strong class="text-strong">核心网络脚本：</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # Main network manager (Singleton)
+│   └── NetworkTank.cs           # Individual tank network synchronization
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # Protocol version and server configuration
+│   └── Generated/               # Auto-generated from Tank.PIDL
+│       ├── Tank_common.cs       # RMI message IDs and constants
+│       ├── Tank_proxy.cs        # Client-to-server RMI calls
+│       └── Tank_stub.cs         # Server-to-client RMI handlers</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - 主要功能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">服务器连接管理</strong>：处理与坦克服务器的连接（TCP/WebSocket）</li>
+                <li class="list-item"><strong class="text-strong">P2P群组管理</strong>：管理点对点通信群组</li>
+                <li class="list-item"><strong class="text-strong">坦克生命周期</strong>：生成/销毁本地和远程坦克</li>
+                <li class="list-item"><strong class="text-strong">RMI通信</strong>：发送/接收坦克移动、射击、生命值更新</li>
+                <li class="list-item"><strong class="text-strong">聊天系统</strong>：与其他玩家的P2P消息</li>
+                <li class="list-item"><strong class="text-strong">多平台支持</strong>：自动选择TCP（独立版）或WebSocket（WebGL）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - 单个坦克功能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">位置插值</strong>：远程坦克的平滑移动同步</li>
+                <li class="list-item"><strong class="text-strong">本地玩家控制</strong>：您的坦克的WASD移动和射击</li>
+                <li class="list-item"><strong class="text-strong">远程玩家渲染</strong>：使用网络数据显示其他玩家的坦克</li>
+                <li class="list-item"><strong class="text-strong">生命值同步</strong>：所有客户端的实时生命值更新</li>
+                <li class="list-item"><strong class="text-strong">弹丸同步</strong>：处理炮弹发射和撞击效果</li>
+                <li class="list-item"><strong class="text-strong">碰撞检测</strong>：追踪炮弹爆炸造成的伤害</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">生成的RMI类（来自Tank.PIDL）：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>：向服务器发送数据的方法（<code class="inline-code">SendMove</code>、<code class="inline-code">SendFire</code>、<code class="inline-code">SendTankHealthUpdated</code>）</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>：从服务器接收数据的处理程序（<code class="inline-code">OnTankPositionUpdated</code>、<code class="inline-code">OnSpawnBullet</code>、<code class="inline-code">OnPlayerJoined</code>）</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>：客户端和服务器之间共享的消息ID和RMI常量</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">重要说明：</strong> <code class="inline-code">Generated/</code>文件夹中的文件与前面文档中C#服务器实现期间生成的文件<strong class="text-strong">完全相同</strong>。这确保了服务器与Unity客户端之间100%的协议兼容性。Unity客户端重用了相同的PIDL生成的网络代码。</p>
+
+            <p class="paragraph"><strong class="text-strong">已实现的关键网络功能：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">实时移动同步</strong>：20Hz位置更新与插值</li>
+                <li class="list-item"><strong class="text-strong">弹丸同步</strong>：其他玩家发射的炮弹即时出现</li>
+                <li class="list-item"><strong class="text-strong">生命值管理</strong>：所有客户端同步伤害和治疗</li>
+                <li class="list-item"><strong class="text-strong">P2P聊天系统</strong>：同组玩家之间的直接消息</li>
+                <li class="list-item"><strong class="text-strong">坦克类型选择</strong>：不同坦克模型在客户端间同步</li>
+                <li class="list-item"><strong class="text-strong">自动重连</strong>：优雅地处理网络断开连接</li>
+            </ul>
+
+            <h3 class="heading-3">步骤2：打开预配置的多人游戏场景</h3>
+            <p class="paragraph">Unity坦克客户端包含一个集成了ProudNet的预配置多人游戏场景：</p>
+
+            <p class="paragraph"><strong class="text-strong">打开网络就绪场景：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">导航到<code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code></li>
+                <li class="list-item">打开<code class="inline-code">Demo_Networkd_Game_Desert.unity</code>场景</li>
+                <li class="list-item">此场景<strong class="text-strong">已配置</strong>了所有必要的网络组件</li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">ProudNet网络演示场景</p>
+
+            <h3 class="heading-3">步骤3：验证网络配置（可选）</h3>
+            <p class="paragraph">场景已预配置，但如果需要，您可以验证或修改网络设置：</p>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager设置（已配置）：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">在层次结构中选择<strong class="text-strong">GameNetworkManager</strong> GameObject</li>
+                <li class="list-item">在检查器中，查看<strong class="text-strong">GameNetworkManager</strong>组件设置：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">服务器IP</strong>：<code class="inline-code">127.0.0.1</code>（测试用本地主机）</li>
+                        <li class="list-item"><strong class="text-strong">服务器端口</strong>：<code class="inline-code">33334</code>（独立构建的TCP）</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket端口</strong>：<code class="inline-code">33335</code>（仅用于WebGL构建）[注意：此设置在独立构建的检查器中是隐藏的，但在构建WebGL时会被使用]</li>
+                        <li class="list-item"><strong class="text-strong">启动时自动连接</strong>：启用自动连接</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">GameNetworkManager检查器</p>
+
+            <p class="paragraph"><strong class="text-strong">自定义选项：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">服务器IP</strong>：如果您的服务器在不同机器上运行，请更改</li>
+                <li class="list-item"><strong class="text-strong">端口</strong>：如果您的服务器使用不同端口，请修改</li>
+                <li class="list-item"><strong class="text-strong">自动连接</strong>：如果您希望手动控制连接，请禁用</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. 测试多人游戏功能</h2>
+
+            <h3 class="heading-3">步骤1：启动坦克服务器</h3>
+            <p class="paragraph">在测试Unity客户端之前，请确保您的坦克服务器正在运行：</p>
+
+            <p class="paragraph"><strong class="text-strong">C++服务器</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">预期服务器输出：</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">步骤2：测试Unity客户端连接</h3>
+            <p class="paragraph">测试Unity客户端与坦克服务器的连接：</p>
+
+            <p class="paragraph"><strong class="text-strong">Unity编辑器测试：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">在Unity编辑器中点击<strong class="text-strong">播放</strong>按钮</li>
+                <li class="list-item">在Unity控制台和游戏视图中观察连接状态</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">预期服务器响应：</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity游戏视图：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">连接状态</strong>："已连接到服务器"指示器</li>
+                <li class="list-item"><strong class="text-strong">坦克选择</strong>：从4种可用坦克类型中选择生成</li>
+                <li class="list-item"><strong class="text-strong">玩家坦克</strong>：您选择的坦克在游戏世界中生成</li>
+                <li class="list-item"><strong class="text-strong">聊天界面</strong>：按Enter键打开聊天窗口进行P2P消息</li>
+                <li class="list-item"><strong class="text-strong">坦克控制</strong>：WASD移动，鼠标瞄准，点击/空格键射击</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Unity游戏初始屏幕</p>
+
+            <h3 class="heading-3">步骤3：多客户端测试</h3>
+            <p class="paragraph">使用多个Unity客户端测试多人游戏功能：</p>
+
+            <p class="paragraph"><strong class="text-strong">第二个Unity实例：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">构建Unity项目</strong>：转到<strong class="text-strong">File > Build and Run</strong></li>
+                <li class="list-item"><strong class="text-strong">配置构建设置</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">目标平台</strong>：PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">架构</strong>：x86_64</li>
+                        <li class="list-item"><strong class="text-strong">场景</strong>：添加<code class="inline-code">Demo_Networkd_Game_Desert.unity</code>场景</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">构建</strong>：点击"Build and Run"创建独立可执行文件</li>
+                <li class="list-item"><strong class="text-strong">运行独立版</strong>：这将创建第二个客户端实例。构建成功后，您可以直接从构建位置运行游戏（例如，<code class="inline-code">Build/unity_tank_client.exe</code>）</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows独立构建设置</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">构建完成</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">多客户端游戏</p>
+
+            <p class="paragraph"><strong class="text-strong">替代测试方法：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong>（Unity资源）：允许多个Unity编辑器实例</li>
+                <li class="list-item"><strong class="text-strong">克隆项目</strong>：创建项目克隆进行同时测试</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">预期多客户端行为：</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">多客户端服务器日志：</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. 多人游戏功能测试</h2>
+
+            <h3 class="heading-3">移动同步测试</h3>
+            <p class="paragraph">测试多个客户端之间的实时坦克移动：</p>
+
+            <p class="paragraph"><strong class="text-strong">客户端1操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">使用<strong class="text-strong">WASD</strong>在地图上移动坦克</li>
+                <li class="list-item">观察本地客户端的平滑移动</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">客户端2观察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">看到客户端1的坦克实时移动</li>
+                <li class="list-item">移动平滑且同步</li>
+                <li class="list-item">位置更新以20Hz频率进行（可配置）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">预期网络消息：</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Client 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">射击和弹丸测试</h3>
+            <p class="paragraph">测试炮弹发射同步：</p>
+
+            <p class="paragraph"><strong class="text-strong">客户端1操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">用<strong class="text-strong">鼠标</strong>朝目标瞄准</li>
+                <li class="list-item">点击<strong class="text-strong">鼠标左键</strong>或按<strong class="text-strong">空格键</strong>发射</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">客户端2观察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">看到炮弹从客户端1的坦克生成</li>
+                <li class="list-item">炮弹轨迹准确地遵循物理规律</li>
+                <li class="list-item">爆炸效果在撞击位置发生</li>
+                <li class="list-item">如果炮弹击中客户端2的坦克，生命值会减少</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">预期网络消息：</strong></p>
+            <div class="code-block">
+                <pre>Client 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Client 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → All: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">P2P聊天系统测试</h3>
+            <p class="paragraph">测试玩家之间的实时消息：</p>
+
+            <p class="paragraph"><strong class="text-strong">客户端1操作：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">点击屏幕底部的<strong class="text-strong">聊天输入框</strong></li>
+                <li class="list-item">输入消息：<code class="inline-code">"Hello from Client 1!"</code></li>
+                <li class="list-item">按<strong class="text-strong">Enter</strong>发送</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">客户端2观察：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">聊天记录中出现消息：<code class="inline-code">"Player: Hello from Client 1!"</code></li>
+                <li class="list-item">聊天记录自动滚动</li>
+                <li class="list-item">显示消息时间戳</li>
+            </ul>
+
+            <h3 class="heading-3">生命值和伤害测试</h3>
+            <p class="paragraph">测试生命值同步和伤害效果：</p>
+
+            <p class="paragraph"><strong class="text-strong">伤害场景：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">客户端1向客户端2的坦克发射炮弹</li>
+                <li class="list-item">炮弹击中并造成伤害</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">预期结果：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">客户端2</strong>：生命值减少（例如，100 → 75）</li>
+                <li class="list-item"><strong class="text-strong">客户端1</strong>：看到客户端2的生命值更新</li>
+                <li class="list-item"><strong class="text-strong">生命值UI</strong>：两个客户端都显示更新的生命值</li>
+                <li class="list-item"><strong class="text-strong">视觉效果</strong>：显示伤害效果和粒子</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. WebGL部署（可选）</h2>
+
+            <h3 class="heading-3">WebGL构建配置</h3>
+            <p class="paragraph">将Unity坦克客户端部署为Web应用程序：</p>
+
+            <p class="paragraph"><strong class="text-strong">构建设置：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">转到<strong class="text-strong">File > Build Settings</strong></li>
+                <li class="list-item">选择<strong class="text-strong">WebGL</strong>平台</li>
+                <li class="list-item">点击<strong class="text-strong">"Switch Platform"</strong></li>
+                <li class="list-item"><strong class="text-strong">添加场景</strong>：确保包含<code class="inline-code">Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item"><strong class="text-strong">配置ProudNet插件设置</strong>（重要！）</li>
+                <li class="list-item"><strong class="text-strong">配置WebGL播放器设置</strong>（重要！）</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">WebGL构建设置</p>
+
+            <h3 class="heading-3">WebGL的ProudNet插件配置</h3>
+            <p class="paragraph">切换到WebGL平台后，您必须配置ProudNet插件设置：</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">重要的WebGL限制</strong>：选择WebGL平台时，ProudNet不支持编辑器内播放模式。您必须构建和部署WebGL版本来测试网络功能。编辑器播放模式在WebGL平台上不能进行网络测试。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">步骤1：禁用.NET DLL的编辑器</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">导航到<code class="inline-code">Assets/Plugins/ProudNet/</code></li>
+                <li class="list-item">选择<code class="inline-code">ProudDotNetClientUnity.dll</code></li>
+                <li class="list-item">在检查器中→<strong class="text-strong">平台设置</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：❌（未选中）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet .NET DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">步骤2：禁用x86_64 DLLs的编辑器</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">导航到<code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code></li>
+                <li class="list-item">选择<code class="inline-code">ProudNetClient.dll</code>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：❌（未选中）</li>
+                    </ul>
+                </li>
+                <li class="list-item">选择<code class="inline-code">ProudNetClientPlugin.dll</code>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：❌（未选中）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">ProudNet x86_64 DLL Platform Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">步骤3：为WebGL文件启用编辑器</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">导航到<code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code></li>
+                <li class="list-item">选择<code class="inline-code">JSClient.jslib</code>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：✓（选中）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（选中）</li>
+                    </ul>
+                </li>
+                <li class="list-item">选择<code class="inline-code">NewJSClient.jslib</code>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：✓（选中）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（选中）</li>
+                    </ul>
+                </li>
+                <li class="list-item">选择<code class="inline-code">ProudNetClientPlugin-webgl.dll</code>：
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">编辑器</strong>：✓（选中）</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>：✓（选中）</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">ProudNet WebGL Files Platform Settings</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">关键</strong>：如果这些设置配置不正确，WebGL构建将失败或网络功能将无法正常工作。</p>
+            </div>
+
+            <h3 class="heading-3">WebGL播放器设置配置</h3>
+            <p class="paragraph">为最佳本地测试配置Unity的WebGL特定设置：</p>
+
+            <p class="paragraph"><strong class="text-strong">发布设置（对本地测试至关重要）：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">转到<strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">展开<strong class="text-strong">Publishing Settings</strong>部分</li>
+                <li class="list-item">设置<strong class="text-strong">Compression Format</strong>：<strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">这对本地Web服务器测试是必要的</li>
+                        <li class="list-item">压缩构建可能无法与简单的HTTP服务器配合工作</li>
+                        <li class="list-item">可以在生产部署时重新启用</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">WebGL Publishing Settings</p>
+
+            <p class="paragraph"><strong class="text-strong">Recommended WebGL Settings:</strong></p>
+            <div class="code-block">
+                <pre>Publishing Settings:
+├── Compression Format: Disabled (for local testing)
+├── Name Files As Hashes: ❌ (unchecked)
+├── Data Caching: ❌ (unchecked)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Memory Settings:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">提示</strong>：对于生产部署，您可以启用<strong class="text-strong">Gzip</strong>压缩格式来减少下载大小，但在本地测试时禁用它以避免服务器兼容性问题。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Network Configuration for WebGL:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Transport</strong>: WebSocket (automatically used for WebGL)</li>
+                <li class="list-item"><strong class="text-strong">Server URL</strong>: <code class="inline-code">ws://localhost:33335/ws</code> (local testing)</li>
+                <li class="list-item"><strong class="text-strong">Production URL</strong>: <code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL Network Configuration" class="image">
+            <p class="image-caption">WebGL Network Configuration</p>
+
+            <h3 class="heading-3">WebGL测试</h3>
+            <p class="paragraph">测试坦克客户端的Web版本：</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">注意</strong>：请记住，选择WebGL平台时，ProudNet网络在Unity编辑器播放模式下无法正常工作。您必须完成完整的构建过程来测试网络功能。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">构建过程：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">在构建设置中点击<strong class="text-strong">"Build"</strong></li>
+                <li class="list-item">创建或选择任何文件夹作为输出文件夹：例如-<code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">等待构建完成（可能需要几分钟）</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">本地Web服务器设置：</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">重要</strong>：WebGL构建必须在Web服务器上托管，不能通过直接打开本地HTML文件来游玩。</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">方法1：Python HTTP服务器</strong></p>
+            <div class="code-block">
+                <pre># Navigate to WebGL build folder
+cd WebGL_Build/
+
+# Python 3 (recommended)
+python -m http.server 8000
+
+# Python 2 (if Python 3 not available)
+python -m SimpleHTTPServer 8000
+
+# Custom port example
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">预期Python输出：</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">方法2：VS Code Live Server扩展</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">安装扩展</strong>：
+                    <ul class="unordered-list">
+                        <li class="list-item">打开VS Code</li>
+                        <li class="list-item">转到扩展（Ctrl+Shift+X）</li>
+                        <li class="list-item">搜索Ritwick Dey的"Live Server"</li>
+                        <li class="list-item">点击"Install"</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">托管WebGL构建</strong>：
+                    <div class="code-block">
+                        <pre>1. 在VS Code中打开WebGL_Build/文件夹
+2. 右键点击index.html
+3. 选择"Open with Live Server"
+4. 浏览器自动在http://127.0.0.1:5500打开</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">方法3：Node.js http-server（替代方案）</strong></p>
+            <div class="code-block">
+                <pre># Install globally (one-time setup)
+npm install -g http-server
+
+# Navigate to build folder and serve
+cd WebGL_Build/
+http-server -p 8000
+
+# With CORS enabled (if needed)
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">访问URL：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>: http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>: http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>: http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Web浏览器测试：</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">打开Web浏览器</li>
+                <li class="list-item">导航到<code class="inline-code">http://localhost:8000</code></li>
+                <li class="list-item">游戏在浏览器中使用WebGL加载</li>
+                <li class="list-item">与桌面版本相同的多人游戏功能</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">预期WebGL行为：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">WebSocket连接</strong>：通过WebSocket连接到坦克服务器（端口33335）</li>
+                <li class="list-item"><strong class="text-strong">跨平台游戏</strong>：WebGL客户端可以与桌面客户端一起游戏</li>
+                <li class="list-item"><strong class="text-strong">相同的游戏逻辑</strong>：相同的移动、射击和聊天功能</li>
+                <li class="list-item"><strong class="text-strong">浏览器兼容性</strong>：在Chrome、Firefox、Safari、Edge中工作</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL Browser Gameplay" class="image">
+            <p class="image-caption">WebGL浏览器游戏</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">故障排除</h2>
+
+            <p class="paragraph"><strong class="text-strong">常见问题和解决方案：</strong></p>
+
+            <h3 class="heading-3">连接问题</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"连接服务器失败"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">验证坦克服务器正在运行且可访问</li>
+                        <li class="list-item">检查防火墙对端口33334-33335的设置</li>
+                        <li class="list-item">确认NetworkManager设置中的服务器IP地址</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">ProudNet集成问题</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"未找到ProudNet DLL"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">验证DLL文件在<code class="inline-code">Assets/Plugins/</code>文件夹中</li>
+                        <li class="list-item">检查每个DLL文件的平台设置</li>
+                        <li class="list-item">更改DLL后重启Unity编辑器</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">构建问题</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Build failed with networking errors"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Ensure all ProudNet scripts compile without errors</li>
+                        <li class="list-item">Check Unity Console for specific error messages</li>
+                        <li class="list-item">Verify platform settings for ProudNet DLLs in Plugins folder:
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows: x86_64 enabled for standalone builds</li>
+                                <li class="list-item">WebGL: WebGL platform enabled for browser builds</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">WebGL问题</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"WebSocket连接失败"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">验证坦克服务器支持WebSocket（端口33335）</li>
+                        <li class="list-item">检查浏览器控制台以获取具体错误信息</li>
+                        <li class="list-item">确保服务器上正确配置了CORS头</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"选择WebGL平台时Unity编辑器中网络不工作"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">预期行为</strong>：ProudNet不支持WebGL平台的编辑器内播放模式</li>
+                        <li class="list-item"><strong class="text-strong">解决方案</strong>：将项目构建为WebGL并在Web浏览器中测试</li>
+                        <li class="list-item"><strong class="text-strong">替代方案</strong>：切换回Windows/Mac/Linux独立平台进行编辑器测试</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">调试工具：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity控制台</strong>：网络连接和错误信息</li>
+                <li class="list-item"><strong class="text-strong">服务器控制台</strong>：客户端连接和游戏状态日志</li>
+                <li class="list-item"><strong class="text-strong">网络分析器</strong>：Unity内置的网络性能分析</li>
+                <li class="list-item"><strong class="text-strong">ProudNet监视器</strong>：实时网络统计（如果可用）</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">获取帮助：</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity文档</strong>：https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">ProudNet文档</strong>：在<code class="inline-code">ProudNet/doc/</code>文件夹中可用</li>
+                <li class="list-item"><strong class="text-strong">Unity论坛</strong>：Unity开发的社区支持</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>：报告错误和请求功能（如果适用）</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 

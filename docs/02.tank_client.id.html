@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Proyek Klien Unity Tank Game</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/webgl-embed.css">
+    <script src="js/image-modal.js"></script>
+    <script src="js/webgl-embed.js"></script>
+    <script src="js/language-selector.js"></script>
+</head>
+<body>
+    <div class="md-container">
+        <div class="md-header">
+            <h1>Proyek Klien Unity Tank Game</h1>
+            <p class="paragraph">Implementasi klien Unity untuk permainan tank multiplayer menggunakan pustaka jaringan ProudNet, dibangun berdasarkan template tutorial tank resmi Unity dengan fitur multiplayer dan chat yang ditingkatkan.</p>
+        </div>
+
+        <div class="md-nav">
+            <h3 class="heading-3">📋 Daftar Isi</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><a href="#prerequisites" class="link">Persyaratan</a></li>
+                <li class="list-item"><a href="#webgl-demo" class="link">Demo Build WebGL Game</a></li>
+                <li class="list-item"><a href="#project-structure" class="link">Struktur Proyek</a></li>
+                <li class="list-item"><a href="#development-notes" class="link">Catatan Pengembangan</a></li>
+                <li class="list-item"><a href="#getting-started" class="link">Memulai</a></li>
+                <li class="list-item"><a href="#unity-project-creation" class="link">1. Pembuatan dan Pengaturan Proyek Unity</a></li>
+                <li class="list-item"><a href="#proudnet-unity-integration" class="link">2. Integrasi ProudNet Unity</a></li>
+                <li class="list-item"><a href="#pidl-integration" class="link">2.5. Alur Kerja Integrasi PIDL</a></li>
+                <li class="list-item"><a href="#tank-multiplayer-integration" class="link">3. Integrasi Tank Multiplayer</a></li>
+                <li class="list-item"><a href="#testing-multiplayer" class="link">4. Pengujian Fungsionalitas Multiplayer</a></li>
+                <li class="list-item"><a href="#multiplayer-features-testing" class="link">5. Pengujian Fitur Multiplayer</a></li>
+                <li class="list-item"><a href="#webgl-deployment" class="link">6. Deployment WebGL (Opsional)</a></li>
+                <li class="list-item"><a href="#troubleshooting" class="link">Pemecahan Masalah</a></li>
+            </ul>
+        </div>
+
+        <section id="prerequisites" class="md-section">
+            <h2 class="heading-2">Persyaratan</h2>
+            <p class="paragraph">Sebelum membangun proyek klien Unity ini, Anda harus telah menyelesaikan <strong class="text-strong">Pengaturan Tank Server</strong> dari dokumentasi sebelumnya dan menginstal komponen-komponen berikut.</p>
+
+            <h3 class="heading-3">Struktur Direktori yang Diperlukan</h3>
+            <div class="code-block">
+                <pre>project_root/
+├── tank_server/          # Server project (from previous setup)
+│   ├── Common/
+│   ├── Server/
+│   ├── Client/
+│   └── Server_CPP/
+├── ProudNet/            # Required: Files from ProudNet installation
+│   ├── doc/
+│   ├── include/
+│   ├── lib/
+│   ├── Sample/
+│   └── util/
+└── tank_unity_client/   # This Unity project (to be created)
+    ├── Assets/
+    ├── Packages/
+    └── ProjectSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Instalasi Perangkat Lunak yang Diperlukan</h3>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Hub</strong> dan <strong class="text-strong">Unity Editor</strong> (2021.3 LTS atau yang lebih baru direkomendasikan)</li>
+                <li class="list-item"><strong class="text-strong">Paket Sampel Klien Tank Unity ProudNet</strong> - Tersedia dari GitHub di https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99</li>
+                <li class="list-item"><strong class="text-strong">Tank Server yang Sudah Selesai</strong> - Dari dokumentasi pengaturan server sebelumnya</li>
+            </ol>
+
+            <h3 class="heading-3">Lokasi Paket Sampel Klien Tank Unity ProudNet</h3>
+            <p class="paragraph">Paket Sampel Klien Tank Unity ProudNet dapat diunduh dari:</p>
+            <div class="code-block">
+                <pre>https://github.com/Nettention/proudnet_sample_tank_server/releases/tag/0.99
+File: tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <h3 class="heading-3">Repositori Sampel Unity 6 Lengkap</h3>
+            <p class="paragraph">Bagi mereka yang lebih suka melewati proses pengaturan manual, proyek sampel Unity 6 lengkap dengan semua langkah integrasi yang sudah selesai tersedia di:</p>
+
+            <p class="paragraph"><strong class="text-strong">Repositori GitHub:</strong> <a href="https://github.com/Nettention/proudnet_sample_tank_unity_client" class="link">https://github.com/Nettention/proudnet_sample_tank_unity_client</a></p>
+
+            <p class="paragraph">Repositori sampel lengkap ini mencakup:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Proyek Unity 6 dengan semua komponen ProudNet yang sudah terintegrasi</li>
+                <li class="list-item">Scene dan skrip jaringan yang sudah dikonfigurasi</li>
+                <li class="list-item">Permainan tank multiplayer yang siap dijalankan</li>
+                <li class="list-item">Semua DLL yang diperlukan dan pengaturan platform yang sudah dikonfigurasi</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Mulai Cepat dengan Sampel Lengkap:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Klon repositori: <code class="inline-code">git clone https://github.com/Nettention/proudnet_sample_tank_unity_client.git</code></li>
+                <li class="list-item">Buka proyek di Unity 6 (atau Unity 2021.3 LTS+)</li>
+                <li class="list-item">Buka scene: <code class="inline-code">Assets/Proundnet_Demo/DemoScene/Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">Pastikan tank server sedang berjalan</li>
+                <li class="list-item">Klik Play untuk langsung melakukan pengujian</li>
+            </ol>
+
+            <p class="paragraph">Opsi ini direkomendasikan untuk pengembang yang ingin dengan cepat menguji fungsionalitas multiplayer tanpa melalui proses integrasi lengkap yang dijelaskan dalam dokumentasi ini.</p>
+        </section>
+
+        <section id="webgl-demo" class="md-section">
+            <h2 class="heading-2">Demo Build WebGL Game</h2>
+            <p class="paragraph">Rasakan ProudNet Tank Game langsung di browser Anda! Ini adalah build WebGL langsung dari klien Unity yang terhubung ke server multiplayer nyata yang di-hosting di AWS.</p>
+            
+            <div id="webgl-game-demo" class="webgl-game-container">
+                <!-- Game will be loaded here by JavaScript -->
+            </div>
+            
+            <p class="paragraph"><strong class="text-strong">Fitur Game yang Didemonstrasikan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Multiplayer Real-time</strong>: Terhubung dan bermain dengan pengguna lain yang mengunjungi halaman ini</li>
+                <li class="list-item"><strong class="text-strong">Jaringan ProudNet</strong>: Rasakan jaringan berbasis WebSocket dalam aksi</li>
+                <li class="list-item"><strong class="text-strong">Pertempuran Tank</strong>: Bergerak dengan WASD, bidik dengan mouse, tembak dengan klik/spasi</li>
+                <li class="list-item"><strong class="text-strong">Chat P2P</strong>: Tekan Enter untuk chat dengan pemain lain</li>
+                <li class="list-item"><strong class="text-strong">Permainan Lintas Platform</strong>: Pemain dari build standalone dapat bergabung dalam game yang sama</li>
+            </ul>
+            
+            <p class="paragraph"><strong class="text-strong">Detail Teknis:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Dibangun dengan Unity 6 dan dikompilasi ke WebGL</li>
+                <li class="list-item">Menggunakan transport WebSocket ProudNet untuk kompatibilitas browser</li>
+                <li class="list-item">Di-hosting di AWS S3 dengan CloudFront CDN</li>
+                <li class="list-item">Backend server berjalan di AWS EC2 dengan Docker</li>
+                <li class="list-item">Codebase yang sama dengan proyek Unity yang dapat diunduh</li>
+            </ul>
+        </section>
+
+        <section id="project-structure" class="md-section">
+            <h2 class="heading-2">Struktur Proyek</h2>
+
+            <h3 class="heading-3">🎮 Aset Proyek Unity</h3>
+            <p class="paragraph">Berisi aset game khusus Unity dan komponen integrasi ProudNet.</p>
+
+            <p class="paragraph"><strong class="text-strong">Konten:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Template Tank</strong> - Proyek tutorial tank resmi Unity (basis single-player)</li>
+                <li class="list-item"><strong class="text-strong">Integrasi ProudNet</strong> - Skrip jaringan dan plugin DLL</li>
+                <li class="list-item"><strong class="text-strong">Skrip Multiplayer</strong> - Logika game tank yang ditingkatkan dengan sinkronisasi jaringan</li>
+                <li class="list-item"><strong class="text-strong">Sistem Chat</strong> - Fungsionalitas pesan P2P</li>
+                <li class="list-item"><strong class="text-strong">Network Manager</strong> - Koneksi server dan manajemen grup P2P</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Komponen Utama:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><code class="inline-code">Plugins/</code> - File DLL ProudNet untuk Unity</li>
+                <li class="list-item"><code class="inline-code">Scripts/Network/</code> - Skrip integrasi ProudNet</li>
+                <li class="list-item"><code class="inline-code">Proudnet_Demo/</code> - Scene game sampel dengan dukungan multiplayer</li>
+            </ul>
+
+            <h3 class="heading-3">🌐 Fitur Jaringan</h3>
+            <p class="paragraph">Implementasi klien Unity dengan jaringan ProudNet.</p>
+
+            <p class="paragraph"><strong class="text-strong">Fitur:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Klien game tank multiplayer real-time</li>
+                <li class="list-item">Sinkronisasi pergerakan, tembakan, dan kesehatan tank</li>
+                <li class="list-item">Partisipasi grup P2P untuk jaringan yang efisien</li>
+                <li class="list-item">Sistem chat dalam game dengan pesan P2P</li>
+                <li class="list-item">Manajemen koneksi server</li>
+                <li class="list-item">Kompatibilitas lintas platform (build Windows, Mac, Linux)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Platform yang Didukung:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Windows Standalone</strong> - Aplikasi desktop</li>
+                <li class="list-item"><strong class="text-strong">Mac Standalone</strong> - Aplikasi macOS</li>
+                <li class="list-item"><strong class="text-strong">Linux Standalone</strong> - Aplikasi Linux</li>
+                <li class="list-item"><strong class="text-strong">WebGL</strong> - Deployment browser web (melalui WebSocket)</li>
+            </ul>
+
+            <h3 class="heading-3">🔄 Kompatibilitas Protokol</h3>
+            <p class="paragraph">Menggunakan definisi protokol yang identik dari proyek tank server.</p>
+
+            <p class="paragraph"><strong class="text-strong">Komponen Bersama:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank.PIDL yang Sama</strong> - Definisi fungsi RMI yang identik</li>
+                <li class="list-item"><strong class="text-strong">Format Pesan yang Kompatibel</strong> - Protokol jaringan yang sama dengan server C# dan C++</li>
+                <li class="list-item"><strong class="text-strong">Logika Game yang Tersinkronisasi</strong> - Sistem pergerakan, tembakan, dan kesehatan sesuai dengan implementasi server</li>
+            </ul>
+        </section>
+
+        <section id="development-notes" class="md-section">
+            <h2 class="heading-2">Catatan Pengembangan</h2>
+            <ul class="unordered-list">
+                <li class="list-item">Versi Unity: 2021.3 LTS atau yang lebih baru direkomendasikan</li>
+                <li class="list-item">Paket Unity ProudNet menyediakan integrasi DLL native</li>
+                <li class="list-item">Kompatibel dengan semua implementasi tank server (C# dan C++)</li>
+                <li class="list-item">Build WebGL menggunakan transport WebSocket untuk kompatibilitas browser web</li>
+                <li class="list-item">Build desktop menggunakan transport TCP untuk performa optimal</li>
+            </ul>
+        </section>
+
+        <section id="getting-started" class="md-section">
+            <h2 class="heading-2">Memulai</h2>
+
+            <h3 class="heading-3">Verifikasi Persyaratan</h3>
+            <p class="paragraph">Sebelum memulai, pastikan Anda memiliki:</p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Pengaturan Tank Server yang Selesai</strong> - Ikuti dokumentasi server untuk mengatur server C# atau C++</li>
+                <li class="list-item"><strong class="text-strong">Tank Server yang Berjalan</strong> - Miliki tank server yang berjalan dan dapat diakses</li>
+                <li class="list-item"><strong class="text-strong">Instalasi ProudNet</strong> - Folder ProudNet dengan paket Unity tersedia</li>
+                <li class="list-item"><strong class="text-strong">Unity Hub dan Editor</strong> - Unity 2021.3 LTS atau yang lebih baru terinstal</li>
+            </ol>
+        </section>
+
+        <section id="unity-project-creation" class="md-section">
+            <h2 class="heading-2">1. Pembuatan dan Pengaturan Proyek Unity</h2>
+
+            <h3 class="heading-3">Langkah 1: Buat Proyek Unity Baru</h3>
+            <p class="paragraph">Buat proyek Unity baru untuk klien tank:</p>
+
+            <p class="paragraph"><strong class="text-strong">Menggunakan Unity Hub:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Buka <strong class="text-strong">Unity Hub</strong></li>
+                <li class="list-item">Klik <strong class="text-strong">"New Project"</strong></li>
+                <li class="list-item">Pilih template <strong class="text-strong">"3D"</strong></li>
+                <li class="list-item">Atur <strong class="text-strong">Project Name</strong>: <code class="inline-code">Tank Unity Client</code></li>
+                <li class="list-item">Atur <strong class="text-strong">Location</strong>: <code class="inline-code">project_root/tank_unity_client/</code></li>
+                <li class="list-item">Klik <strong class="text-strong">"Create project"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Struktur Proyek yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+└── UserSettings/</pre>
+            </div>
+
+            <h3 class="heading-3">Langkah 2: Impor Template Tank Unity</h3>
+            <p class="paragraph">Impor proyek tutorial tank resmi Unity sebagai template dasar:</p>
+
+            <p class="paragraph"><strong class="text-strong">Melalui Unity Asset Store:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Buka <strong class="text-strong">Window > Asset Store</strong> di Unity Editor</li>
+                <li class="list-item">Cari <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Navigasi ke: https://assetstore.unity.com/packages/essentials/tutorial-projects/tanks-complete-project-46209</li>
+                <li class="list-item">Klik <strong class="text-strong">"Add to My Assets"</strong> (jika belum dimiliki)</li>
+                <li class="list-item">Di Unity Editor, buka <strong class="text-strong">Window > Package Manager</strong></li>
+                <li class="list-item">Pilih <strong class="text-strong">"My Assets"</strong> dari dropdown</li>
+                <li class="list-item">Temukan <strong class="text-strong">"Tanks! Complete Project"</strong></li>
+                <li class="list-item">Klik <strong class="text-strong">"Download"</strong> kemudian <strong class="text-strong">"Import"</strong></li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Opsi Impor:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Pilih <strong class="text-strong">"All"</strong> untuk mengimpor proyek lengkap</li>
+                <li class="list-item">Klik <strong class="text-strong">"Import"</strong> untuk menambahkan semua aset game tank</li>
+            </ul>
+
+            <img src="img/image_001.png" alt="Unity Tank Complete Project Import" class="image">
+            <p class="image-caption">Unity Tank Complete Project Import</p>
+
+            <h3 class="heading-3">Langkah 3: Uji Template Single-Player</h3>
+            <p class="paragraph">Verifikasi bahwa template tank yang diimpor berfungsi dengan benar:</p>
+
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Buka Scene Utama</strong>: Navigasi ke <code class="inline-code">unity_tank_client\Assets\_Tanks\Tutorial_Demo\Demo_Scenes\Demo_Game_Desert.unity</code></li>
+            </ol>
+
+            <img src="img/image_002.png" alt="Unity Tank Demo Scene" class="image">
+            <p class="image-caption">Scene Demo Tank Unity</p>
+
+            <ol class="ordered-list" start="2">
+                <li class="list-item"><strong class="text-strong">Masuk Mode Play</strong>: Klik tombol <strong class="text-strong">Play</strong> di Unity Editor</li>
+                <li class="list-item"><strong class="text-strong">Uji Kontrol</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">WASD</strong>: Gerakkan tank</li>
+                        <li class="list-item"><strong class="text-strong">Space</strong>: Tahan untuk mengisi daya tembakan, lepas untuk menembakkan peluru</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Perilaku Single-Player yang Diharapkan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Tank bergerak mulus dengan kontrol WASD</li>
+                <li class="list-item">Meriam mengarah ke posisi mouse</li>
+                <li class="list-item">Peluru ditembakkan dan menciptakan ledakan saat mengenai target</li>
+                <li class="list-item">Kesehatan tank berkurang saat terkena peluru</li>
+                <li class="list-item">Game berakhir saat kesehatan tank mencapai nol</li>
+            </ul>
+        </section>
+
+        <section id="proudnet-unity-integration" class="md-section">
+            <h2 class="heading-2">2. Integrasi ProudNet Unity</h2>
+
+            <h3 class="heading-3">Langkah 1: Impor Paket Sampel Klien Tank Unity ProudNet</h3>
+            <p class="paragraph">Impor Paket Sampel Klien Tank Unity ProudNet untuk menambahkan kemampuan jaringan:</p>
+
+            <p class="paragraph"><strong class="text-strong">File Paket yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>tank_unity_client_proudnet_sample.unitypackage</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Impor Paket di Unity:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Unduh <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> dari rilis GitHub</li>
+                <li class="list-item">Di Unity Editor, pergi ke <strong class="text-strong">Assets > Import Package > Custom Package...</strong></li>
+                <li class="list-item">Navigasi ke <code class="inline-code">tank_unity_client_proudnet_sample.unitypackage</code> yang sudah diunduh</li>
+                <li class="list-item">Pilih file paket dan klik <strong class="text-strong">"Open"</strong></li>
+                <li class="list-item">Dalam dialog impor, pilih <strong class="text-strong">"All"</strong> untuk mengimpor semua komponen</li>
+                <li class="list-item">Klik <strong class="text-strong">"Import"</strong> untuk menambahkan ProudNet ke proyek</li>
+            </ol>
+
+            <img src="img/image_003.png" alt="ProudNet Unity Tank Client Sample Package Import" class="image">
+            <p class="image-caption">Impor Paket Sampel Klien Tank Unity ProudNet</p>
+
+            <h3 class="heading-3">Langkah 2: Verifikasi Instalasi ProudNet</h3>
+            <p class="paragraph">Periksa bahwa komponen ProudNet telah terintegrasi dengan benar:</p>
+
+            <p class="paragraph"><strong class="text-strong">Verifikasi Instalasi Aset Sampel:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Verifikasi bahwa struktur folder berikut ada:
+                    <div class="code-block">
+                        <pre>Assets/
+├── Plugins/
+│   └── ProudNet/           # Berisi DLL ProudNet
+│       ├── ProudNetClientUnity.dll
+│       ├── Andorid/
+│       ├── WebGL/
+│       └── x86_64/
+├── ProudNet_Demo/          # Scene demo dan skrip
+│   ├── DemoScene/
+│   └── ProudNetScripts/
+└── Scripts/
+    └── Network/            # Skrip terkait jaringan</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Verifikasi Pengaturan Platform:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Pilih setiap DLL di <code class="inline-code">Assets/Plugins/</code></li>
+                <li class="list-item">Di Inspector, verifikasi <strong class="text-strong">pengaturan Platform</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Windows</strong>: Diaktifkan untuk x86_64 (Standalone Windows)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 class="heading-3">Langkah 3: Konfigurasi Pengaturan Jaringan</h3>
+            <p class="paragraph">Atur konfigurasi jaringan dasar untuk game tank:</p>
+
+            <p class="paragraph"><strong class="text-strong">Buat Konfigurasi Jaringan:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Klik kanan di jendela Project</li>
+                <li class="list-item">Pilih <strong class="text-strong">Create > ProudNet > Network Config</strong></li>
+                <li class="list-item">Beri nama <code class="inline-code">TankNetworkConfig</code></li>
+                <li class="list-item">Konfigurasi pengaturan berikut:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost untuk pengujian)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (sesuai dengan port tank server)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Detail Konfigurasi Jaringan:</strong></p>
+            <p class="paragraph">Pengaturan Koneksi TankNetworkConfig:</p>
+            <ul class="unordered-list">
+                <li class="list-item">Server IP: 127.0.0.1</li>
+                <li class="list-item">TCP Port: 33334 (untuk build standalone)</li>
+                <li class="list-item">WebSocket Port: 33335 (untuk build WebGL, hanya didukung oleh server C++)</li>
+            </ul>
+
+            <p class="paragraph">Catatan: Kita akan menggunakan port 33334 untuk build standalone pada awalnya. Nanti untuk build WebGL, kita akan menggunakan port WebSocket 33335 yang hanya tersedia dalam implementasi server C++ (server C# tidak mendukung koneksi WebSocket).</p>
+        </section>
+
+        <section id="pidl-integration" class="md-section">
+            <h2 class="heading-2">2.5. Alur Kerja Integrasi PIDL (Opsional tapi Direkomendasikan)</h2>
+
+            <p class="paragraph">Jika Anda telah menyelesaikan pengaturan server dari dokumentasi sebelumnya, Anda dapat menggunakan kembali file PIDL yang dihasilkan:</p>
+
+            <p class="paragraph"><strong class="text-strong">Opsi A: Salin dari Proyek Server (Direkomendasikan)</strong></p>
+            <p class="paragraph">Jika Anda memiliki proyek tank server yang tersedia, gunakan skrip batch yang praktis:</p>
+
+            <div class="code-block">
+                <pre># Navigasi ke direktori tank_server
+cd tank_server
+
+# Jalankan skrip copy
+copy_client_generated_to_unity.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Apa yang dilakukan skrip:</strong></p>
+            <div class="code-block">
+                <pre>Menyalin dari tank_server/:
+├── Server/Tank_stub.cs     → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_proxy.cs    → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+├── Server/Tank_common.cs   → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Generated/
+└── Common/Vars.cs          → unity_tank_client/Assets/Proundnet_Demo/ProudNetScripts/Common/</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Output yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>===== ProudNet Generated Files Unity Copy Script =====
+Copying PIDL generated files...
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Copying common files...
+        1 file(s) copied.
+
+Copy completed! The following files have been copied to Unity project:
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_stub.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_proxy.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Generated\Tank_common.cs
+- ..\unity_tank_client\Assets\Proundnet_Demo\ProudNetScripts\Common\Vars.cs
+
+Press any key to continue...</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Opsi B: Generasi PIDL Manual (Jika tidak ada proyek server)</strong></p>
+            <p class="paragraph">Jika Anda tidak memiliki proyek server, Anda perlu:</p>
+            <ol class="ordered-list">
+                <li class="list-item">Memiliki akses ke file <code class="inline-code">Tank.PIDL</code> dari folder Common</li>
+                <li class="list-item">Menjalankan <code class="inline-code">ProudNet/util/PIDL.exe -cs Tank.PIDL -outdir Generated</code></li>
+                <li class="list-item">Menyalin file yang dihasilkan secara manual ke direktori Unity</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Manfaat Kompatibilitas Protokol:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ID Pesan Identik</strong>: Klien Unity menggunakan ID RMI yang sama dengan server</li>
+                <li class="list-item"><strong class="text-strong">Keamanan Tipe</strong>: Pemeriksaan waktu kompilasi untuk parameter pesan jaringan</li>
+                <li class="list-item"><strong class="text-strong">Sinkronisasi Versi</strong>: Versi protokol secara otomatis cocok dengan server</li>
+                <li class="list-item"><strong class="text-strong">Konfigurasi Nol</strong>: Tidak memerlukan pengaturan jaringan tambahan</li>
+                         </ul>
+        </section>
+
+        <section id="tank-multiplayer-integration" class="md-section">
+            <h2 class="heading-2">3. Integrasi Multiplayer Tank</h2>
+
+            <h3 class="heading-3">Langkah 1: Gambaran Umum Skrip Jaringan</h3>
+            <p class="paragraph">Klien Unity tank menggunakan sistem jaringan komprehensif yang dibangun di atas ProudNet RMI (Remote Method Invocation). Berikut adalah struktur skrip yang sebenarnya:</p>
+
+            <p class="paragraph"><strong class="text-strong">Skrip Jaringan Inti:</strong></p>
+            <div class="code-block">
+                <pre>Assets/
+├── Scripts/Network/
+│   ├── GameNetworkManager.cs     # Manajer jaringan utama (Singleton)
+│   └── NetworkTank.cs           # Sinkronisasi jaringan tank individual
+├── Proundnet_Demo/ProudNetScripts/
+│   ├── Common/
+│   │   └── Vars.cs              # Versi protokol dan konfigurasi server
+│   └── Generated/               # Dibuat otomatis dari Tank.PIDL
+│       ├── Tank_common.cs       # ID pesan RMI dan konstanta
+│       ├── Tank_proxy.cs        # Panggilan RMI klien-ke-server
+│       └── Tank_stub.cs         # Handler RMI server-ke-klien</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">GameNetworkManager.cs - Fitur Utama:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Manajemen Koneksi Server</strong>: Menangani koneksi ke tank server (TCP/WebSocket)</li>
+                <li class="list-item"><strong class="text-strong">Manajemen Grup P2P</strong>: Mengelola grup komunikasi peer-to-peer</li>
+                <li class="list-item"><strong class="text-strong">Siklus Hidup Tank</strong>: Memunculkan/menghancurkan tank lokal dan remote</li>
+                <li class="list-item"><strong class="text-strong">Komunikasi RMI</strong>: Mengirim/menerima gerakan tank, penembakan, pembaruan kesehatan</li>
+                <li class="list-item"><strong class="text-strong">Sistem Chat</strong>: Pesan P2P dengan pemain lain</li>
+                <li class="list-item"><strong class="text-strong">Dukungan Multi-platform</strong>: Pemilihan otomatis TCP (standalone) vs WebSocket (WebGL)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">NetworkTank.cs - Fitur Tank Individual:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Interpolasi Posisi</strong>: Sinkronisasi gerakan yang halus untuk tank remote</li>
+                <li class="list-item"><strong class="text-strong">Kontrol Pemain Lokal</strong>: Gerakan WASD dan penembakan untuk tank Anda</li>
+                <li class="list-item"><strong class="text-strong">Rendering Pemain Remote</strong>: Menampilkan tank pemain lain dengan data jaringan</li>
+                <li class="list-item"><strong class="text-strong">Sinkronisasi Kesehatan</strong>: Pembaruan kesehatan real-time di semua klien</li>
+                <li class="list-item"><strong class="text-strong">Sinkronisasi Proyektil</strong>: Menangani penembakan peluru dan efek dampak</li>
+                <li class="list-item"><strong class="text-strong">Deteksi Tabrakan</strong>: Melacak kerusakan dari ledakan peluru</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Kelas RMI yang Dihasilkan (dari Tank.PIDL):</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Tank_proxy.cs</strong>: Metode untuk mengirim data ke server (<code class="inline-code">SendMove</code>, <code class="inline-code">SendFire</code>, <code class="inline-code">SendTankHealthUpdated</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_stub.cs</strong>: Handler untuk menerima data dari server (<code class="inline-code">OnTankPositionUpdated</code>, <code class="inline-code">OnSpawnBullet</code>, <code class="inline-code">OnPlayerJoined</code>)</li>
+                <li class="list-item"><strong class="text-strong">Tank_common.cs</strong>: ID pesan dan konstanta RMI yang dibagikan antara klien dan server</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Catatan Penting:</strong> File dalam folder <code class="inline-code">Generated/</code> adalah <strong class="text-strong">file yang persis sama</strong> yang dihasilkan selama implementasi server C# dalam dokumentasi sebelumnya. Ini memastikan kompatibilitas protokol 100% antara server dan klien Unity. Klien Unity menggunakan kembali kode jaringan yang dihasilkan PIDL yang identik.</p>
+
+            <p class="paragraph"><strong class="text-strong">Fitur Jaringan Utama yang Diimplementasikan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Sinkronisasi Gerakan Real-time</strong>: Pembaruan posisi 20Hz dengan interpolasi</li>
+                <li class="list-item"><strong class="text-strong">Sinkronisasi Proyektil</strong>: Peluru yang ditembakkan pemain lain muncul secara instan</li>
+                <li class="list-item"><strong class="text-strong">Manajemen Kesehatan</strong>: Kerusakan dan penyembuhan disinkronkan di semua klien</li>
+                <li class="list-item"><strong class="text-strong">Sistem Chat P2P</strong>: Pesan langsung antar pemain dalam grup yang sama</li>
+                <li class="list-item"><strong class="text-strong">Pemilihan Tipe Tank</strong>: Model tank yang berbeda disinkronkan di semua klien</li>
+                <li class="list-item"><strong class="text-strong">Koneksi Ulang Otomatis</strong>: Menangani pemutusan jaringan dengan elegan</li>
+            </ul>
+
+            <h3 class="heading-3">Langkah 2: Buka Scene Multiplayer yang Sudah Dikonfigurasi</h3>
+            <p class="paragraph">Klien Unity tank menyertakan scene multiplayer yang sudah dikonfigurasi dengan integrasi ProudNet:</p>
+
+            <p class="paragraph"><strong class="text-strong">Buka Scene yang Siap Jaringan:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigasi ke <code class="inline-code">Assets\Proundnet_Demo\DemoScene\</code></li>
+                <li class="list-item">Buka scene <code class="inline-code">Demo_Networkd_Game_Desert.unity</code></li>
+                <li class="list-item">Scene ini <strong class="text-strong">sudah dikonfigurasi</strong> dengan semua komponen jaringan yang diperlukan</li>
+            </ol>
+
+            <img src="img/image_004.png" alt="ProudNet Network Demo Scene" class="image">
+            <p class="image-caption">Scene Demo Jaringan ProudNet</p>
+
+            <h3 class="heading-3">Langkah 3: Verifikasi Konfigurasi Jaringan (Opsional)</h3>
+            <p class="paragraph">Scene sudah dikonfigurasi sebelumnya, tetapi Anda dapat memverifikasi atau memodifikasi pengaturan jaringan jika diperlukan:</p>
+
+            <p class="paragraph"><strong class="text-strong">Pengaturan GameNetworkManager (Sudah Dikonfigurasi):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Pilih GameObject <strong class="text-strong">GameNetworkManager</strong> di hierarchy</li>
+                <li class="list-item">Di Inspector, lihat pengaturan komponen <strong class="text-strong">GameNetworkManager</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Server IP</strong>: <code class="inline-code">127.0.0.1</code> (localhost untuk pengujian)</li>
+                        <li class="list-item"><strong class="text-strong">Server Port</strong>: <code class="inline-code">33334</code> (TCP untuk build standalone)</li>
+                        <li class="list-item"><strong class="text-strong">WebSocket Port</strong>: <code class="inline-code">33335</code> (hanya untuk build WebGL) [Catatan: Pengaturan ini tersembunyi di inspector untuk build standalone tetapi akan digunakan nanti saat membangun untuk WebGL]</li>
+                        <li class="list-item"><strong class="text-strong">Auto Connect On Start</strong>: Diaktifkan untuk koneksi otomatis</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_005.png" alt="GameNetworkManager Inspector" class="image">
+            <p class="image-caption">Inspector GameNetworkManager</p>
+
+            <p class="paragraph"><strong class="text-strong">Opsi Kustomisasi:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Server IP</strong>: Ubah jika server Anda berjalan di mesin yang berbeda</li>
+                <li class="list-item"><strong class="text-strong">Ports</strong>: Modifikasi jika server Anda menggunakan port yang berbeda</li>
+                <li class="list-item"><strong class="text-strong">Auto Connect</strong>: Nonaktifkan jika Anda ingin kontrol koneksi manual</li>
+            </ul>
+        </section>
+
+        <section id="testing-multiplayer" class="md-section">
+            <h2 class="heading-2">4. Menguji Fungsionalitas Multiplayer</h2>
+
+            <h3 class="heading-3">Langkah 1: Mulai Tank Server</h3>
+            <p class="paragraph">Sebelum menguji klien Unity, pastikan tank server Anda berjalan:</p>
+
+            <p class="paragraph"><strong class="text-strong">Server C++</strong></p>
+            <div class="code-block">
+                <pre>cd tank_server/Server_CPP
+run.bat</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Output Server yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>========== Tank Server Started ==========
+TCP Server listening on 0.0.0.0:33334
+WebSocket Server listening on 0.0.0.0:33335/ws
+Ready to accept connections from all network interfaces
+==========================================
+Server is running. Commands:
+status: Show connected clients</pre>
+            </div>
+
+            <h3 class="heading-3">Langkah 2: Uji Koneksi Klien Unity</h3>
+            <p class="paragraph">Uji koneksi klien Unity ke tank server:</p>
+
+            <p class="paragraph"><strong class="text-strong">Pengujian Unity Editor:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Klik tombol <strong class="text-strong">Play</strong> di Unity Editor</li>
+                <li class="list-item">Amati status koneksi di Unity Console dan Game view</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Respons Server yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+========== SendTankType Received ==========
+From client 6: tankType=-1
+========== SendTankType Processing Completed ==========</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Unity Game View:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Status Koneksi</strong>: Indikator "Connected to Server"</li>
+                <li class="list-item"><strong class="text-strong">Pemilihan Tank</strong>: Pilih dari 4 tipe tank yang tersedia untuk dimunculkan</li>
+                <li class="list-item"><strong class="text-strong">Tank Pemain</strong>: Tank yang Anda pilih muncul di dunia game</li>
+                <li class="list-item"><strong class="text-strong">Interface Chat</strong>: Tekan Enter untuk membuka jendela chat untuk pesan P2P</li>
+                <li class="list-item"><strong class="text-strong">Kontrol Tank</strong>: Gerakan WASD, bidikan mouse, klik/space untuk menembak</li>
+            </ul>
+
+            <img src="img/image_006.png" alt="Unity Game Initial Screen" class="image">
+            <p class="image-caption">Layar Awal Game Unity</p>
+
+            <h3 class="heading-3">Langkah 3: Pengujian Multi-Klien</h3>
+            <p class="paragraph">Uji fungsionalitas multiplayer dengan beberapa klien Unity:</p>
+
+            <p class="paragraph"><strong class="text-strong">Instance Unity Kedua:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Build Proyek Unity</strong>: Pergi ke <strong class="text-strong">File > Build and Run</strong></li>
+                <li class="list-item"><strong class="text-strong">Konfigurasi Build Settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Target Platform</strong>: PC, Mac & Linux Standalone</li>
+                        <li class="list-item"><strong class="text-strong">Architecture</strong>: x86_64</li>
+                        <li class="list-item"><strong class="text-strong">Scenes</strong>: Tambahkan scene <code class="inline-code">Demo_Networkd_Game_Desert.unity</code></li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Build</strong>: Klik "Build and Run" untuk membuat executable standalone</li>
+                <li class="list-item"><strong class="text-strong">Jalankan Standalone</strong>: Ini membuat instance klien kedua. Setelah build berhasil, Anda dapat menjalankan game langsung dari lokasi build (misalnya, <code class="inline-code">Build/unity_tank_client.exe</code>)</li>
+            </ol>
+
+            <img src="img/image_007.png" alt="Windows Standalone Build Settings" class="image">
+            <p class="image-caption">Windows Standalone Build Settings</p>
+
+            <img src="img/image_008.png" alt="Build Completed" class="image">
+            <p class="image-caption">Build Completed</p>
+
+            <img src="img/image_009.png" alt="Multi-Client Gameplay" class="image">
+            <p class="image-caption">Multi-Client Gameplay</p>
+
+            <p class="paragraph"><strong class="text-strong">Alternative Testing Method:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">ParrelSync</strong> (Unity Asset): Allows multiple Unity Editor instances</li>
+                <li class="list-item"><strong class="text-strong">Clone Project</strong>: Create project clone for simultaneous testing</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Expected Multi-Client Behavior:</strong></p>
+            <div class="code-block">
+                <pre>Unity Client 1 (Editor):
+[ProudNet] Connected to server successfully
+[ProudNet] Assigned Client ID: 6
+[P2P] Other player joined: Client ID 7
+[TankGame] Tank Type Selected: 1 (health: 225)
+[TankGame] Remote tank spawned for player 7 (Type: 0, health: 150)
+
+Unity Client 2 (Standalone):
+[ProudNet] Connected to server successfully  
+[ProudNet] Assigned Client ID: 7
+[P2P] Other player joined: Client ID 6
+[TankGame] Tank Type Selected: 0 (health: 150)  
+[TankGame] Remote tank spawned for player 6 (Type: 1, health: 225)</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Server Log with Multiple Clients:</strong></p>
+            <div class="code-block">
+                <pre>Client connected: Host ID = 6
+New tank created for client 6 with tank type -1 and health 100.000000/100.000000
+Not enough clients to create P2P group (need at least 2)
+Client connected: Host ID = 7
+New tank created for client 7 with tank type -1 and health 100.000000/100.000000
+Sending existing player info to new client: ID=6, Type=-1, Health=100.000000/100.000000
+P2P group created with 2 members, Group ID: 8
+
+========== Tank Selection and Spawning ==========
+========== SendTankSpawned Received ==========
+From client 6: position=(20.959999,11.930000), direction=212.665558, tankType=1, health=225.000000
+Tank spawned for client 6 at (20.959999,11.930000)
+========== SendTankSpawned Received ==========
+From client 7: position=(20.959999,11.930000), direction=212.665558, tankType=0, health=150.000000
+Tank spawned for client 7 at (20.959999,11.930000)</pre>
+                         </div>
+        </section>
+
+        <section id="multiplayer-features-testing" class="md-section">
+            <h2 class="heading-2">5. Pengujian Fitur Multiplayer</h2>
+
+            <h3 class="heading-3">Pengujian Sinkronisasi Pergerakan</h3>
+            <p class="paragraph">Uji pergerakan tank real-time di beberapa klien:</p>
+
+            <p class="paragraph"><strong class="text-strong">Aksi Klien 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Gunakan <strong class="text-strong">WASD</strong> untuk menggerakkan tank di sekitar peta</li>
+                <li class="list-item">Amati pergerakan yang halus di klien lokal</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Observasi Klien 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Lihat tank Klien 1 bergerak secara real-time</li>
+                <li class="list-item">Pergerakan halus dan tersinkronisasi</li>
+                <li class="list-item">Pembaruan posisi terjadi pada 20Hz (dapat dikonfigurasi)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Pesan Jaringan yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>Klien 1 → Server: SendMove(posX: 15.2, posY: 30.1, direction: 45)
+Server → Klien 2: OnTankPositionUpdated(clientId: 3, posX: 15.2, posY: 30.1, direction: 45)</pre>
+            </div>
+
+            <h3 class="heading-3">Pengujian Tembakan dan Proyektil</h3>
+            <p class="paragraph">Uji sinkronisasi tembakan peluru:</p>
+
+            <p class="paragraph"><strong class="text-strong">Aksi Klien 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Bidik dengan <strong class="text-strong">mouse</strong> ke arah target</li>
+                <li class="list-item">Klik <strong class="text-strong">tombol kiri mouse</strong> atau tekan <strong class="text-strong">spasi</strong> untuk menembak</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Observasi Klien 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Lihat peluru muncul dari tank Klien 1</li>
+                <li class="list-item">Lintasan peluru mengikuti fisika dengan akurat</li>
+                <li class="list-item">Efek ledakan terjadi di lokasi benturan</li>
+                <li class="list-item">Kesehatan berkurang jika peluru mengenai tank Klien 2</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Pesan Jaringan yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>Klien 1 → Server: SendFire(shooterId: 3, direction: 180, launchForce: 25, posX: 15.2, posY: 30.1)
+Server → Klien 2: OnSpawnBullet(clientId: 3, shooterId: 3, direction: 180, force: 25, ...)
+Server → Semua: OnTankHealthUpdated(clientId: 4, health: 85, maxHealth: 100)</pre>
+            </div>
+
+            <h3 class="heading-3">Pengujian Sistem Chat P2P</h3>
+            <p class="paragraph">Uji pesan real-time antar pemain:</p>
+
+            <p class="paragraph"><strong class="text-strong">Aksi Klien 1:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Klik <strong class="text-strong">field input chat</strong> di bagian bawah layar</li>
+                <li class="list-item">Ketik pesan: <code class="inline-code">"Halo dari Klien 1!"</code></li>
+                <li class="list-item">Tekan <strong class="text-strong">Enter</strong> untuk mengirim</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Observasi Klien 2:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Pesan muncul di log chat: <code class="inline-code">"Player: Halo dari Klien 1!"</code></li>
+                <li class="list-item">Log chat bergulir otomatis</li>
+                <li class="list-item">Timestamp pesan ditampilkan</li>
+            </ul>
+
+            <h3 class="heading-3">Pengujian Kesehatan dan Kerusakan</h3>
+            <p class="paragraph">Uji sinkronisasi kesehatan dan efek kerusakan:</p>
+
+            <p class="paragraph"><strong class="text-strong">Skenario Kerusakan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item">Klien 1 menembakkan peluru ke tank Klien 2</li>
+                <li class="list-item">Peluru mengenai dan menyebabkan kerusakan</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Hasil yang Diharapkan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Klien 2</strong>: Kesehatan berkurang (contoh: 100 → 75)</li>
+                <li class="list-item"><strong class="text-strong">Klien 1</strong>: Melihat pembaruan kesehatan Klien 2</li>
+                <li class="list-item"><strong class="text-strong">UI Kesehatan</strong>: Kedua klien menampilkan nilai kesehatan yang diperbarui</li>
+                <li class="list-item"><strong class="text-strong">Efek Visual</strong>: Efek kerusakan dan partikel ditampilkan</li>
+            </ul>
+        </section>
+
+        <section id="webgl-deployment" class="md-section">
+            <h2 class="heading-2">6. Deployment WebGL (Opsional)</h2>
+
+            <h3 class="heading-3">Konfigurasi Build WebGL</h3>
+            <p class="paragraph">Deploy klien tank Unity sebagai aplikasi web:</p>
+
+            <p class="paragraph"><strong class="text-strong">Pengaturan Build:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Pergi ke <strong class="text-strong">File > Build Settings</strong></li>
+                <li class="list-item">Pilih platform <strong class="text-strong">WebGL</strong></li>
+                <li class="list-item">Klik <strong class="text-strong">"Switch Platform"</strong></li>
+                <li class="list-item"><strong class="text-strong">Tambahkan Scene</strong>: Pastikan <code class="inline-code">Demo_Networkd_Game_Desert.unity</code> disertakan</li>
+                <li class="list-item"><strong class="text-strong">Konfigurasi Pengaturan Plugin ProudNet</strong> (Penting!)</li>
+                <li class="list-item"><strong class="text-strong">Konfigurasi Pengaturan Player WebGL</strong> (Penting!)</li>
+            </ol>
+
+            <img src="img/image_010.png" alt="WebGL Build Settings" class="image">
+            <p class="image-caption">Pengaturan Build WebGL</p>
+
+            <h3 class="heading-3">Konfigurasi Plugin ProudNet untuk WebGL</h3>
+            <p class="paragraph">Setelah beralih ke platform WebGL, Anda harus mengkonfigurasi pengaturan plugin ProudNet:</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Keterbatasan WebGL Penting</strong>: ProudNet tidak mendukung mode play in-editor ketika platform WebGL dipilih. Anda harus membangun dan men-deploy versi WebGL untuk menguji fungsionalitas jaringan. Mode play editor tidak akan berfungsi untuk pengujian jaringan pada platform WebGL.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Langkah 1: Nonaktifkan Editor untuk .NET DLL</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigasi ke <code class="inline-code">Assets/Plugins/ProudNet/</code></li>
+                <li class="list-item">Pilih <code class="inline-code">ProudDotNetClientUnity.dll</code></li>
+                <li class="list-item">Di Inspector → <strong class="text-strong">Platform settings</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (tidak dicentang)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_011.png" alt="ProudNet .NET DLL Platform Settings" class="image">
+            <p class="image-caption">Pengaturan Platform ProudNet .NET DLL</p>
+
+            <p class="paragraph"><strong class="text-strong">Langkah 2: Nonaktifkan Editor untuk x86_64 DLLs</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigasi ke <code class="inline-code">Assets/Plugins/ProudNet/x86_64/</code></li>
+                <li class="list-item">Pilih <code class="inline-code">ProudNetClient.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (tidak dicentang)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Pilih <code class="inline-code">ProudNetClientPlugin.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ❌ (tidak dicentang)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_012.png" alt="ProudNet x86_64 DLL Platform Settings" class="image">
+            <p class="image-caption">Pengaturan Platform ProudNet x86_64 DLL</p>
+
+            <p class="paragraph"><strong class="text-strong">Langkah 3: Aktifkan Editor untuk File WebGL</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Navigasi ke <code class="inline-code">Assets/Plugins/ProudNet/WebGL/</code></li>
+                <li class="list-item">Pilih <code class="inline-code">JSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (dicentang)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (dicentang)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Pilih <code class="inline-code">NewJSClient.jslib</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (dicentang)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (dicentang)</li>
+                    </ul>
+                </li>
+                <li class="list-item">Pilih <code class="inline-code">ProudNetClientPlugin-webgl.dll</code>:
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Editor</strong>: ✓ (dicentang)</li>
+                        <li class="list-item"><strong class="text-strong">WebGL</strong>: ✓ (dicentang)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_013.png" alt="ProudNet WebGL Files Platform Settings" class="image">
+            <p class="image-caption">Pengaturan Platform File WebGL ProudNet</p>
+
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Kritis</strong>: Jika pengaturan ini tidak dikonfigurasi dengan benar, build WebGL akan gagal atau jaringan tidak akan berfungsi dengan baik.</p>
+            </div>
+
+            <h3 class="heading-3">Konfigurasi Pengaturan Player WebGL</h3>
+            <p class="paragraph">Konfigurasi pengaturan khusus WebGL Unity untuk pengujian lokal yang optimal:</p>
+
+            <p class="paragraph"><strong class="text-strong">Pengaturan Publishing (Kritis untuk Pengujian Lokal):</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Pergi ke <strong class="text-strong">Edit > Project Settings > Player > WebGL Settings</strong></li>
+                <li class="list-item">Perluas bagian <strong class="text-strong">Publishing Settings</strong></li>
+                <li class="list-item">Atur <strong class="text-strong">Compression Format</strong>: <strong class="text-strong">Disabled</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Ini penting untuk pengujian web server lokal</li>
+                        <li class="list-item">Build yang dikompresi mungkin tidak berfungsi dengan server HTTP sederhana</li>
+                        <li class="list-item">Dapat diaktifkan kembali untuk deployment produksi</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <img src="img/image_015.png" alt="WebGL Publishing Settings" class="image">
+            <p class="image-caption">Pengaturan Publishing WebGL</p>
+
+            <p class="paragraph"><strong class="text-strong">Pengaturan WebGL yang Direkomendasikan:</strong></p>
+            <div class="code-block">
+                <pre>Pengaturan Publishing:
+├── Compression Format: Disabled (untuk pengujian lokal)
+├── Name Files As Hashes: ❌ (tidak dicentang)
+├── Data Caching: ❌ (tidak dicentang)  
+├── Debug Symbols: Off
+└── Power Preference: High Performance
+
+Pengaturan Memory:
+├── Initial Memory Size (MB): 32
+├── Maximum Memory Size (MB): 2048
+├── Memory Growth Mode: Geometric
+└── Geometric Memory Growth Cap (MB): 96</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Tips</strong>: Untuk deployment produksi, Anda dapat mengaktifkan format kompresi <strong class="text-strong">Gzip</strong> untuk mengurangi ukuran unduhan, tetapi nonaktifkan untuk pengujian lokal untuk menghindari masalah kompatibilitas server.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Konfigurasi Jaringan untuk WebGL:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Transport</strong>: WebSocket (otomatis digunakan untuk WebGL)</li>
+                <li class="list-item"><strong class="text-strong">URL Server</strong>: <code class="inline-code">ws://localhost:33335/ws</code> (pengujian lokal)</li>
+                <li class="list-item"><strong class="text-strong">URL Produksi</strong>: <code class="inline-code">ws://your-server.com:33335/ws</code></li>
+            </ul>
+
+            <img src="img/image_014.png" alt="WebGL Network Configuration" class="image">
+            <p class="image-caption">Konfigurasi Jaringan WebGL</p>
+
+            <h3 class="heading-3">Pengujian WebGL</h3>
+            <p class="paragraph">Uji versi web dari klien tank:</p>
+
+            <div class="info-box">
+                <p class="paragraph"><strong class="text-strong">Catatan</strong>: Ingat bahwa jaringan ProudNet tidak berfungsi dalam mode play Unity Editor ketika platform WebGL dipilih. Anda harus menyelesaikan proses build penuh untuk menguji fitur jaringan.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Proses Build:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Klik <strong class="text-strong">"Build"</strong> di Build Settings</li>
+                <li class="list-item">Buat atau pilih folder untuk folder output: contoh- <code class="inline-code">WebGL_Build/</code></li>
+                <li class="list-item">Tunggu penyelesaian build (mungkin memakan waktu beberapa menit)</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Pengaturan Web Server Lokal:</strong></p>
+            <div class="warning-box">
+                <p class="paragraph"><strong class="text-strong">Penting</strong>: Build WebGL harus di-host pada web server dan tidak dapat dimainkan dengan membuka file HTML secara langsung secara lokal.</p>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Metode 1: Python HTTP Server</strong></p>
+            <div class="code-block">
+                <pre># Navigasi ke folder build WebGL
+cd WebGL_Build/
+
+# Python 3 (direkomendasikan)
+python -m http.server 8000
+
+# Python 2 (jika Python 3 tidak tersedia)
+python -m SimpleHTTPServer 8000
+
+# Contoh port kustom
+python -m http.server 3000</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Output Python yang Diharapkan:</strong></p>
+            <div class="code-block">
+                <pre>Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [23/May/2024 10:30:15] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/May/2024 10:30:15] "GET /Build/unity_tank_client.wasm HTTP/1.1" 200 -</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">Metode 2: VS Code Live Server Extension</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item"><strong class="text-strong">Install Extension</strong>:
+                    <ul class="unordered-list">
+                        <li class="list-item">Buka VS Code</li>
+                        <li class="list-item">Pergi ke Extensions (Ctrl+Shift+X)</li>
+                        <li class="list-item">Cari "Live Server" by Ritwick Dey</li>
+                        <li class="list-item">Klik "Install"</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">Host WebGL Build</strong>:
+                    <div class="code-block">
+                        <pre>1. Buka folder WebGL_Build/ di VS Code
+2. Klik kanan pada index.html
+3. Pilih "Open with Live Server"
+4. Browser membuka otomatis di http://127.0.0.1:5500</pre>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Metode 3: Node.js http-server (Alternatif)</strong></p>
+            <div class="code-block">
+                <pre># Install secara global (pengaturan satu kali)
+npm install -g http-server
+
+# Navigasi ke folder build dan serve
+cd WebGL_Build/
+http-server -p 8000
+
+# Dengan CORS diaktifkan (jika diperlukan)
+http-server -p 8000 --cors</pre>
+            </div>
+
+            <p class="paragraph"><strong class="text-strong">URL Akses:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Python</strong>: http://localhost:8000</li>
+                <li class="list-item"><strong class="text-strong">VS Code Live Server</strong>: http://127.0.0.1:5500</li>
+                <li class="list-item"><strong class="text-strong">Node.js</strong>: http://localhost:8000</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Pengujian Web Browser:</strong></p>
+            <ol class="ordered-list">
+                <li class="list-item">Buka web browser</li>
+                <li class="list-item">Navigasi ke <code class="inline-code">http://localhost:8000</code></li>
+                <li class="list-item">Game dimuat di browser dengan WebGL</li>
+                <li class="list-item">Fungsionalitas multiplayer yang sama seperti versi desktop</li>
+            </ol>
+
+            <p class="paragraph"><strong class="text-strong">Perilaku WebGL yang Diharapkan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Koneksi WebSocket</strong>: Terhubung ke server tank melalui WebSocket (port 33335)</li>
+                <li class="list-item"><strong class="text-strong">Permainan Lintas Platform</strong>: Klien WebGL dapat bermain dengan klien desktop</li>
+                <li class="list-item"><strong class="text-strong">Logika Game yang Sama</strong>: Fungsionalitas pergerakan, tembakan, dan chat yang identik</li>
+                <li class="list-item"><strong class="text-strong">Kompatibilitas Browser</strong>: Berfungsi di Chrome, Firefox, Safari, Edge</li>
+            </ul>
+
+            <img src="img/image_016.png" alt="WebGL Browser Gameplay" class="image">
+            <p class="image-caption">Gameplay Browser WebGL</p>
+        </section>
+
+        <section id="troubleshooting" class="md-section">
+            <h2 class="heading-2">Pemecahan Masalah</h2>
+
+            <p class="paragraph"><strong class="text-strong">Masalah Umum dan Solusi:</strong></p>
+
+            <h3 class="heading-3">Masalah Koneksi</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Gagal terhubung ke server"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verifikasi server tank berjalan dan dapat diakses</li>
+                        <li class="list-item">Periksa pengaturan firewall untuk port 33334-33335</li>
+                        <li class="list-item">Konfirmasi alamat IP server di pengaturan NetworkManager</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Masalah Integrasi ProudNet</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"ProudNet DLL tidak ditemukan"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verifikasi DLL ada di folder <code class="inline-code">Assets/Plugins/</code></li>
+                        <li class="list-item">Periksa pengaturan platform untuk setiap file DLL</li>
+                        <li class="list-item">Restart Unity Editor setelah perubahan DLL</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Masalah Build</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Build gagal dengan error jaringan"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Pastikan semua script ProudNet dikompilasi tanpa error</li>
+                        <li class="list-item">Periksa Unity Console untuk pesan error spesifik</li>
+                        <li class="list-item">Verifikasi pengaturan platform untuk DLL ProudNet di folder Plugins:
+                            <ul class="unordered-list">
+                                <li class="list-item">Windows: x86_64 diaktifkan untuk build standalone</li>
+                                <li class="list-item">WebGL: platform WebGL diaktifkan untuk build browser</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="heading-3">Masalah WebGL</h3>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">"Koneksi WebSocket gagal"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item">Verifikasi server tank mendukung WebSocket (port 33335)</li>
+                        <li class="list-item">Periksa konsol browser untuk pesan error spesifik</li>
+                        <li class="list-item">Pastikan header CORS dikonfigurasi dengan benar di server</li>
+                    </ul>
+                </li>
+                <li class="list-item"><strong class="text-strong">"Jaringan tidak berfungsi di Unity Editor dengan platform WebGL dipilih"</strong>
+                    <ul class="unordered-list">
+                        <li class="list-item"><strong class="text-strong">Perilaku yang Diharapkan</strong>: ProudNet tidak mendukung mode play in-editor untuk platform WebGL</li>
+                        <li class="list-item"><strong class="text-strong">Solusi</strong>: Build proyek sebagai WebGL dan uji di web browser</li>
+                        <li class="list-item"><strong class="text-strong">Alternatif</strong>: Beralih kembali ke platform Windows/Mac/Linux Standalone untuk pengujian editor</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Alat Debugging:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Unity Console</strong>: Koneksi jaringan dan pesan error</li>
+                <li class="list-item"><strong class="text-strong">Server Console</strong>: Log koneksi klien dan status game</li>
+                <li class="list-item"><strong class="text-strong">Network Profiler</strong>: Analisis performa jaringan bawaan Unity</li>
+                <li class="list-item"><strong class="text-strong">ProudNet Monitor</strong>: Statistik jaringan real-time (jika tersedia)</li>
+            </ul>
+
+            <p class="paragraph"><strong class="text-strong">Mendapatkan Bantuan:</strong></p>
+            <ul class="unordered-list">
+                <li class="list-item"><strong class="text-strong">Dokumentasi Unity</strong>: https://docs.unity3d.com/</li>
+                <li class="list-item"><strong class="text-strong">Dokumentasi ProudNet</strong>: Tersedia di folder <code class="inline-code">ProudNet/doc/</code></li>
+                <li class="list-item"><strong class="text-strong">Unity Forums</strong>: Dukungan komunitas untuk pengembangan Unity</li>
+                <li class="list-item"><strong class="text-strong">GitHub Issues</strong>: Laporkan bug dan minta fitur (jika berlaku)</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 이미지 모달 컴포넌트 include -->
+    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" class="image-modal-image" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+    <!-- JavaScript는 js/image-modal.js에서 자동 로드됨 -->
+</body>
+</html> 
