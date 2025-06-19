@@ -359,37 +359,37 @@ int main()
                         <li class="list-item">右键点击 PdnUE5ExampleClient.uproject 并选择生成 Visual Studio 项目文件</li>
                     </ol>
                 </li>
-                <li class="list-item">Change the startup project (recommended)
+                <li class="list-item">更改启动项目（推荐）
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image</li>
+                        <li class="list-item">指导图片</li>
                     </ul>
-                    <img src="img/image_022.png" alt="Change Startup Project" class="image">
-                    <p class="image-caption">Change Startup Project</p>
+                    <img src="img/image_022.png" alt="更改启动项目" class="image">
+                    <p class="image-caption">更改启动项目</p>
                 </li>
-                <li class="list-item">Apply the UE5 ProudNet plugin following the procedure below.
+                <li class="list-item">按照以下步骤应用 UE5 ProudNet 插件。
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Unreal project folder.
-                            <p class="paragraph">Shortcut: Epic Games Launcher → My Projects → Right-click project → Show in Folder</p>
+                        <li class="list-item">打开虚幻项目文件夹。
+                            <p class="paragraph">快捷方式：Epic Games Launcher → 我的项目 → 右键单击项目 → 在文件夹中显示</p>
                         </li>
-                        <li class="list-item">Extract the following file and place it in the Plugins folder.
-                            <p class="paragraph">Create a new Plugins folder if it doesn't exist.</p>
+                        <li class="list-item">解压以下文件并将其放置在 Plugins 文件夹中。
+                            <p class="paragraph">如果不存在，请创建新的 Plugins 文件夹。</p>
                             <p class="paragraph"><strong class="text-strong"><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample/ProudNet.UE5.Linker.Plugin.zip">ProudNet UE5 Lib Linker Plugin.zip</a></strong></p>
-                            <img src="img/image_023.png" alt="Plugin Folder Structure" class="image">
-                            <p class="image-caption">Plugin Folder Structure</p>
+                            <img src="img/image_023.png" alt="插件文件夹结构" class="image">
+                            <p class="image-caption">插件文件夹结构</p>
                         </li>
-                        <li class="list-item">Regenerate the Visual Studio project solution.
+                        <li class="list-item">重新生成 Visual Studio 项目解决方案。
                             <ol class="ordered-list">
-                                <li class="list-item">Close the Visual Studio IDE.</li>
-                                <li class="list-item">Right-click PdnUE5ExampleClient.uproject and select Generate Visual Studio project files</li>
+                                <li class="list-item">关闭 Visual Studio IDE。</li>
+                                <li class="list-item">右键单击 PdnUE5ExampleClient.uproject 并选择生成 Visual Studio 项目文件</li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the PdnUE5ExampleClient.Build.cs code.
+                        <li class="list-item">修改 PdnUE5ExampleClient.Build.cs 代码。
                             <ul class="unordered-list">
-                                <li class="list-item">Guide image
-                                    <img src="img/image_023-0.png" alt="Build.cs File Location" class="image">
-                                    <p class="image-caption">Build.cs File Location</p>
+                                <li class="list-item">指导图片
+                                    <img src="img/image_023-0.png" alt="Build.cs 文件位置" class="image">
+                                    <p class="image-caption">Build.cs 文件位置</p>
                                 </li>
-                                <li class="list-item">Modifications
+                                <li class="list-item">修改内容
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -417,7 +417,7 @@ public class PdnUE5ExampleClient : ModuleRules
 }</pre>
                                     </div>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">完整代码
                                     <div class="code-block">
                                         <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -448,13 +448,13 @@ public class PdnUE5ExampleClient : ModuleRules
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Modify the GissChatNet.h and .cpp code.
+                <li class="list-item">修改 GissChatNet.h 和 .cpp 代码。
                     <ul class="unordered-list">
-                        <li class="list-item">Guide image
-                            <img src="img/image_023-1.png" alt="GissChatNet Files" class="image">
-                            <p class="image-caption">GissChatNet Files</p>
+                        <li class="list-item">指导图片
+                            <img src="img/image_023-1.png" alt="GissChatNet 文件" class="image">
+                            <p class="image-caption">GissChatNet 文件</p>
                         </li>
-                        <li class="list-item">GissChatNet.h (diff)
+                        <li class="list-item">GissChatNet.h（差异）
                             <div class="code-block">
                                 <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -478,7 +478,7 @@ class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
 };</pre>
                             </div>
                         </li>
-                        <li class="list-item">GissChatNet.cpp (diff)
+                        <li class="list-item">GissChatNet.cpp（差异）
                             <div class="code-block">
                                 <pre>// Fill out your copyright notice in the Description page of Project Settings.
 
@@ -562,7 +562,7 @@ class PDNUE5EXAMPLECLIENT_API UGissChatNet : public UGameInstanceSubsystem
 + }</pre>
                             </div>
                         </li>
-                        <li class="list-item">Complete Code
+                        <li class="list-item">完整代码
                             <ul class="unordered-list">
                                 <li class="list-item">GissChatNet.h
                                     <div class="code-block">
@@ -676,22 +676,22 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Testing
+                <li class="list-item">测试
                     <ol class="ordered-list">
-                        <li class="list-item">Build and run chat_server from PdnUE5ExampleServer.
-                            <img src="img/image_024.png" alt="chat_server Execution" class="image">
-                            <p class="image-caption">chat_server Execution</p>
+                        <li class="list-item">从 PdnUE5ExampleServer 构建并运行 chat_server。
+                            <img src="img/image_024.png" alt="chat_server 执行" class="image">
+                            <p class="image-caption">chat_server 执行</p>
                         </li>
-                        <li class="list-item">Build PdnUE5ExampleClient and run the level in the Unreal Engine editor.
-                            <img src="img/image_025.png" alt="Unreal Editor Execution" class="image">
-                            <p class="image-caption">Unreal Editor Execution</p>
+                        <li class="list-item">构建 PdnUE5ExampleClient 并在虚幻引擎编辑器中运行关卡。
+                            <img src="img/image_025.png" alt="虚幻编辑器执行" class="image">
+                            <p class="image-caption">虚幻编辑器执行</p>
                         </li>
-                        <li class="list-item">Success if client and server connect as shown below.
-                            <img src="img/image_026.png" alt="Server Connection Success" class="image">
-                            <p class="image-caption">Server Connection Success</p>
+                        <li class="list-item">如下所示，如果客户端和服务器连接成功。
+                            <img src="img/image_026.png" alt="服务器连接成功" class="image">
+                            <p class="image-caption">服务器连接成功</p>
                             
-                            <img src="img/image_027.png" alt="Client Connection Success" class="image">
-                            <p class="image-caption">Client Connection Success</p>
+                            <img src="img/image_027.png" alt="客户端连接成功" class="image">
+                            <p class="image-caption">客户端连接成功</p>
                         </li>
                     </ol>
                 </li>
@@ -718,12 +718,12 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the appearance of the BP_ChatWidget widget following the procedure below.
+                <li class="list-item">按照以下步骤配置 BP_ChatWidget 控件的外观。
                     <ol class="ordered-list">
-                        <li class="list-item">Double-click BP_ChatWidget to open the Blueprint editor.</li>
-                        <li class="list-item">Configure the widget according to the structure below.
+                        <li class="list-item">双击 BP_ChatWidget 打开蓝图编辑器。</li>
+                        <li class="list-item">根据以下结构配置控件。
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">控件元素结构
                                     <div class="directory-tree">
                                         <pre>&gt;&gt; Canvas Panel
 	&gt;&gt; Canvas Panel
@@ -756,47 +756,47 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
-                            <img src="img/image_030.png" alt="Chat Widget Configuration" class="image">
-                            <p class="image-caption">Chat Widget Configuration</p>
+                            <p class="paragraph">配置完成后的外观如下。</p>
+                            <img src="img/image_030.png" alt="聊天控件配置" class="image">
+                            <p class="image-caption">聊天控件配置</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Add BP_ChatWidget to viewport following the procedure below.
+                <li class="list-item">按照以下步骤将 BP_ChatWidget 添加到视口。
                     <ol class="ordered-list">
-                        <li class="list-item">Open the Level Blueprint editor.
-                            <img src="img/image_031.png" alt="Opening Level Blueprint Editor" class="image">
-                            <p class="image-caption">Opening Level Blueprint Editor</p>
+                        <li class="list-item">打开关卡蓝图编辑器。
+                            <img src="img/image_031.png" alt="打开关卡蓝图编辑器" class="image">
+                            <p class="image-caption">打开关卡蓝图编辑器</p>
                         </li>
-                        <li class="list-item">Add Create Widget node and change the class to BP_ChatWidget.
-                            <img src="img/image_032.png" alt="Adding Create Widget Node" class="image">
-                            <p class="image-caption">Adding Create Widget Node</p>
+                        <li class="list-item">添加 Create Widget 节点并将类更改为 BP_ChatWidget。
+                            <img src="img/image_032.png" alt="添加 Create Widget 节点" class="image">
+                            <p class="image-caption">添加 Create Widget 节点</p>
                             
-                            <img src="img/image_033.png" alt="Class Setting" class="image">
-                            <p class="image-caption">Class Setting</p>
+                            <img src="img/image_033.png" alt="类设置" class="image">
+                            <p class="image-caption">类设置</p>
                         </li>
-                        <li class="list-item">Add Add to Viewport node and connect them.
-                            <img src="img/image_034.png" alt="Adding Add to Viewport Node" class="image">
-                            <p class="image-caption">Adding Add to Viewport Node</p>
+                        <li class="list-item">添加 Add to Viewport 节点并连接它们。
+                            <img src="img/image_034.png" alt="添加 Add to Viewport 节点" class="image">
+                            <p class="image-caption">添加 Add to Viewport 节点</p>
                             
-                            <img src="img/image_035.png" alt="Node Connection" class="image">
-                            <p class="image-caption">Node Connection</p>
+                            <img src="img/image_035.png" alt="节点连接" class="image">
+                            <p class="image-caption">节点连接</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and confirm that the chat window has been added.
-                    <img src="img/image_036.png" alt="Screen with Chat Window Added" class="image">
-                    <p class="image-caption">Screen with Chat Window Added</p>
+                <li class="list-item">运行关卡并确认已添加聊天窗口。
+                    <img src="img/image_036.png" alt="添加聊天窗口的屏幕" class="image">
+                    <p class="image-caption">添加聊天窗口的屏幕</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">2.2. Implementing Chat Functionality</h3>
+            <h3 class="heading-3">2.2. 实现聊天功能</h3>
             <ol class="ordered-list">
-                <li class="list-item">Create a new widget blueprint BP_ChatBlock and configure its appearance.
+                <li class="list-item">创建新的控件蓝图 BP_ChatBlock 并配置其外观。
                     <ol class="ordered-list">
-                        <li class="list-item">Configure the widget according to the structure below.
+                        <li class="list-item">根据以下结构配置控件。
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">控件元素结构
                                     <div class="directory-tree">
                                         <pre>&gt;&gt; Canvas Panel
 	&gt;&gt; Border
@@ -814,46 +814,46 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance upon completion of configuration is as follows.</p>
-                            <img src="img/image_037.png" alt="BP_ChatBlock Configuration" class="image">
-                            <p class="image-caption">BP_ChatBlock Configuration</p>
+                            <p class="paragraph">配置完成后的外观如下。</p>
+                            <img src="img/image_037.png" alt="BP_ChatBlock 配置" class="image">
+                            <p class="image-caption">BP_ChatBlock 配置</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the Blueprint for BP_ChatBlock widget following the procedure below.
+                <li class="list-item">按照以下步骤配置 BP_ChatBlock 控件的蓝图。
                     <ol class="ordered-list">
-                        <li class="list-item">Switch to Blueprint Graph mode.
-                            <img src="img/image_038.png" alt="Blueprint Graph Mode" class="image">
-                            <p class="image-caption">Blueprint Graph Mode</p>
+                        <li class="list-item">切换到蓝图图表模式。
+                            <img src="img/image_038.png" alt="蓝图图表模式" class="image">
+                            <p class="image-caption">蓝图图表模式</p>
                         </li>
-                        <li class="list-item">Configure the SetChatText function.
+                        <li class="list-item">配置 SetChatText 函数。
                             <ol class="ordered-list">
-                                <li class="list-item">Create a function in the Blueprint window.
-                                    <img src="img/image_039.png" alt="Function Creation" class="image">
-                                    <p class="image-caption">Function Creation</p>
+                                <li class="list-item">在蓝图窗口中创建函数。
+                                    <img src="img/image_039.png" alt="函数创建" class="image">
+                                    <p class="image-caption">函数创建</p>
                                 </li>
-                                <li class="list-item">Set function parameters in the Details window.
-                                    <img src="img/image_040.png" alt="Function Parameter Setting" class="image">
-                                    <p class="image-caption">Function Parameter Setting</p>
+                                <li class="list-item">在详细信息窗口中设置函数参数。
+                                    <img src="img/image_040.png" alt="函数参数设置" class="image">
+                                    <p class="image-caption">函数参数设置</p>
                                 </li>
-                                <li class="list-item">Drag ChatText from the variable list in the Blueprint window and select Get ChatText.</li>
-                                <li class="list-item">Create and connect SetText (Text) node. Be careful not to accidentally select other items.
-                                    <img src="img/image_041.png" alt="Adding SetText Node" class="image">
-                                    <p class="image-caption">Adding SetText Node</p>
+                                <li class="list-item">从蓝图窗口的变量列表中拖拽 ChatText 并选择 Get ChatText。</li>
+                                <li class="list-item">创建并连接 SetText (Text) 节点。注意不要意外选择其他项目。
+                                    <img src="img/image_041.png" alt="添加 SetText 节点" class="image">
+                                    <p class="image-caption">添加 SetText 节点</p>
                                     
-                                    <img src="img/image_042.png" alt="Node Connection Complete" class="image">
-                                    <p class="image-caption">Node Connection Complete</p>
+                                    <img src="img/image_042.png" alt="节点连接完成" class="image">
+                                    <p class="image-caption">节点连接完成</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Configure the BP_ChatWidget widget following the procedure below.
+                <li class="list-item">按照以下步骤配置 BP_ChatWidget 控件。
                     <ol class="ordered-list">
-                        <li class="list-item">Open the BP_ChatWidget Blueprint editor and switch to Designer mode.</li>
-                        <li class="list-item">Modify the widget referring to the following.
+                        <li class="list-item">打开 BP_ChatWidget 蓝图编辑器并切换到设计器模式。</li>
+                        <li class="list-item">参考以下内容修改控件。
                             <ul class="unordered-list">
-                                <li class="list-item">Widget Element Structure
+                                <li class="list-item">控件元素结构
                                     <div class="directory-tree">
                                         <pre>-&gt; Canvas Panel
 	-&gt; Canvas Panel
@@ -870,57 +870,57 @@ void UGissChatNet::Deinitialize()
                                     </div>
                                 </li>
                             </ul>
-                            <p class="paragraph">The appearance after modification is as follows.</p>
-                            <img src="img/image_043.png" alt="BP_ChatWidget Modification Complete" class="image">
-                            <p class="image-caption">BP_ChatWidget Modification Complete</p>
+                            <p class="paragraph">修改后的外观如下。</p>
+                            <img src="img/image_043.png" alt="BP_ChatWidget 修改完成" class="image">
+                            <p class="image-caption">BP_ChatWidget 修改完成</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Switch the Blueprint editor to Graph mode.</li>
-                <li class="list-item">Configure the PrintChat function.
+                <li class="list-item">将蓝图编辑器切换到图表模式。</li>
+                <li class="list-item">配置 PrintChat 函数。
                     <ol class="ordered-list">
-                        <li class="list-item">Add a function.
-                            <img src="img/image_044.png" alt="Adding PrintChat Function" class="image">
-                            <p class="image-caption">Adding PrintChat Function</p>
+                        <li class="list-item">添加函数。
+                            <img src="img/image_044.png" alt="添加 PrintChat 函数" class="image">
+                            <p class="image-caption">添加 PrintChat 函数</p>
                         </li>
-                        <li class="list-item">Add Create Widget node and specify BP_ChatBlock for the class.</li>
-                        <li class="list-item">Add and connect BP_ChatBlock's SetChatText node.</li>
-                        <li class="list-item">Drag and add the ChatBlockArea variable.</li>
-                        <li class="list-item">Add Add Child node and connect.
-                            <img src="img/image_045.png" alt="PrintChat Function Configuration" class="image">
-                            <p class="image-caption">PrintChat Function Configuration</p>
+                        <li class="list-item">添加 Create Widget 节点并为类指定 BP_ChatBlock。</li>
+                        <li class="list-item">添加并连接 BP_ChatBlock 的 SetChatText 节点。</li>
+                        <li class="list-item">拖拽并添加 ChatBlockArea 变量。</li>
+                        <li class="list-item">添加 Add Child 节点并连接。
+                            <img src="img/image_045.png" alt="PrintChat 函数配置" class="image">
+                            <p class="image-caption">PrintChat 函数配置</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Implement the chat message sending event.
+                <li class="list-item">实现聊天消息发送事件。
                     <ol class="ordered-list">
-                        <li class="list-item">Select SendButton from variables and add a click event.
-                            <img src="img/image_046.png" alt="Adding Button Click Event" class="image">
-                            <p class="image-caption">Adding Button Click Event</p>
+                        <li class="list-item">从变量中选择 SendButton 并添加点击事件。
+                            <img src="img/image_046.png" alt="添加按钮点击事件" class="image">
+                            <p class="image-caption">添加按钮点击事件</p>
                         </li>
-                        <li class="list-item">Drag and add the ChatTextBox variable and PrintChat function.</li>
-                        <li class="list-item">Add Get Text (Text Box) node and connect all.
-                            <img src="img/image_047.png" alt="Chat Send Event Complete" class="image">
-                            <p class="image-caption">Chat Send Event Complete</p>
+                        <li class="list-item">拖拽并添加 ChatTextBox 变量和 PrintChat 函数。</li>
+                        <li class="list-item">添加 Get Text (Text Box) 节点并连接所有内容。
+                            <img src="img/image_047.png" alt="聊天发送事件完成" class="image">
+                            <p class="image-caption">聊天发送事件完成</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Additional features can be implemented by modifying the Blueprint graph as follows (optional).
-                    <img src="img/image_048.png" alt="Additional Feature Implementation 1" class="image">
-                    <p class="image-caption">Additional Feature Implementation 1</p>
+                <li class="list-item">可以通过如下修改蓝图图表来实现附加功能（可选）。
+                    <img src="img/image_048.png" alt="附加功能实现 1" class="image">
+                    <p class="image-caption">附加功能实现 1</p>
                     
-                    <img src="img/image_049.png" alt="Additional Feature Implementation 2" class="image">
-                    <p class="image-caption">Additional Feature Implementation 2</p>
+                    <img src="img/image_049.png" alt="附加功能实现 2" class="image">
+                    <p class="image-caption">附加功能实现 2</p>
                     
                     <ol class="ordered-list">
-                        <li class="list-item">Ignore sending if no message is entered</li>
-                        <li class="list-item">Automatically delete the input message after sending</li>
-                        <li class="list-item">Auto-scroll chat window to bottom when new chat arrives</li>
+                        <li class="list-item">如果没有输入消息则忽略发送</li>
+                        <li class="list-item">发送后自动删除输入的消息</li>
+                        <li class="list-item">新聊天到达时自动滚动聊天窗口到底部</li>
                     </ol>
                 </li>
-                <li class="list-item">Run the level and confirm that chat functionality has been added.
-                    <img src="img/image_050.png" alt="Chat Function Verification" class="image">
-                    <p class="image-caption">Chat Function Verification</p>
+                <li class="list-item">运行关卡并确认已添加聊天功能。
+                    <img src="img/image_050.png" alt="聊天功能验证" class="image">
+                    <p class="image-caption">聊天功能验证</p>
                 </li>
             </ol>
         </section>
@@ -931,21 +931,21 @@ void UGissChatNet::Deinitialize()
 
             <h3 class="heading-3">3.1. Visual Studio 项目工作</h3>
             <ol class="ordered-list">
-                <li class="list-item">Add a new empty project chat_pidl in PdnUE5ExampleServer.</li>
-                <li class="list-item">Add two files C2S.PIDL, S2C.PIDL and modify their properties.
+                <li class="list-item">在 PdnUE5ExampleServer 中添加新的空项目 chat_pidl。</li>
+                <li class="list-item">添加两个文件 C2S.PIDL、S2C.PIDL 并修改它们的属性。
                     <ol class="ordered-list">
-                        <li class="list-item">Select "Custom Build Tool" from "General - Item Type" dropdown</li>
-                        <li class="list-item">Enter text in "Custom Build Tool - General - Command Line"
+                        <li class="list-item">从"常规 - 项目类型"下拉菜单中选择"自定义生成工具"</li>
+                        <li class="list-item">在"自定义生成工具 - 常规 - 命令行"中输入文本
                             <div class="code-block">
                                 <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
                             </div>
                         </li>
-                        <li class="list-item">Enter text in "Custom Build Tool - General - Description"
+                        <li class="list-item">在"自定义生成工具 - 常规 - 描述"中输入文本
                             <div class="code-block">
                                 <pre>%(Filename).PIDL Compiling...</pre>
                             </div>
                         </li>
-                        <li class="list-item">Select &lt;Edit…&gt; from "Custom Build Tool - General - Outputs" dropdown and add the following paths in the popup window
+                        <li class="list-item">从"自定义生成工具 - 常规 - 输出"下拉菜单中选择 &lt;编辑…&gt; 并在弹出窗口中添加以下路径
                             <div class="code-block">
                                 <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
 %(RootDir)%(Directory)\%(Filename)_common.h
@@ -957,9 +957,9 @@ void UGissChatNet::Deinitialize()
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Enter code in each file.
+                <li class="list-item">在每个文件中输入代码。
                     <ul class="unordered-list">
-                        <li class="list-item">Complete Code
+                        <li class="list-item">完整代码
                             <ul class="unordered-list">
                                 <li class="list-item">C2S.PIDL
                                     <div class="code-block">
@@ -984,13 +984,13 @@ global CHAT_S2C 4000
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">Build the chat_pidl project. You can check the built source code files in the chat_pidl project folder.
-                    <img src="img/image_051.png" alt="PIDL Build Results" class="image">
-                    <p class="image-caption">PIDL Build Results</p>
+                <li class="list-item">构建 chat_pidl 项目。可以在 chat_pidl 项目文件夹中查看已构建的源代码文件。
+                    <img src="img/image_051.png" alt="PIDL 构建结果" class="image">
+                    <p class="image-caption">PIDL 构建结果</p>
                 </li>
-                <li class="list-item">Modify the main.cpp source code of the chat_server project.
+                <li class="list-item">修改 chat_server 项目的 main.cpp 源代码。
                     <ul class="unordered-list">
-                        <li class="list-item">Modifications
+                        <li class="list-item">修改内容
                             <div class="code-block">
                                 <pre>#include &lt;iostream&gt;
 #include &lt;format&gt;
@@ -1663,7 +1663,7 @@ public:
             <ol class="ordered-list">
                 <li class="list-item">修改 BaseMirageCharacter 类的源代码。
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">修改内容
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1711,58 +1711,58 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">修改 BP_Character 蓝图图表。
                     <ol class="ordered-list">
-                        <li class="list-item">재장전 시 미라지 캐릭터의 재장전 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">创建在重新装弹时调用幻影角色重新装弹事件的图表。
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.
-                                    <img src="img/image_080.png" alt="Reload 관련 구역" class="image">
-                                    <p class="image-caption">Reload 관련 구역</p>
+                                <li class="list-item">移动到图表上方与 Reload 相关的区域。
+                                    <img src="img/image_080.png" alt="Reload 相关区域" class="image">
+                                    <p class="image-caption">Reload 相关区域</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Reloaded 함수 노드로 연계합니다.
-                                    <img src="img/image_081.png" alt="On Reloaded 노드 추가" class="image">
-                                    <p class="image-caption">On Reloaded 노드 추가</p>
+                                <li class="list-item">创建 Get Actor Of Class 节点并在类中指定 BP_MirageCharacter。</li>
+                                <li class="list-item">连接到 On Reloaded 函数节点。
+                                    <img src="img/image_081.png" alt="添加 On Reloaded 节点" class="image">
+                                    <p class="image-caption">添加 On Reloaded 节点</p>
                                 </li>
-                                <li class="list-item">Reload와 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_082.png" alt="Reload 이벤트 연결" class="image">
-                                    <p class="image-caption">Reload 이벤트 연결</p>
+                                <li class="list-item">在 Reload 和 Delay 函数之间连接。
+                                    <img src="img/image_082.png" alt="Reload 事件连接" class="image">
+                                    <p class="image-caption">Reload 事件连接</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">발사 시 미라지 캐릭터의 발사 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">创建在射击时调用幻影角色射击事件的图表。
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 우측에서 Shoot과 관련된 구역의 종단부로 이동합니다.
-                                    <img src="img/image_083.png" alt="Shoot 관련 구역" class="image">
-                                    <p class="image-caption">Shoot 관련 구역</p>
+                                <li class="list-item">移动到图表右侧与 Shoot 相关区域的末端。
+                                    <img src="img/image_083.png" alt="Shoot 相关区域" class="image">
+                                    <p class="image-caption">Shoot 相关区域</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Fired 함수 노드로 연계합니다.</li>
-                                <li class="list-item">(Current Ammunition) Set 과 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_084.png" alt="Shoot 이벤트 연결" class="image">
-                                    <p class="image-caption">Shoot 이벤트 연결</p>
+                                <li class="list-item">创建 Get Actor Of Class 节点并在类中指定 BP_MirageCharacter。</li>
+                                <li class="list-item">连接到 On Fired 函数节点。</li>
+                                <li class="list-item">在 (Current Ammunition) Set 和 Delay 函数之间连接。
+                                    <img src="img/image_084.png" alt="Shoot 事件连接" class="image">
+                                    <p class="image-caption">Shoot 事件连接</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">修改 BP_MirageCharacter 蓝图图表。
                     <ol class="ordered-list">
-                        <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Play Montage 노드의 앞에 On Reloaded 이벤트 노드를 연결합니다
-                            <img src="img/image_085.png" alt="On Reloaded 이벤트 연결" class="image">
-                            <p class="image-caption">On Reloaded 이벤트 연결</p>
+                        <li class="list-item">移动到图表上方与 Reload 相关的区域。</li>
+                        <li class="list-item">在 Play Montage 节点前连接 On Reloaded 事件节点
+                            <img src="img/image_085.png" alt="On Reloaded 事件连接" class="image">
+                            <p class="image-caption">On Reloaded 事件连接</p>
                         </li>
-                        <li class="list-item">그래프 우측에서 Shoot과 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Shoot 노드의 앞에 On Fired 이벤트 노드를 연결합니다
-                            <img src="img/image_086.png" alt="On Fired 이벤트 연결" class="image">
-                            <p class="image-caption">On Fired 이벤트 연결</p>
+                        <li class="list-item">移动到图表右侧与 Shoot 相关的区域。</li>
+                        <li class="list-item">在 Shoot 节点前连接 On Fired 事件节点
+                            <img src="img/image_086.png" alt="On Fired 事件连接" class="image">
+                            <p class="image-caption">On Fired 事件连接</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 미라지 캐릭터가 장전과 발사를 따라하는 모습을 볼 수 있습니다.
-                    <img src="img/image_087.png" alt="액션 애니메이션 테스트" class="image">
-                    <p class="image-caption">액션 애니메이션 테스트</p>
+                <li class="list-item">运行关卡，可以看到幻影角色模仿装弹和射击的动作。
+                    <img src="img/image_087.png" alt="动作动画测试" class="image">
+                    <p class="image-caption">动作动画测试</p>
                 </li>
             </ol>
 
@@ -1770,7 +1770,7 @@ public:
             <ol class="ordered-list">
                 <li class="list-item">修改 BaseMirageCharacter 类的源代码。
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">修改内容
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1819,7 +1819,7 @@ public:
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">전체 코드
+                        <li class="list-item">完整代码
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1870,118 +1870,118 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">修改 BP_Character 蓝图图表。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 타입의 AimPitch 변수를 추가합니다.
-                            <img src="img/image_088.png" alt="AimPitch 변수 추가" class="image">
-                            <p class="image-caption">AimPitch 변수 추가</p>
+                        <li class="list-item">添加浮点类型的 AimPitch 变量。
+                            <img src="img/image_088.png" alt="添加 AimPitch 变量" class="image">
+                            <p class="image-caption">添加 AimPitch 变量</p>
                         </li>
-                        <li class="list-item">Tick 이벤트의 코드가 끝나는 부분으로 이동합니다.</li>
-                        <li class="list-item">두 개의 라우트 노드를 생성하고 Branch 노드의 False, Stop Running 두 노드를 연결합니다.
-                            <img src="img/image_089.png" alt="라우트 노드 1" class="image">
-                            <p class="image-caption">라우트 노드 1</p>
+                        <li class="list-item">移动到 Tick 事件代码结束的部分。</li>
+                        <li class="list-item">创建两个路由节点，连接 Branch 节点的 False 和 Stop Running 两个节点。
+                            <img src="img/image_089.png" alt="路由节点 1" class="image">
+                            <p class="image-caption">路由节点 1</p>
                             
-                            <img src="img/image_090.png" alt="라우트 노드 2" class="image">
-                            <p class="image-caption">라우트 노드 2</p>
+                            <img src="img/image_090.png" alt="路由节点 2" class="image">
+                            <p class="image-caption">路由节点 2</p>
                         </li>
-                        <li class="list-item">라우트 노드를 이동합니다.
-                            <img src="img/image_091.png" alt="라우트 노드 이동" class="image">
-                            <p class="image-caption">라우트 노드 이동</p>
+                        <li class="list-item">移动路由节点。
+                            <img src="img/image_091.png" alt="路由节点移动" class="image">
+                            <p class="image-caption">路由节点移动</p>
                         </li>
-                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 작성합니다
+                        <li class="list-item">创建调用 BP_MirageCharacter 的 Update Transform 的图表
                             
-                            그래프 작성이 끝난 모습은 다음과 같으며, 아래에서 과정을 확인할 수 있습니다.
+                            图表创建完成的样子如下，可以在下面确认过程。
                             
-                            <img src="img/image_092.png" alt="Update Transform 그래프 완성" class="image">
-                            <p class="image-caption">Update Transform 그래프 완성</p>
+                            <img src="img/image_092.png" alt="Update Transform 图表完成" class="image">
+                            <p class="image-caption">Update Transform 图表完成</p>
                             
                             <details class="expandable-section">
-                                <summary>과정 보기</summary>
+                                <summary>查看过程</summary>
                                 <ol class="ordered-list">
-                                    <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                    <li class="list-item">Update Transform 함수 노드로 연계합니다.
-                                        <img src="img/image_093.png" alt="Update Transform 노드 추가" class="image">
-                                        <p class="image-caption">Update Transform 노드 추가</p>
+                                    <li class="list-item">创建 Get Actor Of Class 节点并在类中指定 BP_MirageCharacter。</li>
+                                    <li class="list-item">连接到 Update Transform 函数节点。
+                                        <img src="img/image_093.png" alt="添加 Update Transform 节点" class="image">
+                                        <p class="image-caption">添加 Update Transform 节点</p>
                                     </li>
-                                    <li class="list-item">Get Actor Location, Get Actor Rotation으로 이동/회전 값을 얻는 노드를 생성합니다.
-                                        <img src="img/image_094.png" alt="위치/회전 노드 추가" class="image">
-                                        <p class="image-caption">위치/회전 노드 추가</p>
+                                    <li class="list-item">创建用 Get Actor Location、Get Actor Rotation 获取移动/旋转值的节点。
+                                        <img src="img/image_094.png" alt="添加位置/旋转节点" class="image">
+                                        <p class="image-caption">添加位置/旋转节点</p>
                                     </li>
-                                    <li class="list-item">Get Actor Rotation은 To Quaternion 노드로 연계합니다.
-                                        <img src="img/image_095.png" alt="To Quaternion 연결" class="image">
-                                        <p class="image-caption">To Quaternion 연결</p>
+                                    <li class="list-item">将 Get Actor Rotation 连接到 To Quaternion 节点。
+                                        <img src="img/image_095.png" alt="To Quaternion 连接" class="image">
+                                        <p class="image-caption">To Quaternion 连接</p>
                                     </li>
-                                    <li class="list-item">Get Character Arms 노드를 생성하고, 속도와 각속도를 얻는 노드로 연계합니다.
-                                        <img src="img/image_096.png" alt="Character Arms 노드" class="image">
-                                        <p class="image-caption">Character Arms 노드</p>
+                                    <li class="list-item">创建 Get Character Arms 节点，连接到获取速度和角速度的节点。
+                                        <img src="img/image_096.png" alt="Character Arms 节点" class="image">
+                                        <p class="image-caption">Character Arms 节点</p>
                                         
-                                        <img src="img/image_097.png" alt="속도/각속도 노드" class="image">
-                                        <p class="image-caption">속도/각속도 노드</p>
+                                        <img src="img/image_097.png" alt="速度/角速度节点" class="image">
+                                        <p class="image-caption">速度/角速度节点</p>
                                     </li>
-                                    <li class="list-item">Get Control Rotation 노드를 생성하고, 반환값으로 부터 Pitch 회전 값을 연산합니다.
-                                        모든 노드는 노드 이름을 통해 연계 가능합니다.
-                                        중간의 곱셉 노드는 Multiply로 생성 가능합니다.
+                                    <li class="list-item">创建 Get Control Rotation 节点，从返回值计算 Pitch 旋转值。
+                                        所有节点都可以通过节点名称进行连接。
+                                        中间的乘法节点可以用 Multiply 创建。
                                         
-                                        <img src="img/image_098.png" alt="Control Rotation과 Pitch 계산" class="image">
-                                        <p class="image-caption">Control Rotation과 Pitch 계산</p>
+                                        <img src="img/image_098.png" alt="Control Rotation 和 Pitch 计算" class="image">
+                                        <p class="image-caption">Control Rotation 和 Pitch 计算</p>
                                     </li>
-                                    <li class="list-item">추가된 모든 노드를 Update Transform의 알맞은 인자와 연결합니다.
-                                        Get Physics Linear Velocity 노드는 실행 핀이 연결되어야 합니다.</li>
+                                    <li class="list-item">将所有添加的节点连接到 Update Transform 的合适参数。
+                                        Get Physics Linear Velocity 节点必须连接执行引脚。</li>
                                 </ol>
                             </details>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">修改 BP_MirageCharacter 蓝图图表。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">UpdateTransform 이벤트 노드를 추가합니다.</li>
-                        <li class="list-item">이벤트 노드에 맞는 각 노드를 추가하고 연결합니다.
-                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 구현" class="image">
-                            <p class="image-caption">BP_MirageCharacter UpdateTransform 구현</p>
+                        <li class="list-item">添加浮点类型的 AimPitch 变量。</li>
+                        <li class="list-item">添加 UpdateTransform 事件节点。</li>
+                        <li class="list-item">添加并连接适合事件节点的各个节点。
+                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 实现" class="image">
+                            <p class="image-caption">BP_MirageCharacter UpdateTransform 实现</p>
                         </li>
-                        <li class="list-item">Position 노드의 연결을 끊고, Make Vector노드를 추가하여 연결합니다.
+                        <li class="list-item">断开 Position 节点的连接，添加 Make Vector 节点进行连接。
                             
-                            싱글 테스트 환경에서의 버그동작을 방지하기 위한 조치입니다.
+                            这是为了防止单机测试环境中的错误行为的措施。
                             
-                            <img src="img/image_100.png" alt="Position Make Vector 연결" class="image">
-                            <p class="image-caption">Position Make Vector 연결</p>
+                            <img src="img/image_100.png" alt="Position Make Vector 连接" class="image">
+                            <p class="image-caption">Position Make Vector 连接</p>
                         </li>
-                        <li class="list-item">Shoot과 관련된 부분으로 이동합니다.</li>
-                        <li class="list-item">아래와 같이 그래프를 구성하고 연결합니다.
-                            <img src="img/image_101.png" alt="Shoot 관련 그래프 구성" class="image">
-                            <p class="image-caption">Shoot 관련 그래프 구성</p>
+                        <li class="list-item">移动到与 Shoot 相关的部分。</li>
+                        <li class="list-item">如下所示构成并连接图表。
+                            <img src="img/image_101.png" alt="Shoot 相关图表构成" class="image">
+                            <p class="image-caption">Shoot 相关图表构成</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 이벤트그래프를 수정합니다.
+                <li class="list-item">修改 ABP_MirageCharacter 蓝图的事件图表。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">형변환된 BP_MirageCharacter로부터 값을 불러와 저장합니다.
-                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 변수" class="image">
-                            <p class="image-caption">ABP_MirageCharacter AimPitch 변수</p>
+                        <li class="list-item">添加浮点类型的 AimPitch 变量。</li>
+                        <li class="list-item">从类型转换的 BP_MirageCharacter 中调用并保存值。
+                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 变量" class="image">
+                            <p class="image-caption">ABP_MirageCharacter AimPitch 变量</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 AnimGraph를 수정합니다.
+                <li class="list-item">修改 ABP_MirageCharacter 蓝图的 AnimGraph。
                     <ol class="ordered-list">
-                        <li class="list-item">Mouse Sway 관련 부분으로 이동합니다.
-                            <img src="img/image_103.png" alt="Mouse Sway 관련 부분" class="image">
-                            <p class="image-caption">Mouse Sway 관련 부분</p>
+                        <li class="list-item">移动到 Mouse Sway 相关部分。
+                            <img src="img/image_103.png" alt="Mouse Sway 相关部分" class="image">
+                            <p class="image-caption">Mouse Sway 相关部分</p>
                         </li>
-                        <li class="list-item">Trasnform (Modify) Bone 노드를 추가하고 Mouse Sway 코멘트 노드의 앞에 연결합니다.</li>
-                        <li class="list-item">AimPitch 변수값으로 Rotator를 만들고 노드의 Rotation에 적용합니다.
-                            <img src="img/image_104.png" alt="Transform Bone 노드 적용" class="image">
-                            <p class="image-caption">Transform Bone 노드 적용</p>
+                        <li class="list-item">添加 Transform (Modify) Bone 节点并连接到 Mouse Sway 注释节点前面。</li>
+                        <li class="list-item">用 AimPitch 变量值创建 Rotator 并应用到节点的 Rotation。
+                            <img src="img/image_104.png" alt="Transform Bone 节点应用" class="image">
+                            <p class="image-caption">Transform Bone 节点应用</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 기능을 테스트합니다.
+                <li class="list-item">运行关卡并测试功能。
                     
-                    미라지 캐릭터가 플레이어 캐릭터와 같은 방향을 조준하며 발사하게 되었습니다.
+                    幻影角色现在可以瞄准和射击与玩家角色相同的方向。
 
-                    <img src="img/image_105.png" alt="위치 회전 복제 테스트" class="image">
-                    <p class="image-caption">위치 회전 복제 테스트</p>
+                    <img src="img/image_105.png" alt="位置旋转复制测试" class="image">
+                    <p class="image-caption">位置旋转复制测试</p>
                 </li>
             </ol>
         </section>
@@ -2361,8 +2361,8 @@ private:
 
     
 
-    <!-- 이미지 모달 컴포넌트 include -->
-    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <!-- 包含图片模态组件 -->
+    <!-- 图片模态 - 可在所有 HTML 文档中重复使用的通用组件 -->
     <div id="imageModal" class="image-modal">
         <div class="image-modal-content">
             <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
@@ -2370,6 +2370,6 @@ private:
             <div id="modalCaption" class="image-modal-caption"></div>
         </div>
     </div>
-    <!-- JavaScript는 js/image-modal.js와 js/syntax-highlighting.js에서 자동 로드됨 -->
+    <!-- JavaScript 由 js/image-modal.js 和 js/syntax-highlighting.js 自动加载 -->
 </body>
 </html> 

@@ -1412,12 +1412,12 @@ private:
 
             <h4 class="heading-4">4.2.1. Animation Variable Duplication</h4>
             <ol class="ordered-list">
-                <li class="list-item">C++ 클래스 BaseMirageCharacter를 구현합니다.
+                <li class="list-item">Implement the C++ class BaseMirageCharacter.
                     <ol class="ordered-list">
-                        <li class="list-item">Character를 상속받는 BaseMirageCharacter 클래스를 생성합니다</li>
-                        <li class="list-item">생성된 클래스의 소스 코드를 수정합니다.
+                        <li class="list-item">Create a BaseMirageCharacter class that inherits from Character</li>
+                        <li class="list-item">Modify the source code of the created class.
                             <ul class="unordered-list">
-                                <li class="list-item">수정 내역
+                                <li class="list-item">Modifications
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1457,7 +1457,7 @@ public:
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="list-item">전체 코드
+                                <li class="list-item">Complete Code
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1501,169 +1501,169 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter의 부모 클래스로 BaseMirageCharacter를 지정합니다</li>
-                <li class="list-item">이벤트 함수를 사용한 애니메이션 변수 복제를 구현합니다.
+                <li class="list-item">Set BaseMirageCharacter as the parent class of BP_MirageCharacter</li>
+                <li class="list-item">Implement animation variable duplication using event functions.
                     <ol class="ordered-list">
-                        <li class="list-item">ABP_Character 블루프린트를 수정합니다.
+                        <li class="list-item">Modify the ABP_Character Blueprint.
                             <ol class="ordered-list">
-                                <li class="list-item">ABP_Character 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
-                                <li class="list-item">BlueprintUpdateAnimation 이벤트 실행 흐름의 끝 부분으로 이동합니다.
-                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation 이벤트" class="image">
-                                    <p class="image-caption">BlueprintUpdateAnimation 이벤트</p>
+                                <li class="list-item">Open the ABP_Character Blueprint editor and navigate to the Event Graph tab.</li>
+                                <li class="list-item">Navigate to the end of the BlueprintUpdateAnimation event execution flow.
+                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation Event" class="image">
+                                    <p class="image-caption">BlueprintUpdateAnimation Event</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성 및 연결하고 Class에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">Update Animation Parameter 노드를 생성 및 연결하고 모든 변수를 연결합니다. 모든 변수는 블루프린트의 변수 목록에서 가져올 수 있습니다.
-                                    <img src="img/image_061.png" alt="Update Animation Parameter 노드" class="image">
-                                    <p class="image-caption">Update Animation Parameter 노드</p>
+                                <li class="list-item">Create and connect a Get Actor Of Class node and specify BP_MirageCharacter for the Class.</li>
+                                <li class="list-item">Create and connect an Update Animation Parameter node and connect all variables. All variables can be obtained from the Blueprint's variable list.
+                                    <img src="img/image_061.png" alt="Update Animation Parameter Node" class="image">
+                                    <p class="image-caption">Update Animation Parameter Node</p>
                                     
-                                    <img src="img/image_062.png" alt="변수 연결 완료" class="image">
-                                    <p class="image-caption">변수 연결 완료</p>
+                                    <img src="img/image_062.png" alt="Variable Connection Complete" class="image">
+                                    <p class="image-caption">Variable Connection Complete</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">BP_MirageCharacter 블루프린트를 수정합니다.
+                        <li class="list-item">Modify the BP_MirageCharacter Blueprint.
                             <ol class="ordered-list">
-                                <li class="list-item">BP_MirageCharacter 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
-                                <li class="list-item">4개 변수를 추가합니다.
-                                    <img src="img/image_063.png" alt="변수 추가" class="image">
-                                    <p class="image-caption">변수 추가</p>
+                                <li class="list-item">Open the BP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
+                                <li class="list-item">Add 4 variables.
+                                    <img src="img/image_063.png" alt="Add Variables" class="image">
+                                    <p class="image-caption">Add Variables</p>
                                 </li>
-                                <li class="list-item">Event UpdateAnimationParameter 노드를 추가합니다.</li>
-                                <li class="list-item">이벤트의 파라미터를 블루프린트 변수에 저장합니다.
-                                    <img src="img/image_064.png" alt="파라미터 저장" class="image">
-                                    <p class="image-caption">파라미터 저장</p>
+                                <li class="list-item">Add an Event UpdateAnimationParameter node.</li>
+                                <li class="list-item">Store the event parameters in Blueprint variables.
+                                    <img src="img/image_064.png" alt="Parameter Storage" class="image">
+                                    <p class="image-caption">Parameter Storage</p>
                                 </li>
-                                <li class="list-item">Event Tick 노드의 연결을 끊습니다.
-                                    <img src="img/image_065.png" alt="Event Tick 연결 해제" class="image">
-                                    <p class="image-caption">Event Tick 연결 해제</p>
+                                <li class="list-item">Disconnect the Event Tick node connection.
+                                    <img src="img/image_065.png" alt="Event Tick Disconnection" class="image">
+                                    <p class="image-caption">Event Tick Disconnection</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">ABP_MirageCharacter 블루프린트를 수정합니다.
+                        <li class="list-item">Modify the ABP_MirageCharacter Blueprint.
                             <ol class="ordered-list">
-                                <li class="list-item">ABP_MirageCharacter 블루프린트 에디터를 열고 이벤트 그래프 탭으로 이동합니다.</li>
-                                <li class="list-item">Try Get Pawn Owner 노드를 추가합니다.</li>
-                                <li class="list-item">Cast To BP_MirageCharacter 노드를 추가하고 연결합니다.</li>
-                                <li class="list-item">형변환된 캐릭터로부터 변수를 가져와 애니메이션 블루프린트 변수에 저장합니다.
-                                    <img src="img/image_066.png" alt="애니메이션 변수 연결" class="image">
-                                    <p class="image-caption">애니메이션 변수 연결</p>
+                                <li class="list-item">Open the ABP_MirageCharacter Blueprint editor and navigate to the Event Graph tab.</li>
+                                <li class="list-item">Add a Try Get Pawn Owner node.</li>
+                                <li class="list-item">Add a Cast To BP_MirageCharacter node and connect it.</li>
+                                <li class="list-item">Get variables from the cast character and store them in the animation Blueprint variables.
+                                    <img src="img/image_066.png" alt="Animation Variable Connection" class="image">
+                                    <p class="image-caption">Animation Variable Connection</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 애니메이션 복제 동작 확인
-                    <p class="paragraph">달리기, 점프, 조준 등의 동작 시 모션을 따라하는 미라지 캐릭터의 모습을 관찰 가능합니다.</p>
-                    <img src="img/image_067.png" alt="애니메이션 복제 확인" class="image">
-                    <p class="image-caption">애니메이션 복제 확인</p>
+                <li class="list-item">Run level and verify animation duplication functionality
+                    <p class="paragraph">You can observe the mirage character mimicking motions during actions like running, jumping, and aiming.</p>
+                    <img src="img/image_067.png" alt="Animation Duplication Verification" class="image">
+                    <p class="image-caption">Animation Duplication Verification</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.2. 보정 애니메이션 적용</h4>
+            <h4 class="heading-4">4.2.2. Corrective Animation Application</h4>
             <ol class="ordered-list">
-                <li class="list-item">보정 애니메이션 준비
+                <li class="list-item">Prepare corrective animation
                     <ol class="ordered-list">
-                        <li class="list-item">애니메이션 파일을 다운로드 받습니다.
-                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (파일 다운로드 필요)</p>
+                        <li class="list-item">Download the animation file.
+                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (File download required)</p>
                         </li>
-                        <li class="list-item">다운로드 받은 파일을 언리얼 에디터의 콘텐츠 브라우저로 드래그 합니다.</li>
-                        <li class="list-item">Animations 탭의 스켈레톤 항목에 SKEL_UE5_Mannequin을 지정합니다.
-                            <img src="img/image_068.png" alt="스켈레톤 지정" class="image">
-                            <p class="image-caption">스켈레톤 지정</p>
+                        <li class="list-item">Drag the downloaded file into the Content Browser of the Unreal Editor.</li>
+                        <li class="list-item">Specify SKEL_UE5_Mannequin in the Skeleton field of the Animations tab.
+                            <img src="img/image_068.png" alt="Skeleton Assignment" class="image">
+                            <p class="image-caption">Skeleton Assignment</p>
                         </li>
-                        <li class="list-item">임포트 버튼을 클릭합니다.</li>
-                        <li class="list-item">생성된 두 개의 애니메이션 중 하나를 삭제합니다. (선택 사항)
-                            <img src="img/image_069.png" alt="애니메이션 삭제" class="image">
-                            <p class="image-caption">애니메이션 삭제</p>
+                        <li class="list-item">Click the Import button.</li>
+                        <li class="list-item">Delete one of the two generated animations. (Optional)
+                            <img src="img/image_069.png" alt="Animation Deletion" class="image">
+                            <p class="image-caption">Animation Deletion</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">보정 애니메이션을 수정합니다.
+                <li class="list-item">Modify the corrective animation.
                     <ol class="ordered-list">
-                        <li class="list-item">Inver_Anim_Scene 애니메이션 시퀀스의 블루프린트 에디터를 엽니다.</li>
-                        <li class="list-item">에셋 디테일 창의 애디티브 세팅을 수정합니다.
+                        <li class="list-item">Open the Blueprint editor for the Inver_Anim_Scene animation sequence.</li>
+                        <li class="list-item">Modify the Additive Settings in the Asset Details window.
                             <ol class="ordered-list">
-                                <li class="list-item">애디티브 애님 타입 - Mesh Space 선택</li>
-                                <li class="list-item">베이스 포즈 타입 - Selected animation frame 선택</li>
-                                <li class="list-item">베이스 포즈 애니메이션 - A_FP_AssaultRifle_Idle_Loop 선택
-                                    <img src="img/image_070.png" alt="애디티브 세팅" class="image">
-                                    <p class="image-caption">애디티브 세팅</p>
+                                <li class="list-item">Additive Anim Type - Select Mesh Space</li>
+                                <li class="list-item">Base Pose Type - Select Selected animation frame</li>
+                                <li class="list-item">Base Pose Animation - Select A_FP_AssaultRifle_Idle_Loop
+                                    <img src="img/image_070.png" alt="Additive Settings" class="image">
+                                    <p class="image-caption">Additive Settings</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the ABP_MirageCharacter Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">Apply Additive 노드와 Invert_Anim_Scene 애니메이션 노드를 추가합니다.</li>
-                        <li class="list-item">A_FP_AssaultRifle_Idle_Loop 애니메이션 노드와 연결합니다.
-                            <img src="img/image_071.png" alt="Apply Additive 노드 연결" class="image">
-                            <p class="image-caption">Apply Additive 노드 연결</p>
+                        <li class="list-item">Add Apply Additive node and Invert_Anim_Scene animation node.</li>
+                        <li class="list-item">Connect with the A_FP_AssaultRifle_Idle_Loop animation node.
+                            <img src="img/image_071.png" alt="Apply Additive Node Connection" class="image">
+                            <p class="image-caption">Apply Additive Node Connection</p>
                         </li>
-                        <li class="list-item">나머지 4개의 애니메이션 노드에 대해 같은 작업을 진행합니다. 모두 동일하게 Inver_Anim_Scene, Apply Additive를 사용합니다.
-                            <img src="img/image_072.png" alt="모든 애니메이션 노드 수정" class="image">
-                            <p class="image-caption">모든 애니메이션 노드 수정</p>
+                        <li class="list-item">Perform the same operation for the remaining 4 animation nodes. Use Inver_Anim_Scene and Apply Additive identically for all.
+                            <img src="img/image_072.png" alt="All Animation Node Modifications" class="image">
+                            <p class="image-caption">All Animation Node Modifications</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 애니메이션 보정 결과 확인
-                    <p class="paragraph">팔 골격의 위치가 정상 범위 내로 보정 된 것을 확인할 수 있습니다.</p>
-                    <img src="img/image_073.png" alt="애니메이션 보정 결과" class="image">
-                    <p class="image-caption">애니메이션 보정 결과</p>
+                <li class="list-item">Run level and verify animation correction results
+                    <p class="paragraph">You can confirm that the arm skeleton positions have been corrected to normal ranges.</p>
+                    <img src="img/image_073.png" alt="Animation Correction Results" class="image">
+                    <p class="image-caption">Animation Correction Results</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.3. 이동 시 다리 애니메이션 적용</h4>
+            <h4 class="heading-4">4.2.3. Applying Leg Animation During Movement</h4>
             <ol class="ordered-list">
-                <li class="list-item">ABP_MirageCharacter - AnimGraph 블루프린트 그래프의 A_FP_AssaultRifle_Run_Loop와 연결된 부분을 아래의 절차에 따라 수정합니다.
+                <li class="list-item">Modify the part connected to A_FP_AssaultRifle_Run_Loop in the ABP_MirageCharacter - AnimGraph Blueprint graph following the procedure below.
                     <ol class="ordered-list">
-                        <li class="list-item">Layered blend per bone 노드를 추가합니다.</li>
-                        <li class="list-item">추가한 노드의 디테일을 수정합니다.
+                        <li class="list-item">Add a Layered blend per bone node.</li>
+                        <li class="list-item">Modify the details of the added node.
                             <ol class="ordered-list">
-                                <li class="list-item">설정 - 레이어 설정 - 인덱스[0]에 두 개의 분기 필터를 추가합니다.</li>
-                                <li class="list-item">각각 본 이름을 thigh_l, thigh_r로 지정합니다.
-                                    <img src="img/image_074.png" alt="Layered blend per bone 설정" class="image">
-                                    <p class="image-caption">Layered blend per bone 설정</p>
+                                <li class="list-item">Settings - Layer Setup - Add two branch filters to Index[0].</li>
+                                <li class="list-item">Specify the bone names as thigh_l and thigh_r respectively.
+                                    <img src="img/image_074.png" alt="Layered Blend Per Bone Settings" class="image">
+                                    <p class="image-caption">Layered Blend Per Bone Settings</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">기존 Apply Additive 노드를 위 노드의 Base Pose에 연결합니다.</li>
-                        <li class="list-item">MM_Run_Fwd 애니메이션 노드를 추가하고 위 노드의 Blend Poses 0에 연결합니다.</li>
-                        <li class="list-item">MM_Run_Fwd 노드의 디테일 창에서 애니메이션 루프를 활성화 합니다.
-                            <img src="img/image_075.png" alt="애니메이션 루프 활성화" class="image">
-                            <p class="image-caption">애니메이션 루프 활성화</p>
+                        <li class="list-item">Connect the existing Apply Additive node to the Base Pose of the above node.</li>
+                        <li class="list-item">Add an MM_Run_Fwd animation node and connect it to Blend Poses 0 of the above node.</li>
+                        <li class="list-item">Enable animation loop in the details window of the MM_Run_Fwd node.
+                            <img src="img/image_075.png" alt="Animation Loop Activation" class="image">
+                            <p class="image-caption">Animation Loop Activation</p>
                         </li>
-                        <li class="list-item">최종 모습은 다음과 같습니다. 코멘트 노드의 크기 조절은 선택 사항입니다.
-                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop 최종 모습" class="image">
-                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop 최종 모습</p>
+                        <li class="list-item">The final appearance is as follows. Adjusting the size of comment nodes is optional.
+                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop Final Appearance" class="image">
+                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop Final Appearance</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">위 과정을 나머지 4개의 애니메이션 노드에도 유사하게 적용합니다.
+                <li class="list-item">Apply the above process similarly to the remaining 4 animation nodes.
                     <ol class="ordered-list">
-                        <li class="list-item">Layered blend per bone 노드의 설정은 동일하므로 복사하여 사용할 수 있습니다.</li>
-                        <li class="list-item">MM_Run_Fwd 노드 대신 경우에 MM_Walk_Fwd 또는 MM_Idle을 사용해야 합니다.</li>
-                        <li class="list-item">모든 과정을 마친 후 그래프는 다음과 같습니다.
-                            <img src="img/image_077.png" alt="전체 그래프 1" class="image">
-                            <p class="image-caption">전체 그래프 1</p>
+                        <li class="list-item">The Layered blend per bone node settings are identical, so you can copy and use them.</li>
+                        <li class="list-item">Instead of the MM_Run_Fwd node, you should use MM_Walk_Fwd or MM_Idle as appropriate.</li>
+                        <li class="list-item">After completing all processes, the graph appears as follows.
+                            <img src="img/image_077.png" alt="Complete Graph 1" class="image">
+                            <p class="image-caption">Complete Graph 1</p>
                             
-                            <img src="img/image_078.png" alt="전체 그래프 2" class="image">
-                            <p class="image-caption">전체 그래프 2</p>
+                            <img src="img/image_078.png" alt="Complete Graph 2" class="image">
+                            <p class="image-caption">Complete Graph 2</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 다리 애니메이션 적용 확인
-                    <p class="paragraph">걷기와 달리기 애니메이션이 재생됨을 확인할 수 있습니다.</p>
-                    <img src="img/image_079.png" alt="다리 애니메이션 확인" class="image">
-                    <p class="image-caption">다리 애니메이션 확인</p>
+                <li class="list-item">Run level and verify leg animation application
+                    <p class="paragraph">You can confirm that walking and running animations are being played.</p>
+                    <img src="img/image_079.png" alt="Leg Animation Verification" class="image">
+                    <p class="image-caption">Leg Animation Verification</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">4.3. 액션 애니메이션 및 동작 복제</h3>
+            <h3 class="heading-3">4.3. Action Animation and Motion Duplication</h3>
             <ol class="ordered-list">
-                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                <li class="list-item">Modify the source code of the BaseMirageCharacter class.
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">Modifications
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1711,66 +1711,66 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the BP_Character Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">재장전 시 미라지 캐릭터의 재장전 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">Create a graph that calls the mirage character's reload event when reloading.
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.
-                                    <img src="img/image_080.png" alt="Reload 관련 구역" class="image">
-                                    <p class="image-caption">Reload 관련 구역</p>
+                                <li class="list-item">Navigate to the Reload-related area at the top of the graph.
+                                    <img src="img/image_080.png" alt="Reload Related Area" class="image">
+                                    <p class="image-caption">Reload Related Area</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Reloaded 함수 노드로 연계합니다.
-                                    <img src="img/image_081.png" alt="On Reloaded 노드 추가" class="image">
-                                    <p class="image-caption">On Reloaded 노드 추가</p>
+                                <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
+                                <li class="list-item">Connect to the On Reloaded function node.
+                                    <img src="img/image_081.png" alt="On Reloaded Node Addition" class="image">
+                                    <p class="image-caption">On Reloaded Node Addition</p>
                                 </li>
-                                <li class="list-item">Reload와 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_082.png" alt="Reload 이벤트 연결" class="image">
-                                    <p class="image-caption">Reload 이벤트 연결</p>
+                                <li class="list-item">Connect between the Reload and Delay functions.
+                                    <img src="img/image_082.png" alt="Reload Event Connection" class="image">
+                                    <p class="image-caption">Reload Event Connection</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">발사 시 미라지 캐릭터의 발사 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">Create a graph that calls the mirage character's fire event when shooting.
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 우측에서 Shoot과 관련된 구역의 종단부로 이동합니다.
-                                    <img src="img/image_083.png" alt="Shoot 관련 구역" class="image">
-                                    <p class="image-caption">Shoot 관련 구역</p>
+                                <li class="list-item">Navigate to the end of the Shoot-related area on the right side of the graph.
+                                    <img src="img/image_083.png" alt="Shoot Related Area" class="image">
+                                    <p class="image-caption">Shoot Related Area</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Fired 함수 노드로 연계합니다.</li>
-                                <li class="list-item">(Current Ammunition) Set 과 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_084.png" alt="Shoot 이벤트 연결" class="image">
-                                    <p class="image-caption">Shoot 이벤트 연결</p>
+                                <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
+                                <li class="list-item">Connect to the On Fired function node.</li>
+                                <li class="list-item">Connect between the (Current Ammunition) Set and Delay functions.
+                                    <img src="img/image_084.png" alt="Shoot Event Connection" class="image">
+                                    <p class="image-caption">Shoot Event Connection</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the BP_MirageCharacter Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Play Montage 노드의 앞에 On Reloaded 이벤트 노드를 연결합니다
-                            <img src="img/image_085.png" alt="On Reloaded 이벤트 연결" class="image">
-                            <p class="image-caption">On Reloaded 이벤트 연결</p>
+                        <li class="list-item">Navigate to the Reload-related area at the top of the graph.</li>
+                        <li class="list-item">Connect the On Reloaded event node in front of the Play Montage node
+                            <img src="img/image_085.png" alt="On Reloaded Event Connection" class="image">
+                            <p class="image-caption">On Reloaded Event Connection</p>
                         </li>
-                        <li class="list-item">그래프 우측에서 Shoot과 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Shoot 노드의 앞에 On Fired 이벤트 노드를 연결합니다
-                            <img src="img/image_086.png" alt="On Fired 이벤트 연결" class="image">
-                            <p class="image-caption">On Fired 이벤트 연결</p>
+                        <li class="list-item">Navigate to the Shoot-related area on the right side of the graph.</li>
+                        <li class="list-item">Connect the On Fired event node in front of the Shoot node
+                            <img src="img/image_086.png" alt="On Fired Event Connection" class="image">
+                            <p class="image-caption">On Fired Event Connection</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 미라지 캐릭터가 장전과 발사를 따라하는 모습을 볼 수 있습니다.
-                    <img src="img/image_087.png" alt="액션 애니메이션 테스트" class="image">
-                    <p class="image-caption">액션 애니메이션 테스트</p>
+                <li class="list-item">Run the level and you can see the mirage character mimicking reload and fire actions.
+                    <img src="img/image_087.png" alt="Action Animation Test" class="image">
+                    <p class="image-caption">Action Animation Test</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">4.4. 위치, 회전 등 기타 복제</h3>
+            <h3 class="heading-3">4.4. Position, Rotation and Other Duplications</h3>
             <ol class="ordered-list">
-                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                <li class="list-item">Modify the source code of the BaseMirageCharacter class.
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">Modifications
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1819,7 +1819,7 @@ public:
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">전체 코드
+                        <li class="list-item">Complete Code
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1870,164 +1870,163 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the BP_Character Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 타입의 AimPitch 변수를 추가합니다.
-                            <img src="img/image_088.png" alt="AimPitch 변수 추가" class="image">
-                            <p class="image-caption">AimPitch 변수 추가</p>
+                        <li class="list-item">Add a float type AimPitch variable.
+                            <img src="img/image_088.png" alt="AimPitch Variable Addition" class="image">
+                            <p class="image-caption">AimPitch Variable Addition</p>
                         </li>
-                        <li class="list-item">Tick 이벤트의 코드가 끝나는 부분으로 이동합니다.</li>
-                        <li class="list-item">두 개의 라우트 노드를 생성하고 Branch 노드의 False, Stop Running 두 노드를 연결합니다.
-                            <img src="img/image_089.png" alt="라우트 노드 1" class="image">
-                            <p class="image-caption">라우트 노드 1</p>
+                        <li class="list-item">Navigate to the end of the Tick event code.</li>
+                        <li class="list-item">Create two route nodes and connect the Branch node's False and Stop Running nodes.
+                            <img src="img/image_089.png" alt="Route Node 1" class="image">
+                            <p class="image-caption">Route Node 1</p>
                             
-                            <img src="img/image_090.png" alt="라우트 노드 2" class="image">
-                            <p class="image-caption">라우트 노드 2</p>
+                            <img src="img/image_090.png" alt="Route Node 2" class="image">
+                            <p class="image-caption">Route Node 2</p>
                         </li>
-                        <li class="list-item">라우트 노드를 이동합니다.
-                            <img src="img/image_091.png" alt="라우트 노드 이동" class="image">
-                            <p class="image-caption">라우트 노드 이동</p>
+                        <li class="list-item">Move the route nodes.
+                            <img src="img/image_091.png" alt="Route Node Movement" class="image">
+                            <p class="image-caption">Route Node Movement</p>
                         </li>
-                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 작성합니다
+                        <li class="list-item">Create a graph that calls BP_MirageCharacter's Update Transform
                             
-                            그래프 작성이 끝난 모습은 다음과 같으며, 아래에서 과정을 확인할 수 있습니다.
+                            The completed graph appearance is as follows, and you can check the process below.
                             
-                            <img src="img/image_092.png" alt="Update Transform 그래프 완성" class="image">
-                            <p class="image-caption">Update Transform 그래프 완성</p>
+                            <img src="img/image_092.png" alt="Update Transform Graph Complete" class="image">
+                            <p class="image-caption">Update Transform Graph Complete</p>
                             
                             <details class="expandable-section">
-                                <summary>과정 보기</summary>
+                                <summary>View Process</summary>
                                 <ol class="ordered-list">
-                                    <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                    <li class="list-item">Update Transform 함수 노드로 연계합니다.
-                                        <img src="img/image_093.png" alt="Update Transform 노드 추가" class="image">
-                                        <p class="image-caption">Update Transform 노드 추가</p>
+                                    <li class="list-item">Create a Get Actor Of Class node and specify BP_MirageCharacter for the class.</li>
+                                    <li class="list-item">Connect to the Update Transform function node.
+                                        <img src="img/image_093.png" alt="Update Transform Node Addition" class="image">
+                                        <p class="image-caption">Update Transform Node Addition</p>
                                     </li>
-                                    <li class="list-item">Get Actor Location, Get Actor Rotation으로 이동/회전 값을 얻는 노드를 생성합니다.
-                                        <img src="img/image_094.png" alt="위치/회전 노드 추가" class="image">
-                                        <p class="image-caption">위치/회전 노드 추가</p>
+                                    <li class="list-item">Create nodes that get position/rotation values using Get Actor Location and Get Actor Rotation.
+                                        <img src="img/image_094.png" alt="Position/Rotation Node Addition" class="image">
+                                        <p class="image-caption">Position/Rotation Node Addition</p>
                                     </li>
-                                    <li class="list-item">Get Actor Rotation은 To Quaternion 노드로 연계합니다.
-                                        <img src="img/image_095.png" alt="To Quaternion 연결" class="image">
-                                        <p class="image-caption">To Quaternion 연결</p>
+                                    <li class="list-item">Connect Get Actor Rotation to the To Quaternion node.
+                                        <img src="img/image_095.png" alt="To Quaternion Connection" class="image">
+                                        <p class="image-caption">To Quaternion Connection</p>
                                     </li>
-                                    <li class="list-item">Get Character Arms 노드를 생성하고, 속도와 각속도를 얻는 노드로 연계합니다.
-                                        <img src="img/image_096.png" alt="Character Arms 노드" class="image">
-                                        <p class="image-caption">Character Arms 노드</p>
+                                    <li class="list-item">Create a Get Character Arms node and connect to nodes that get velocity and angular velocity.
+                                        <img src="img/image_096.png" alt="Character Arms Node" class="image">
+                                        <p class="image-caption">Character Arms Node</p>
                                         
-                                        <img src="img/image_097.png" alt="속도/각속도 노드" class="image">
-                                        <p class="image-caption">속도/각속도 노드</p>
+                                        <img src="img/image_097.png" alt="Velocity/Angular Velocity Nodes" class="image">
+                                        <p class="image-caption">Velocity/Angular Velocity Nodes</p>
                                     </li>
-                                    <li class="list-item">Get Control Rotation 노드를 생성하고, 반환값으로 부터 Pitch 회전 값을 연산합니다.
-                                        모든 노드는 노드 이름을 통해 연계 가능합니다.
-                                        중간의 곱셉 노드는 Multiply로 생성 가능합니다.
+                                    <li class="list-item">Create a Get Control Rotation node and calculate the Pitch rotation value from the return value.
+                                        All nodes can be connected through node names.
+                                        The multiplication node in the middle can be created with Multiply.
                                         
-                                        <img src="img/image_098.png" alt="Control Rotation과 Pitch 계산" class="image">
-                                        <p class="image-caption">Control Rotation과 Pitch 계산</p>
+                                        <img src="img/image_098.png" alt="Control Rotation and Pitch Calculation" class="image">
+                                        <p class="image-caption">Control Rotation and Pitch Calculation</p>
                                     </li>
-                                    <li class="list-item">추가된 모든 노드를 Update Transform의 알맞은 인자와 연결합니다.
-                                        Get Physics Linear Velocity 노드는 실행 핀이 연결되어야 합니다.</li>
+                                    <li class="list-item">Connect all added nodes to the appropriate parameters of Update Transform.
+                                        The Get Physics Linear Velocity node must have its execution pin connected.</li>
                                 </ol>
                             </details>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the BP_MirageCharacter Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">UpdateTransform 이벤트 노드를 추가합니다.</li>
-                        <li class="list-item">이벤트 노드에 맞는 각 노드를 추가하고 연결합니다.
-                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 구현" class="image">
-                            <p class="image-caption">BP_MirageCharacter UpdateTransform 구현</p>
+                        <li class="list-item">Add a float type AimPitch variable.</li>
+                        <li class="list-item">Add an UpdateTransform event node.</li>
+                        <li class="list-item">Add and connect each node appropriate for the event node.
+                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform Implementation" class="image">
+                            <p class="image-caption">BP_MirageCharacter UpdateTransform Implementation</p>
                         </li>
-                        <li class="list-item">Position 노드의 연결을 끊고, Make Vector노드를 추가하여 연결합니다.
+                        <li class="list-item">Disconnect the Position node connection and add a Make Vector node to connect.
                             
-                            싱글 테스트 환경에서의 버그동작을 방지하기 위한 조치입니다.
+                            This is a measure to prevent bug behavior in single test environments.
                             
-                            <img src="img/image_100.png" alt="Position Make Vector 연결" class="image">
-                            <p class="image-caption">Position Make Vector 연결</p>
+                            <img src="img/image_100.png" alt="Position Make Vector Connection" class="image">
+                            <p class="image-caption">Position Make Vector Connection</p>
                         </li>
-                        <li class="list-item">Shoot과 관련된 부분으로 이동합니다.</li>
-                        <li class="list-item">아래와 같이 그래프를 구성하고 연결합니다.
-                            <img src="img/image_101.png" alt="Shoot 관련 그래프 구성" class="image">
-                            <p class="image-caption">Shoot 관련 그래프 구성</p>
+                        <li class="list-item">Navigate to the Shoot-related section.</li>
+                        <li class="list-item">Configure and connect the graph as follows.
+                            <img src="img/image_101.png" alt="Shoot Related Graph Configuration" class="image">
+                            <p class="image-caption">Shoot Related Graph Configuration</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 이벤트그래프를 수정합니다.
+                <li class="list-item">Modify the event graph of the ABP_MirageCharacter Blueprint.
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">형변환된 BP_MirageCharacter로부터 값을 불러와 저장합니다.
-                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 변수" class="image">
-                            <p class="image-caption">ABP_MirageCharacter AimPitch 변수</p>
+                        <li class="list-item">Add a float type AimPitch variable.</li>
+                        <li class="list-item">Retrieve and store values from the cast BP_MirageCharacter.
+                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch Variable" class="image">
+                            <p class="image-caption">ABP_MirageCharacter AimPitch Variable</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 AnimGraph를 수정합니다.
+                <li class="list-item">Modify the AnimGraph of the ABP_MirageCharacter Blueprint.
                     <ol class="ordered-list">
-                        <li class="list-item">Mouse Sway 관련 부분으로 이동합니다.
-                            <img src="img/image_103.png" alt="Mouse Sway 관련 부분" class="image">
-                            <p class="image-caption">Mouse Sway 관련 부분</p>
+                        <li class="list-item">Navigate to the Mouse Sway related section.
+                            <img src="img/image_103.png" alt="Mouse Sway Related Section" class="image">
+                            <p class="image-caption">Mouse Sway Related Section</p>
                         </li>
-                        <li class="list-item">Trasnform (Modify) Bone 노드를 추가하고 Mouse Sway 코멘트 노드의 앞에 연결합니다.</li>
-                        <li class="list-item">AimPitch 변수값으로 Rotator를 만들고 노드의 Rotation에 적용합니다.
-                            <img src="img/image_104.png" alt="Transform Bone 노드 적용" class="image">
-                            <p class="image-caption">Transform Bone 노드 적용</p>
+                        <li class="list-item">Add a Transform (Modify) Bone node and connect it in front of the Mouse Sway comment node.</li>
+                        <li class="list-item">Create a Rotator with the AimPitch variable value and apply it to the node's Rotation.
+                            <img src="img/image_104.png" alt="Transform Bone Node Application" class="image">
+                            <p class="image-caption">Transform Bone Node Application</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 기능을 테스트합니다.
+                <li class="list-item">Run the level and test the functionality.
                     
-                    미라지 캐릭터가 플레이어 캐릭터와 같은 방향을 조준하며 발사하게 되었습니다.
+                    The mirage character now aims and fires in the same direction as the player character.
 
-                    <img src="img/image_105.png" alt="위치 회전 복제 테스트" class="image">
-                    <p class="image-caption">위치 회전 복제 테스트</p>
+                    <img src="img/image_105.png" alt="Position Rotation Duplication Test" class="image">
+                    <p class="image-caption">Position Rotation Duplication Test</p>
                 </li>
             </ol>
         </section>
 
-        <!-- 섹션 5: 미라지 캐릭터 온라인 연동하기 -->
-        <section id="section-5" class="section">
-            <h2 class="heading-2">5. 미라지 캐릭터 온라인 연동하기</h2>
-            <p class="description">이 섹션에서는 멀티플레이어 게임플레이를 위한 미라지 캐릭터와 ProudNet 네트워킹 통합을 다룹니다.</p>
+        <section id="mirage-online" class="md-section">
+            <h2 class="heading-2">5. Mirage Character Online Integration</h2>
+            <p class="paragraph">This section covers integrating mirage character with ProudNet networking for multiplayer gameplay.</p>
 
-            <h3 class="heading-3">5.1. Visual Studio 프로젝트 작업</h3>
+            <h3 class="heading-3">5.1. Visual Studio Project Work</h3>
 
-            <h4 class="heading-4">5.1.1. game_server 프로젝트 생성</h4>
+            <h4 class="heading-4">5.1.1. game_server Project Creation</h4>
             <ol class="ordered-list">
-                <li class="list-item">VisualStudio에서 빈 프로젝트 game_server를 생성합니다</li>
+                <li class="list-item">Create an empty project game_server in Visual Studio</li>
                 
-                <li class="list-item">game_server프로젝트에 3개의 새 항목 main.cpp, setting.cpp, setting.h을 추가합니다.</li>
+                <li class="list-item">Add 3 new items to the game_server project: main.cpp, setting.cpp, setting.h.</li>
                 
-                <li class="list-item">game_server 프로젝트의 속성을 수정합니다.
+                <li class="list-item">Modify the properties of the game_server project.
                     <ol class="ordered-list">
-                        <li class="list-item">"C/C++ - 언어 - C++ 언어 표준"
-                            드롭다운에서 "ISO C++20 표준 (/std:C++20)" 선택</li>
-                        <li class="list-item">"C/C++ - 일반 - 추가 포함 디렉터리"
-                            드롭다운에서 &lt;편집…&gt; 선택
-                            팝업 창에 아래 경로 추가
+                        <li class="list-item">"C/C++ - Language - C++ Language Standard"
+                            Select "ISO C++20 Standard (/std:C++20)" from the dropdown</li>
+                        <li class="list-item">"C/C++ - General - Additional Include Directories"
+                            Select &lt;Edit…&gt; from the dropdown
+                            Add the following path in the popup window
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\include</pre>
                             </div>
                         </li>
-                        <li class="list-item">"링커 - 일반 - 추가 라이브러리 디렉터리"
-                            드롭다운에서 &lt;편집…&gt; 선택
-                            팝업 창에 아래 경로 추가
+                        <li class="list-item">"Linker - General - Additional Library Directories"
+                            Select &lt;Edit…&gt; from the dropdown
+                            Add the following path in the popup window
                             <div class="code-block">
                                 <pre>C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)</pre>
                             </div>
                         </li>
-                        <li class="list-item">"링커 - 입력 - 추가 종속성"
-                            드롭다운에서 &lt;편집…&gt; 선택
-                            팝업 창에 아래 파일명 추가
+                        <li class="list-item">"Linker - Input - Additional Dependencies"
+                            Select &lt;Edit…&gt; from the dropdown
+                            Add the following filenames in the popup window
                             <div class="code-block">
                                 <pre>ProudNetServer.lib
 ProudNetClient.lib</pre>
                             </div>
                         </li>
-                        <li class="list-item">"빌드 이벤트 - 빌드 후 이벤트 - 명령줄"
-                            드롭다운에서 &lt;편집…&gt; 선택
-                            팝업 창에 아래 명령 추가
+                        <li class="list-item">"Build Events - Post-Build Event - Command Line"
+                            Select &lt;Edit…&gt; from the dropdown
+                            Add the following commands in the popup window
                             <div class="code-block">
                                 <pre>xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libcrypto-3-x64.dll" "$(OutDir)"
 xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Configuration)\libssl-3-x64.dll" "$(OutDir)"</pre>
@@ -2035,9 +2034,9 @@ xcopy /Y "C:\Program Files (x86)\Nettention\ProudNet\lib\$(Platform)\v140\$(Conf
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">각 소스 파일에 코드를 입력합니다.
+                <li class="list-item">Enter code into each source file.
                     <ul class="unordered-list">
-                        <li class="list-item">전체 코드
+                        <li class="list-item">Complete Code
                             <ul class="unordered-list">
                                 <li class="list-item">setting.h
                                     <div class="code-block">
@@ -2134,29 +2133,29 @@ int main()
                 </li>
             </ol>
 
-            <h4 class="heading-4">5.1.2. game_pidl 프로젝트 생성</h4>
+            <h4 class="heading-4">5.1.2. game_pidl Project Creation</h4>
             <ol class="ordered-list">
-                <li class="list-item">PdnUE5ExampleServer에서 새로운 빈 프로젝트 game_pidl을 추가합니다.</li>
+                <li class="list-item">Add a new empty project game_pidl in PdnUE5ExampleServer.</li>
 
-                <li class="list-item">파일 P2P.PIDL을 추가하고, 속성을 수정합니다.
+                <li class="list-item">Add file P2P.PIDL and modify its properties.
                     <ol class="ordered-list">
-                        <li class="list-item">"일반 - 항목 형식"
-                            드롭다운에서 "사용자 지정 빌드 도구" 선택</li>
-                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 명령줄"
-                            텍스트 입력
+                        <li class="list-item">"General - Item Type"
+                            Select "Custom Build Tool" from the dropdown</li>
+                        <li class="list-item">"Custom Build Tool - General - Command Line"
+                            Enter text
                             <div class="code-block">
                                 <pre>C:\"Program Files (x86)"\Nettention\ProudNet\util\PIDL.exe "%(FullPath)" -cpp</pre>
                             </div>
                         </li>
-                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 설명"
-                            텍스트 입력
+                        <li class="list-item">"Custom Build Tool - General - Description"
+                            Enter text
                             <div class="code-block">
                                 <pre>%(Filename).PIDL Compiling...</pre>
                             </div>
                         </li>
-                        <li class="list-item">"사용자 지정 빌드 도구 - 일반 - 출력"
-                            드롭다운에서 &lt;편집…&gt; 선택
-                            팝업 창에 아래 경로 추가
+                        <li class="list-item">"Custom Build Tool - General - Outputs"
+                            Select &lt;Edit…&gt; from the dropdown
+                            Add the following paths in the popup window
                             <div class="code-block">
                                 <pre>%(RootDir)%(Directory)\%(Filename)_common.cpp
 %(RootDir)%(Directory)\%(Filename)_common.h
@@ -2169,9 +2168,9 @@ int main()
                     </ol>
                 </li>
 
-                <li class="list-item">파일에 코드를 입력합니다.
+                <li class="list-item">Enter code into the file.
                     <ul class="unordered-list">
-                        <li class="list-item">전체 코드
+                        <li class="list-item">Complete Code
                             <ul class="unordered-list">
                                 <li class="list-item">P2P.PIDL
                                     <div class="code-block">
@@ -2189,25 +2188,25 @@ global GAME_P2P 3000
                     </ul>
                 </li>
 
-                <li class="list-item">game_pidl 프로젝트를 빌드합니다.</li>
+                <li class="list-item">Build the game_pidl project.</li>
             </ol>
 
-            <h4 class="heading-4">5.1.3. game_server 프로젝트 소스 코드 수정</h4>
+            <h4 class="heading-4">5.1.3. game_server Project Source Code Modification</h4>
             <ol class="ordered-list">
-                <li class="list-item">game_server 프로젝트의 소스 코드를 수정합니다.
+                <li class="list-item">Modify the source code of the game_server project.
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역을 적용하여 P2P 그룹 관리 기능을 추가합니다.</li>
-                        <li class="list-item">데이터 구조체와 직렬화 함수들을 setting.h와 setting.cpp에 추가합니다.</li>
+                        <li class="list-item">Apply modifications to add P2P group management functionality.</li>
+                        <li class="list-item">Add data structures and serialization functions to setting.h and setting.cpp.</li>
                     </ul>
                 </li>
             </ol>
 
-            <h3 class="heading-3">5.2. 언리얼 프로젝트 작업</h3>
+            <h3 class="heading-3">5.2. Unreal Project Work</h3>
             <ol class="ordered-list">
-                <li class="list-item">GissGameNet C++ 클래스 생성
+                <li class="list-item">GissGameNet C++ Class Creation
                     <ol class="ordered-list">
-                        <li class="list-item">GameInstanceSubsystem을 상속받는 C++ 클래스 GissGameNet을 생성합니다.</li>
-                        <li class="list-item">GissGameNet 클래스의 소스 코드를 수정합니다.
+                        <li class="list-item">Create a C++ class GissGameNet that inherits from GameInstanceSubsystem.</li>
+                        <li class="list-item">Modify the source code of the GissGameNet class.
                             <ul class="unordered-list">
                                 <li class="list-item">GissGameNet.h
                                     <div class="code-block">
@@ -2251,108 +2250,107 @@ private:
                     </ol>
                 </li>
 
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">Modify the BP_Character Blueprint graph.
                     <ol class="ordered-list">
-                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 GissGameNet의 Update Character Transform을 호출하는 그래프로 대체합니다.
-                            <img src="img/image_106.png" alt="Update Character Transform 변경" class="image">
-                            <p class="image-caption">Update Character Transform 변경</p>
+                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's Update Transform with a graph that calls GissGameNet's Update Character Transform.
+                            <img src="img/image_106.png" alt="Update Character Transform Change" class="image">
+                            <p class="image-caption">Update Character Transform Change</p>
                         </li>
-                        <li class="list-item">BP_MirageCharacter의 On Fired를 호출하는 그래프를 GissGameNet의 Send Character Fired를 호출하는 그래프로 대체합니다.
-                            <img src="img/image_107.png" alt="Send Character Fired 변경" class="image">
-                            <p class="image-caption">Send Character Fired 변경</p>
+                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's On Fired with a graph that calls GissGameNet's Send Character Fired.
+                            <img src="img/image_107.png" alt="Send Character Fired Change" class="image">
+                            <p class="image-caption">Send Character Fired Change</p>
                         </li>
-                        <li class="list-item">BP_MirageCharacter의 On Reloaded를 호출하는 그래프를 GissGameNet의 Send Character Reloaded를 호출하는 그래프로 대체합니다.
-                            <img src="img/image_108.png" alt="Send Character Reloaded 변경" class="image">
-                            <p class="image-caption">Send Character Reloaded 변경</p>
+                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's On Reloaded with a graph that calls GissGameNet's Send Character Reloaded.
+                            <img src="img/image_108.png" alt="Send Character Reloaded Change" class="image">
+                            <p class="image-caption">Send Character Reloaded Change</p>
                         </li>
                     </ol>
                 </li>
 
-                <li class="list-item">ABP_Character 블루프린트의 이벤트그래프를 수정합니다.
+                <li class="list-item">Modify the event graph of the ABP_Character Blueprint.
                     <ol class="ordered-list">
-                        <li class="list-item">BP_MirageCharacter의 Update Animation Parameter를 호출하는 그래프를 GissGameNet의 Update Character Animation Parameter를 호출하는 그래프로 대체합니다.
-                            <img src="img/image_109.png" alt="Update Character Animation Parameter 변경" class="image">
-                            <p class="image-caption">Update Character Animation Parameter 변경</p>
+                        <li class="list-item">Replace the graph that calls BP_MirageCharacter's Update Animation Parameter with a graph that calls GissGameNet's Update Character Animation Parameter.
+                            <img src="img/image_109.png" alt="Update Character Animation Parameter Change" class="image">
+                            <p class="image-caption">Update Character Animation Parameter Change</p>
                         </li>
                     </ol>
                 </li>
 
-                <li class="list-item">서버 빌드 및 실행 후 레벨 실행 시, 연동 작업 이전과 동일한 결과를 확인할 수 있습니다.</li>
+                <li class="list-item">After building and running the server, when running the level, you can confirm the same results as before the integration work.</li>
             </ol>
         </section>
 
-        <!-- 섹션 6: 마무리 후 프로젝트 빌드 및 테스트 -->
-        <section id="section-6" class="section">
-            <h2 class="heading-2">6. 마무리 후 프로젝트 빌드 및 테스트</h2>
-            <p class="description">이 섹션에서는 프로젝트 마무리, 빌드 및 종합 테스트 절차를 다룹니다.</p>
+        <section id="project-build" class="md-section">
+            <h2 class="heading-2">6. Final Project Build and Testing</h2>
+            <p class="paragraph">This section covers project finalization, build, and comprehensive testing procedures.</p>
 
-            <h3 class="heading-3">6.1. 테스트 코드 수정</h3>
+            <h3 class="heading-3">6.1. Test Code Modification</h3>
             <ol class="ordered-list">
-                <li class="list-item">BaseMirageCharacter 클래스 코드를 수정합니다.
+                <li class="list-item">Modify the BaseMirageCharacter class code.
                     <ul class="unordered-list">
-                        <li class="list-item">캐릭터 ID 관리를 위한 SetId와 GetId 함수를 추가합니다.</li>
+                        <li class="list-item">Add SetId and GetId functions for character ID management.</li>
                     </ul>
                 </li>
-                <li class="list-item">GissGameNet 클래스 코드를 수정합니다.
+                <li class="list-item">Modify the GissGameNet class code.
                     <ul class="unordered-list">
-                        <li class="list-item">멀티플레이어 환경에서 캐릭터별 식별을 위한 ID 기반 관리 시스템을 구현합니다.</li>
-                        <li class="list-item">P2P 멤버 조인 시 자동으로 미라지 캐릭터를 생성하는 기능을 추가합니다.</li>
-                        <li class="list-item">루프백 비활성화로 자신의 동작이 자신에게 다시 전송되지 않도록 수정합니다.</li>
+                        <li class="list-item">Implement an ID-based management system for character identification in multiplayer environments.</li>
+                        <li class="list-item">Add functionality to automatically create mirage characters when P2P members join.</li>
+                        <li class="list-item">Modify to disable loopback so that one's own actions are not sent back to oneself.</li>
                     </ul>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 클래스를 수정합니다.
+                <li class="list-item">Modify the BP_MirageCharacter Blueprint class.
                     <ol class="ordered-list">
-                        <li class="list-item">Update Transform 이벤트의 Position을 Set Actor Location에 다시 직접 연결합니다.
-                            <img src="img/image_110.png" alt="Position 직접 연결" class="image">
-                            <p class="image-caption">Position 직접 연결</p>
+                        <li class="list-item">Reconnect the Position of the Update Transform event directly to Set Actor Location.
+                            <img src="img/image_110.png" alt="Position Direct Connection" class="image">
+                            <p class="image-caption">Position Direct Connection</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 에디터의 아웃라이너 창에서 BP_MirageCharacter 인스턴스를 제거합니다.
-                    <img src="img/image_111.png" alt="MirageCharacter 인스턴스 제거" class="image">
-                    <p class="image-caption">MirageCharacter 인스턴스 제거</p>
+                <li class="list-item">Remove the BP_MirageCharacter instance from the Outliner window in the Level Editor.
+                    <img src="img/image_111.png" alt="MirageCharacter Instance Removal" class="image">
+                    <p class="image-caption">MirageCharacter Instance Removal</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.2. 프로젝트 빌드</h3>
+            <h3 class="heading-3">6.2. Project Build</h3>
             <ol class="ordered-list">
-                <li class="list-item">서버 실행 파일 빌드
+                <li class="list-item">Server Executable Build
                     <ol class="ordered-list">
-                        <li class="list-item">비주얼 스튜디오 상단의 드롭다운을 통해 빌드 구성을 변경합니다.
-                            <img src="img/image_112.png" alt="빌드 구성 변경" class="image">
-                            <p class="image-caption">빌드 구성 변경</p>
+                        <li class="list-item">Change the build configuration through the dropdown at the top of Visual Studio.
+                            <img src="img/image_112.png" alt="Build Configuration Change" class="image">
+                            <p class="image-caption">Build Configuration Change</p>
                         </li>
-                        <li class="list-item">chat_server와 game_server 프로젝트를 각각 빌드합니다.</li>
-                        <li class="list-item">솔루션의 하위 폴더에서 빌드된 실행파일을 확인할 수 있습니다.
-                            <img src="img/image_113.png" alt="빌드된 실행파일" class="image">
-                            <p class="image-caption">빌드된 실행파일</p>
+                        <li class="list-item">Build the chat_server and game_server projects respectively.</li>
+                        <li class="list-item">You can check the built executable files in the solution's subfolders.
+                            <img src="img/image_113.png" alt="Built Executable Files" class="image">
+                            <p class="image-caption">Built Executable Files</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">클라이언트 실행 파일 빌드
+                <li class="list-item">Client Executable Build
                     <ol class="ordered-list">
-                        <li class="list-item">언리얼 에디터의 레벨 실행 옆 버튼을 통해 언리얼 프로젝트를 빌드할 수 있습니다.
-                            <img src="img/image_114.png" alt="언리얼 프로젝트 빌드" class="image">
-                            <p class="image-caption">언리얼 프로젝트 빌드</p>
+                        <li class="list-item">You can build the Unreal project through the button next to level execution in the Unreal Editor.
+                            <img src="img/image_114.png" alt="Unreal Project Build" class="image">
+                            <p class="image-caption">Unreal Project Build</p>
                         </li>
-                        <li class="list-item">지정한 경로를 통해 빌드된 파일을 확인할 수 있습니다.
-                            <img src="img/image_115.png" alt="빌드된 클라이언트 파일" class="image">
-                            <p class="image-caption">빌드된 클라이언트 파일</p>
+                        <li class="list-item">You can check the built files through the specified path.
+                            <img src="img/image_115.png" alt="Built Client Files" class="image">
+                            <p class="image-caption">Built Client Files</p>
                         </li>
                     </ol>
                 </li>
             </ol>
 
-            <h3 class="heading-3">6.3. 테스트</h3>
+            <h3 class="heading-3">6.3. Testing</h3>
             <ol class="ordered-list">
-                <li class="list-item">서버 프로젝트에서 빌드 된 chat_server.exe와 game_server.exe를 실행합니다.</li>
-                <li class="list-item">언리얼 프로젝트에서 빌드 된 Windows 폴더의 PdnUE5ExampleClient.exe를 실행합니다.
+                <li class="list-item">Run the built chat_server.exe and game_server.exe from the server project.</li>
+                <li class="list-item">Run PdnUE5ExampleClient.exe from the Windows folder built in the Unreal project.
                     
-                    PC의 사양에 따라 컴퓨터에 심한 부하가 걸릴 수 있으므로 주의해야합니다.
+                    Be careful as this may put a heavy load on the computer depending on your PC specifications.
                 </li>
-                <li class="list-item">채팅 서버와 게임 서버를 이용하는 두 클라이언트의 모습을 확인할 수 있습니다.
-                    <img src="img/image_116.png" alt="최종 테스트 결과" class="image">
-                    <p class="image-caption">최종 테스트 결과</p>
+                <li class="list-item">You can see two clients using the chat server and game server.
+                    <img src="img/image_116.png" alt="Final Test Results" class="image">
+                    <p class="image-caption">Final Test Results</p>
                 </li>
             </ol>
         </section>

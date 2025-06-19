@@ -1412,12 +1412,12 @@ private:
 
             <h4 class="heading-4">4.2.1. アニメーション変数の複製</h4>
             <ol class="ordered-list">
-                <li class="list-item">Implement the BaseMirageCharacter C++ class.
+                <li class="list-item">BaseMirageCharacter C++クラスを実装します。
                     <ol class="ordered-list">
-                        <li class="list-item">Create a BaseMirageCharacter class that inherits from Character</li>
-                        <li class="list-item">Modify the source code of the created class.
+                        <li class="list-item">Characterを継承するBaseMirageCharacterクラスを作成します</li>
+                        <li class="list-item">作成されたクラスのソースコードを修正します。
                             <ul class="unordered-list">
-                                <li class="list-item">Modifications
+                                <li class="list-item">修正内容
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1457,7 +1457,7 @@ public:
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="list-item">Complete Code
+                                <li class="list-item">完全なコード
                                     <ul class="unordered-list">
                                         <li class="list-item">BaseMirageCharacter.h
                                             <div class="code-block">
@@ -1501,169 +1501,169 @@ public:
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">Set BaseMirageCharacter as the parent class for BP_MirageCharacter</li>
-                <li class="list-item">Implement animation variable duplication using event functions.
+                <li class="list-item">BP_MirageCharacterの親クラスとしてBaseMirageCharacterを指定します</li>
+                <li class="list-item">イベント関数を使用したアニメーション変数の複製を実装します。
                     <ol class="ordered-list">
-                        <li class="list-item">Modify the ABP_Character blueprint.
+                        <li class="list-item">ABP_Characterブループリントを修正します。
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_Character blueprint editor and go to the event graph tab.</li>
-                                <li class="list-item">Navigate to the end part of the BlueprintUpdateAnimation event execution flow.
-                                    <img src="img/image_060.png" alt="BlueprintUpdateAnimation 이벤트" class="image">
-                                    <p class="image-caption">BlueprintUpdateAnimation Event</p>
+                                <li class="list-item">ABP_Characterブループリントエディタを開き、イベントグラフタブに移動します。</li>
+                                <li class="list-item">BlueprintUpdateAnimationイベント実行フローの終端部分に移動します。
+                                                                <img src="img/image_060.png" alt="BlueprintUpdateAnimationイベント" class="image">
+                            <p class="image-caption">BlueprintUpdateAnimationイベント</p>
                                 </li>
-                                <li class="list-item">Create and connect the Get Actor Of Class node, specifying BP_MirageCharacter for the Class.</li>
-                                <li class="list-item">Create and connect the Update Animation Parameter node and connect all variables. All variables can be obtained from the blueprint's variable list.
-                                    <img src="img/image_061.png" alt="Update Animation Parameter 노드" class="image">
-                                    <p class="image-caption">Update Animation Parameter Node</p>
+                                <li class="list-item">Get Actor Of Classノードを作成・接続し、ClassにBP_MirageCharacterを指定します。</li>
+                                <li class="list-item">Update Animation Parameterノードを作成・接続し、すべての変数を接続します。すべての変数はブループリントの変数リストから取得できます。
+                                    <img src="img/image_061.png" alt="Update Animation Parameterノード" class="image">
+                                    <p class="image-caption">Update Animation Parameterノード</p>
                                     
-                                    <img src="img/image_062.png" alt="변수 연결 완료" class="image">
-                                    <p class="image-caption">Variable Connection Complete</p>
+                                    <img src="img/image_062.png" alt="変数接続完了" class="image">
+                                    <p class="image-caption">変数接続完了</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the BP_MirageCharacter blueprint.
+                        <li class="list-item">BP_MirageCharacterブループリントを修正します。
                             <ol class="ordered-list">
-                                <li class="list-item">Open the BP_MirageCharacter blueprint editor and go to the event graph tab.</li>
-                                <li class="list-item">Add 4 variables.
-                                    <img src="img/image_063.png" alt="변수 추가" class="image">
-                                    <p class="image-caption">Adding Variables</p>
+                                <li class="list-item">BP_MirageCharacterブループリントエディタを開き、イベントグラフタブに移動します。</li>
+                                <li class="list-item">4つの変数を追加します。
+                                    <img src="img/image_063.png" alt="変数追加" class="image">
+                                    <p class="image-caption">変数追加</p>
                                 </li>
-                                <li class="list-item">Add the Event UpdateAnimationParameter node.</li>
-                                <li class="list-item">Store the event parameters in blueprint variables.
-                                    <img src="img/image_064.png" alt="파라미터 저장" class="image">
-                                    <p class="image-caption">Parameter Storage</p>
+                                <li class="list-item">Event UpdateAnimationParameterノードを追加します。</li>
+                                <li class="list-item">イベントのパラメータをブループリント変数に保存します。
+                                    <img src="img/image_064.png" alt="パラメータ保存" class="image">
+                                    <p class="image-caption">パラメータ保存</p>
                                 </li>
-                                <li class="list-item">Disconnect the Event Tick node connection.
-                                    <img src="img/image_065.png" alt="Event Tick 연결 해제" class="image">
-                                    <p class="image-caption">Event Tick Connection Disconnection</p>
+                                <li class="list-item">Event Tickノードの接続を切断します。
+                                    <img src="img/image_065.png" alt="Event Tick接続切断" class="image">
+                                    <p class="image-caption">Event Tick接続切断</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">Modify the ABP_MirageCharacter blueprint.
+                        <li class="list-item">ABP_MirageCharacterブループリントを修正します。
                             <ol class="ordered-list">
-                                <li class="list-item">Open the ABP_MirageCharacter blueprint editor and go to the event graph tab.</li>
-                                <li class="list-item">Try Get Pawn Owner 노드를 추가합니다.</li>
-                                <li class="list-item">Cast To BP_MirageCharacter 노드를 추가하고 연결합니다.</li>
-                                <li class="list-item">형변환된 캐릭터로부터 변수를 가져와 애니메이션 블루프린트 변수에 저장합니다.
-                                    <img src="img/image_066.png" alt="애니메이션 변수 연결" class="image">
-                                    <p class="image-caption">애니메이션 변수 연결</p>
+                                <li class="list-item">ABP_MirageCharacterブループリントエディタを開き、イベントグラフタブに移動します。</li>
+                                <li class="list-item">Try Get Pawn Ownerノードを追加します。</li>
+                                <li class="list-item">Cast To BP_MirageCharacterノードを追加して接続します。</li>
+                                <li class="list-item">キャストされたキャラクターから変数を取得し、アニメーションブループリント変数に保存します。
+                                    <img src="img/image_066.png" alt="アニメーション変数接続" class="image">
+                                    <p class="image-caption">アニメーション変数接続</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 애니메이션 복제 동작 확인
-                    <p class="paragraph">달리기, 점프, 조준 등의 동작 시 모션을 따라하는 미라지 캐릭터의 모습을 관찰 가능합니다.</p>
-                    <img src="img/image_067.png" alt="애니메이션 복제 확인" class="image">
-                    <p class="image-caption">애니메이션 복제 확인</p>
+                <li class="list-item">レベル実行とアニメーション複製動作の確認
+                    <p class="paragraph">走行、ジャンプ、照準などの動作時にミラージュキャラクターがモーションを真似る様子を観察できます。</p>
+                    <img src="img/image_067.png" alt="アニメーション複製確認" class="image">
+                    <p class="image-caption">アニメーション複製確認</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.2. 보정 애니메이션 적용</h4>
+            <h4 class="heading-4">4.2.2. 補正アニメーションの適用</h4>
             <ol class="ordered-list">
-                <li class="list-item">보정 애니메이션 준비
+                <li class="list-item">補正アニメーションの準備
                     <ol class="ordered-list">
-                        <li class="list-item">애니메이션 파일을 다운로드 받습니다.
-                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (파일 다운로드 필요)</p>
+                        <li class="list-item">アニメーションファイルをダウンロードします。
+                            <p class="paragraph"><strong><a href="https://github.com/Nettention/proudnet_sample_tank_server/releases/download/unreal_sample_extra_asset/Invert.fbx">Invert.fbx</a></strong> (ファイルダウンロード必要)</p>
                         </li>
-                        <li class="list-item">다운로드 받은 파일을 언리얼 에디터의 콘텐츠 브라우저로 드래그 합니다.</li>
-                        <li class="list-item">Animations 탭의 스켈레톤 항목에 SKEL_UE5_Mannequin을 지정합니다.
-                            <img src="img/image_068.png" alt="스켈레톤 지정" class="image">
-                            <p class="image-caption">스켈레톤 지정</p>
+                        <li class="list-item">ダウンロードしたファイルをUnrealエディタのコンテンツブラウザにドラッグします。</li>
+                        <li class="list-item">AnimationsタブのSkeletonアイテムにSKEL_UE5_Mannequinを指定します。
+                            <img src="img/image_068.png" alt="スケルトン指定" class="image">
+                            <p class="image-caption">スケルトン指定</p>
                         </li>
-                        <li class="list-item">임포트 버튼을 클릭합니다.</li>
-                        <li class="list-item">생성된 두 개의 애니메이션 중 하나를 삭제합니다. (선택 사항)
-                            <img src="img/image_069.png" alt="애니메이션 삭제" class="image">
-                            <p class="image-caption">애니메이션 삭제</p>
+                        <li class="list-item">インポートボタンをクリックします。</li>
+                        <li class="list-item">生成された2つのアニメーションのうち1つを削除します。（オプション）
+                            <img src="img/image_069.png" alt="アニメーション削除" class="image">
+                            <p class="image-caption">アニメーション削除</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">보정 애니메이션을 수정합니다.
+                <li class="list-item">補正アニメーションを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">Inver_Anim_Scene 애니메이션 시퀀스의 블루프린트 에디터를 엽니다.</li>
-                        <li class="list-item">에셋 디테일 창의 애디티브 세팅을 수정합니다.
+                        <li class="list-item">Inver_Anim_Sceneアニメーションシーケンスのブループリントエディタを開きます。</li>
+                        <li class="list-item">アセット詳細ウィンドウのアディティブ設定を修正します。
                             <ol class="ordered-list">
-                                <li class="list-item">애디티브 애님 타입 - Mesh Space 선택</li>
-                                <li class="list-item">베이스 포즈 타입 - Selected animation frame 선택</li>
-                                <li class="list-item">베이스 포즈 애니메이션 - A_FP_AssaultRifle_Idle_Loop 선택
-                                    <img src="img/image_070.png" alt="애디티브 세팅" class="image">
-                                    <p class="image-caption">애디티브 세팅</p>
+                                <li class="list-item">アディティブアニメーションタイプ - Mesh Space選択</li>
+                                <li class="list-item">ベースポーズタイプ - Selected animation frame選択</li>
+                                <li class="list-item">ベースポーズアニメーション - A_FP_AssaultRifle_Idle_Loop選択
+                                    <img src="img/image_070.png" alt="アディティブ設定" class="image">
+                                    <p class="image-caption">アディティブ設定</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">ABP_MirageCharacterブループリントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">Apply Additive 노드와 Invert_Anim_Scene 애니메이션 노드를 추가합니다.</li>
-                        <li class="list-item">A_FP_AssaultRifle_Idle_Loop 애니메이션 노드와 연결합니다.
-                            <img src="img/image_071.png" alt="Apply Additive 노드 연결" class="image">
-                            <p class="image-caption">Apply Additive 노드 연결</p>
+                        <li class="list-item">Apply AdditiveノードとInvert_Anim_Sceneアニメーションノードを追加します。</li>
+                        <li class="list-item">A_FP_AssaultRifle_Idle_Loopアニメーションノードと接続します。
+                            <img src="img/image_071.png" alt="Apply Additiveノード接続" class="image">
+                            <p class="image-caption">Apply Additiveノード接続</p>
                         </li>
-                        <li class="list-item">나머지 4개의 애니메이션 노드에 대해 같은 작업을 진행합니다. 모두 동일하게 Inver_Anim_Scene, Apply Additive를 사용합니다.
-                            <img src="img/image_072.png" alt="모든 애니메이션 노드 수정" class="image">
-                            <p class="image-caption">모든 애니메이션 노드 수정</p>
+                        <li class="list-item">残り4つのアニメーションノードに対して同じ作業を進行します。すべて同様にInver_Anim_Scene、Apply Additiveを使用します。
+                            <img src="img/image_072.png" alt="すべてのアニメーションノード修正" class="image">
+                            <p class="image-caption">すべてのアニメーションノード修正</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 애니메이션 보정 결과 확인
-                    <p class="paragraph">팔 골격의 위치가 정상 범위 내로 보정 된 것을 확인할 수 있습니다.</p>
-                    <img src="img/image_073.png" alt="애니메이션 보정 결과" class="image">
-                    <p class="image-caption">애니메이션 보정 결과</p>
+                <li class="list-item">レベル実行とアニメーション補正結果の確認
+                    <p class="paragraph">腕骨格の位置が正常範囲内に補正されたことを確認できます。</p>
+                    <img src="img/image_073.png" alt="アニメーション補正結果" class="image">
+                    <p class="image-caption">アニメーション補正結果</p>
                 </li>
             </ol>
 
-            <h4 class="heading-4">4.2.3. 이동 시 다리 애니메이션 적용</h4>
+            <h4 class="heading-4">4.2.3. 移動時の脚アニメーション適用</h4>
             <ol class="ordered-list">
-                <li class="list-item">ABP_MirageCharacter - AnimGraph 블루프린트 그래프의 A_FP_AssaultRifle_Run_Loop와 연결된 부분을 아래의 절차에 따라 수정합니다.
+                <li class="list-item">ABP_MirageCharacter - AnimGraphブループリントグラフのA_FP_AssaultRifle_Run_Loopと接続された部分を以下の手順に従って修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">Layered blend per bone 노드를 추가합니다.</li>
-                        <li class="list-item">추가한 노드의 디테일을 수정합니다.
+                        <li class="list-item">Layered blend per boneノードを追加します。</li>
+                        <li class="list-item">追加したノードの詳細を修正します。
                             <ol class="ordered-list">
-                                <li class="list-item">설정 - 레이어 설정 - 인덱스[0]에 두 개의 분기 필터를 추가합니다.</li>
-                                <li class="list-item">각각 본 이름을 thigh_l, thigh_r로 지정합니다.
-                                    <img src="img/image_074.png" alt="Layered blend per bone 설정" class="image">
-                                    <p class="image-caption">Layered blend per bone 설정</p>
+                                <li class="list-item">設定 - レイヤー設定 - インデックス[0]に2つの分岐フィルターを追加します。</li>
+                                <li class="list-item">それぞれのボーン名をthigh_l、thigh_rに指定します。
+                                    <img src="img/image_074.png" alt="Layered blend per bone設定" class="image">
+                                    <p class="image-caption">Layered blend per bone設定</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">기존 Apply Additive 노드를 위 노드의 Base Pose에 연결합니다.</li>
-                        <li class="list-item">MM_Run_Fwd 애니메이션 노드를 추가하고 위 노드의 Blend Poses 0에 연결합니다.</li>
-                        <li class="list-item">MM_Run_Fwd 노드의 디테일 창에서 애니메이션 루프를 활성화 합니다.
-                            <img src="img/image_075.png" alt="애니메이션 루프 활성화" class="image">
-                            <p class="image-caption">애니메이션 루프 활성화</p>
+                        <li class="list-item">既存のApply Additiveノードを上記ノードのBase Poseに接続します。</li>
+                        <li class="list-item">MM_Run_Fwdアニメーションノードを追加し、上記ノードのBlend Poses 0に接続します。</li>
+                        <li class="list-item">MM_Run_Fwdノードの詳細ウィンドウでアニメーションループを有効化します。
+                            <img src="img/image_075.png" alt="アニメーションループ有効化" class="image">
+                            <p class="image-caption">アニメーションループ有効化</p>
                         </li>
-                        <li class="list-item">최종 모습은 다음과 같습니다. 코멘트 노드의 크기 조절은 선택 사항입니다.
-                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop 최종 모습" class="image">
-                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop 최종 모습</p>
+                        <li class="list-item">最終的な様子は以下の通りです。コメントノードのサイズ調整は任意です。
+                            <img src="img/image_076.png" alt="A_FP_AssaultRifle_Run_Loop最終様子" class="image">
+                            <p class="image-caption">A_FP_AssaultRifle_Run_Loop最終様子</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">위 과정을 나머지 4개의 애니메이션 노드에도 유사하게 적용합니다.
+                <li class="list-item">上記のプロセスを残りの4つのアニメーションノードにも同様に適用します。
                     <ol class="ordered-list">
-                        <li class="list-item">Layered blend per bone 노드의 설정은 동일하므로 복사하여 사용할 수 있습니다.</li>
-                        <li class="list-item">MM_Run_Fwd 노드 대신 경우에 MM_Walk_Fwd 또는 MM_Idle을 사용해야 합니다.</li>
-                        <li class="list-item">모든 과정을 마친 후 그래프는 다음과 같습니다.
-                            <img src="img/image_077.png" alt="전체 그래프 1" class="image">
-                            <p class="image-caption">전체 그래프 1</p>
+                        <li class="list-item">Layered blend per boneノードの設定は同一なので、コピーして使用できます。</li>
+                        <li class="list-item">MM_Run_Fwdノードの代わりに、場合によってMM_Walk_FwdまたはMM_Idleを使用する必要があります。</li>
+                        <li class="list-item">すべてのプロセスを完了した後のグラフは以下の通りです。
+                            <img src="img/image_077.png" alt="全体グラフ1" class="image">
+                            <p class="image-caption">全体グラフ1</p>
                             
-                            <img src="img/image_078.png" alt="전체 그래프 2" class="image">
-                            <p class="image-caption">전체 그래프 2</p>
+                            <img src="img/image_078.png" alt="全体グラフ2" class="image">
+                            <p class="image-caption">全体グラフ2</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨 실행 및 다리 애니메이션 적용 확인
-                    <p class="paragraph">걷기와 달리기 애니메이션이 재생됨을 확인할 수 있습니다.</p>
-                    <img src="img/image_079.png" alt="다리 애니메이션 확인" class="image">
-                    <p class="image-caption">다리 애니메이션 확인</p>
+                <li class="list-item">レベル実行と脚アニメーション適用の確認
+                    <p class="paragraph">歩きと走りのアニメーションが再生されることを確認できます。</p>
+                    <img src="img/image_079.png" alt="脚アニメーション確認" class="image">
+                    <p class="image-caption">脚アニメーション確認</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">4.3. 액션 애니메이션 및 동작 복제</h3>
+            <h3 class="heading-3">4.3. アクションアニメーションと動作複製</h3>
             <ol class="ordered-list">
-                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                <li class="list-item">BaseMirageCharacterクラスのソースコードを修正します。
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">修正内容
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1711,66 +1711,66 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">BP_Characterブループリントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">재장전 시 미라지 캐릭터의 재장전 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">リロード時にミラージュキャラクターのリロードイベントを呼び出すグラフを作成します。
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.
-                                    <img src="img/image_080.png" alt="Reload 관련 구역" class="image">
-                                    <p class="image-caption">Reload 관련 구역</p>
+                                <li class="list-item">グラフ上部でReloadと関連した区域に移動します。
+                                    <img src="img/image_080.png" alt="Reload関連区域" class="image">
+                                    <p class="image-caption">Reload関連区域</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Reloaded 함수 노드로 연계합니다.
-                                    <img src="img/image_081.png" alt="On Reloaded 노드 추가" class="image">
-                                    <p class="image-caption">On Reloaded 노드 추가</p>
+                                <li class="list-item">Get Actor Of Classノードを生成し、クラスにBP_MirageCharacterを指定します。</li>
+                                <li class="list-item">On Reloaded関数ノードで連携します。
+                                    <img src="img/image_081.png" alt="On Reloadedノード追加" class="image">
+                                    <p class="image-caption">On Reloadedノード追加</p>
                                 </li>
-                                <li class="list-item">Reload와 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_082.png" alt="Reload 이벤트 연결" class="image">
-                                    <p class="image-caption">Reload 이벤트 연결</p>
+                                <li class="list-item">ReloadとDelay関数の間で接続します。
+                                    <img src="img/image_082.png" alt="Reloadイベント接続" class="image">
+                                    <p class="image-caption">Reloadイベント接続</p>
                                 </li>
                             </ol>
                         </li>
-                        <li class="list-item">발사 시 미라지 캐릭터의 발사 이벤트를 호출하는 그래프를 작성합니다.
+                        <li class="list-item">射撃時にミラージュキャラクターの射撃イベントを呼び出すグラフを作成します。
                             <ol class="ordered-list">
-                                <li class="list-item">그래프 우측에서 Shoot과 관련된 구역의 종단부로 이동합니다.
-                                    <img src="img/image_083.png" alt="Shoot 관련 구역" class="image">
-                                    <p class="image-caption">Shoot 관련 구역</p>
+                                <li class="list-item">グラフ右側でShootと関連した区域の終端部に移動します。
+                                    <img src="img/image_083.png" alt="Shoot関連区域" class="image">
+                                    <p class="image-caption">Shoot関連区域</p>
                                 </li>
-                                <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                <li class="list-item">On Fired 함수 노드로 연계합니다.</li>
-                                <li class="list-item">(Current Ammunition) Set 과 Delay 함수 사이로 연결합니다.
-                                    <img src="img/image_084.png" alt="Shoot 이벤트 연결" class="image">
-                                    <p class="image-caption">Shoot 이벤트 연결</p>
+                                <li class="list-item">Get Actor Of Classノードを生成し、クラスにBP_MirageCharacterを指定します。</li>
+                                <li class="list-item">On Fired関数ノードで連携します。</li>
+                                <li class="list-item">(Current Ammunition) SetとDelay関数の間で接続します。
+                                    <img src="img/image_084.png" alt="Shootイベント接続" class="image">
+                                    <p class="image-caption">Shootイベント接続</p>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">BP_MirageCharacterブループリントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">그래프 상단에서 Reload와 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Play Montage 노드의 앞에 On Reloaded 이벤트 노드를 연결합니다
-                            <img src="img/image_085.png" alt="On Reloaded 이벤트 연결" class="image">
-                            <p class="image-caption">On Reloaded 이벤트 연결</p>
+                        <li class="list-item">グラフ上部でReloadと関連した区域に移動します。</li>
+                        <li class="list-item">Play Montageノードの前にOn Reloadedイベントノードを接続します。
+                            <img src="img/image_085.png" alt="On Reloadedイベント接続" class="image">
+                            <p class="image-caption">On Reloadedイベント接続</p>
                         </li>
-                        <li class="list-item">그래프 우측에서 Shoot과 관련된 구역으로 이동합니다.</li>
-                        <li class="list-item">Shoot 노드의 앞에 On Fired 이벤트 노드를 연결합니다
-                            <img src="img/image_086.png" alt="On Fired 이벤트 연결" class="image">
-                            <p class="image-caption">On Fired 이벤트 연결</p>
+                        <li class="list-item">グラフ右側でShootと関連した区域に移動します。</li>
+                        <li class="list-item">Shootノードの前にOn Firedイベントノードを接続します。
+                            <img src="img/image_086.png" alt="On Firedイベント接続" class="image">
+                            <p class="image-caption">On Firedイベント接続</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 미라지 캐릭터가 장전과 발사를 따라하는 모습을 볼 수 있습니다.
-                    <img src="img/image_087.png" alt="액션 애니메이션 테스트" class="image">
-                    <p class="image-caption">액션 애니메이션 테스트</p>
+                <li class="list-item">レベルを実行し、ミラージュキャラクターがリロードと射撃を模倣する様子を確認できます。
+                    <img src="img/image_087.png" alt="アクションアニメーションテスト" class="image">
+                    <p class="image-caption">アクションアニメーションテスト</p>
                 </li>
             </ol>
 
-            <h3 class="heading-3">4.4. 위치, 회전 등 기타 복제</h3>
+            <h3 class="heading-3">4.4. 位置、回転などその他の複製</h3>
             <ol class="ordered-list">
-                <li class="list-item">BaseMirageCharacter 클래스의 소스 코드를 수정합니다.
+                <li class="list-item">BaseMirageCharacterクラスのソースコードを修正します。
                     <ul class="unordered-list">
-                        <li class="list-item">수정 내역
+                        <li class="list-item">修正内容
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1819,7 +1819,7 @@ public:
                                 </li>
                             </ul>
                         </li>
-                        <li class="list-item">전체 코드
+                        <li class="list-item">完全なコード
                             <ul class="unordered-list">
                                 <li class="list-item">BaseMirageCharacter.h
                                     <div class="code-block">
@@ -1870,118 +1870,118 @@ public:
                         </li>
                     </ul>
                 </li>
-                <li class="list-item">BP_Character 블루프린트 그래프를 수정합니다.
+                <li class="list-item">BP_Characterブループリントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 타입의 AimPitch 변수를 추가합니다.
-                            <img src="img/image_088.png" alt="AimPitch 변수 추가" class="image">
-                            <p class="image-caption">AimPitch 변수 추가</p>
+                        <li class="list-item">Float型のAimPitch変数を追加します。
+                            <img src="img/image_088.png" alt="AimPitch変数追加" class="image">
+                            <p class="image-caption">AimPitch変数追加</p>
                         </li>
-                        <li class="list-item">Tick 이벤트의 코드가 끝나는 부분으로 이동합니다.</li>
-                        <li class="list-item">두 개의 라우트 노드를 생성하고 Branch 노드의 False, Stop Running 두 노드를 연결합니다.
-                            <img src="img/image_089.png" alt="라우트 노드 1" class="image">
-                            <p class="image-caption">라우트 노드 1</p>
+                        <li class="list-item">Tickイベントのコードが終わる部分に移動します。</li>
+                        <li class="list-item">2つのRerouteノードを生成し、BranchノードのFalse、Stop Runningの2つのノードを接続します。
+                            <img src="img/image_089.png" alt="Rerouteノード1" class="image">
+                            <p class="image-caption">Rerouteノード1</p>
                             
-                            <img src="img/image_090.png" alt="라우트 노드 2" class="image">
-                            <p class="image-caption">라우트 노드 2</p>
+                            <img src="img/image_090.png" alt="Rerouteノード2" class="image">
+                            <p class="image-caption">Rerouteノード2</p>
                         </li>
-                        <li class="list-item">라우트 노드를 이동합니다.
-                            <img src="img/image_091.png" alt="라우트 노드 이동" class="image">
-                            <p class="image-caption">라우트 노드 이동</p>
+                        <li class="list-item">Rerouteノードを移動します。
+                            <img src="img/image_091.png" alt="Rerouteノード移動" class="image">
+                            <p class="image-caption">Rerouteノード移動</p>
                         </li>
-                        <li class="list-item">BP_MirageCharacter의 Update Transform을 호출하는 그래프를 작성합니다
+                        <li class="list-item">BP_MirageCharacterのUpdate Transformを呼び出すグラフを作成します。
                             
-                            그래프 작성이 끝난 모습은 다음과 같으며, 아래에서 과정을 확인할 수 있습니다.
+                            グラフ作成が完了した様子は以下の通りで、下記でプロセスを確認できます。
                             
-                            <img src="img/image_092.png" alt="Update Transform 그래프 완성" class="image">
-                            <p class="image-caption">Update Transform 그래프 완성</p>
+                            <img src="img/image_092.png" alt="Update Transformグラフ完成" class="image">
+                            <p class="image-caption">Update Transformグラフ完成</p>
                             
                             <details class="expandable-section">
-                                <summary>과정 보기</summary>
+                                <summary>プロセス表示</summary>
                                 <ol class="ordered-list">
-                                    <li class="list-item">Get Actor Of Class 노드를 생성하고 클래스에 BP_MirageCharacter를 지정합니다.</li>
-                                    <li class="list-item">Update Transform 함수 노드로 연계합니다.
-                                        <img src="img/image_093.png" alt="Update Transform 노드 추가" class="image">
-                                        <p class="image-caption">Update Transform 노드 추가</p>
+                                    <li class="list-item">Get Actor Of Classノードを生成し、クラスにBP_MirageCharacterを指定します。</li>
+                                    <li class="list-item">Update Transform関数ノードで連携します。
+                                        <img src="img/image_093.png" alt="Update Transformノード追加" class="image">
+                                        <p class="image-caption">Update Transformノード追加</p>
                                     </li>
-                                    <li class="list-item">Get Actor Location, Get Actor Rotation으로 이동/회전 값을 얻는 노드를 생성합니다.
-                                        <img src="img/image_094.png" alt="위치/회전 노드 추가" class="image">
-                                        <p class="image-caption">위치/회전 노드 추가</p>
+                                    <li class="list-item">Get Actor Location、Get Actor Rotationで移動/回転値を取得するノードを生成します。
+                                        <img src="img/image_094.png" alt="位置/回転ノード追加" class="image">
+                                        <p class="image-caption">位置/回転ノード追加</p>
                                     </li>
-                                    <li class="list-item">Get Actor Rotation은 To Quaternion 노드로 연계합니다.
-                                        <img src="img/image_095.png" alt="To Quaternion 연결" class="image">
-                                        <p class="image-caption">To Quaternion 연결</p>
+                                    <li class="list-item">Get Actor RotationはTo Quaternionノードで連携します。
+                                        <img src="img/image_095.png" alt="To Quaternion接続" class="image">
+                                        <p class="image-caption">To Quaternion接続</p>
                                     </li>
-                                    <li class="list-item">Get Character Arms 노드를 생성하고, 속도와 각속도를 얻는 노드로 연계합니다.
-                                        <img src="img/image_096.png" alt="Character Arms 노드" class="image">
-                                        <p class="image-caption">Character Arms 노드</p>
+                                    <li class="list-item">Get Character Armsノードを生成し、速度と角速度を取得するノードで連携します。
+                                        <img src="img/image_096.png" alt="Character Armsノード" class="image">
+                                        <p class="image-caption">Character Armsノード</p>
                                         
-                                        <img src="img/image_097.png" alt="속도/각속도 노드" class="image">
-                                        <p class="image-caption">속도/각속도 노드</p>
+                                        <img src="img/image_097.png" alt="速度/角速度ノード" class="image">
+                                        <p class="image-caption">速度/角速度ノード</p>
                                     </li>
-                                    <li class="list-item">Get Control Rotation 노드를 생성하고, 반환값으로 부터 Pitch 회전 값을 연산합니다.
-                                        모든 노드는 노드 이름을 통해 연계 가능합니다.
-                                        중간의 곱셉 노드는 Multiply로 생성 가능합니다.
+                                    <li class="list-item">Get Control Rotationノードを生成し、戻り値からPitch回転値を演算します。
+                                        すべてのノードはノード名を通じて連携可能です。
+                                        中間の乗算ノードはMultiplyで生成可能です。
                                         
-                                        <img src="img/image_098.png" alt="Control Rotation과 Pitch 계산" class="image">
-                                        <p class="image-caption">Control Rotation과 Pitch 계산</p>
+                                        <img src="img/image_098.png" alt="Control RotationとPitch計算" class="image">
+                                        <p class="image-caption">Control RotationとPitch計算</p>
                                     </li>
-                                    <li class="list-item">추가된 모든 노드를 Update Transform의 알맞은 인자와 연결합니다.
-                                        Get Physics Linear Velocity 노드는 실행 핀이 연결되어야 합니다.</li>
+                                    <li class="list-item">追加されたすべてのノードをUpdate Transformの適切な引数と接続します。
+                                        Get Physics Linear Velocityノードは実行ピンが接続される必要があります。</li>
                                 </ol>
                             </details>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">BP_MirageCharacter 블루프린트 그래프를 수정합니다.
+                <li class="list-item">BP_MirageCharacterブループリントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">UpdateTransform 이벤트 노드를 추가합니다.</li>
-                        <li class="list-item">이벤트 노드에 맞는 각 노드를 추가하고 연결합니다.
-                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform 구현" class="image">
-                            <p class="image-caption">BP_MirageCharacter UpdateTransform 구현</p>
+                        <li class="list-item">Float形式のAimPitch変数を追加します。</li>
+                        <li class="list-item">UpdateTransformイベントノードを追加します。</li>
+                        <li class="list-item">イベントノードに合わせて各ノードを追加し接続します。
+                            <img src="img/image_099.png" alt="BP_MirageCharacter UpdateTransform実装" class="image">
+                            <p class="image-caption">BP_MirageCharacter UpdateTransform実装</p>
                         </li>
-                        <li class="list-item">Position 노드의 연결을 끊고, Make Vector노드를 추가하여 연결합니다.
+                        <li class="list-item">Positionノードの接続を切断し、Make Vectorノードを追加して接続します。
                             
-                            싱글 테스트 환경에서의 버그동작을 방지하기 위한 조치입니다.
+                            シングルテスト環境でのバグ動作を防止するための措置です。
                             
-                            <img src="img/image_100.png" alt="Position Make Vector 연결" class="image">
-                            <p class="image-caption">Position Make Vector 연결</p>
+                            <img src="img/image_100.png" alt="Position Make Vector接続" class="image">
+                            <p class="image-caption">Position Make Vector接続</p>
                         </li>
-                        <li class="list-item">Shoot과 관련된 부분으로 이동합니다.</li>
-                        <li class="list-item">아래와 같이 그래프를 구성하고 연결합니다.
-                            <img src="img/image_101.png" alt="Shoot 관련 그래프 구성" class="image">
-                            <p class="image-caption">Shoot 관련 그래프 구성</p>
+                        <li class="list-item">Shootと関連する部分に移動します。</li>
+                        <li class="list-item">以下のようにグラフを構成し接続します。
+                            <img src="img/image_101.png" alt="Shoot関連グラフ構成" class="image">
+                            <p class="image-caption">Shoot関連グラフ構成</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 이벤트그래프를 수정합니다.
+                <li class="list-item">ABP_MirageCharacterブループリントのイベントグラフを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">플로트 형식의 AimPitch 변수를 추가합니다.</li>
-                        <li class="list-item">형변환된 BP_MirageCharacter로부터 값을 불러와 저장합니다.
-                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch 변수" class="image">
-                            <p class="image-caption">ABP_MirageCharacter AimPitch 변수</p>
+                        <li class="list-item">Float形式のAimPitch変数を追加します。</li>
+                        <li class="list-item">型変換されたBP_MirageCharacterから値を取得し保存します。
+                            <img src="img/image_102.png" alt="ABP_MirageCharacter AimPitch変数" class="image">
+                            <p class="image-caption">ABP_MirageCharacter AimPitch変数</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">ABP_MirageCharacter 블루프린트의 AnimGraph를 수정합니다.
+                <li class="list-item">ABP_MirageCharacterブループリントのAnimGraphを修正します。
                     <ol class="ordered-list">
-                        <li class="list-item">Mouse Sway 관련 부분으로 이동합니다.
-                            <img src="img/image_103.png" alt="Mouse Sway 관련 부분" class="image">
-                            <p class="image-caption">Mouse Sway 관련 부분</p>
+                        <li class="list-item">Mouse Sway関連部分に移動します。
+                            <img src="img/image_103.png" alt="Mouse Sway関連部分" class="image">
+                            <p class="image-caption">Mouse Sway関連部分</p>
                         </li>
-                        <li class="list-item">Trasnform (Modify) Bone 노드를 추가하고 Mouse Sway 코멘트 노드의 앞에 연결합니다.</li>
-                        <li class="list-item">AimPitch 변수값으로 Rotator를 만들고 노드의 Rotation에 적용합니다.
-                            <img src="img/image_104.png" alt="Transform Bone 노드 적용" class="image">
-                            <p class="image-caption">Transform Bone 노드 적용</p>
+                        <li class="list-item">Transform (Modify) Boneノードを追加し、Mouse Swayコメントノードの前に接続します。</li>
+                        <li class="list-item">AimPitch変数値でRotatorを作成し、ノードのRotationに適用します。
+                            <img src="img/image_104.png" alt="Transform Boneノード適用" class="image">
+                            <p class="image-caption">Transform Boneノード適用</p>
                         </li>
                     </ol>
                 </li>
-                <li class="list-item">레벨을 실행하고 기능을 테스트합니다.
+                <li class="list-item">レベルを実行し機能をテストします。
                     
-                    미라지 캐릭터가 플레이어 캐릭터와 같은 방향을 조준하며 발사하게 되었습니다.
+                    ミラージュキャラクターがプレイヤーキャラクターと同じ方向を照準し射撃するようになりました。
 
-                    <img src="img/image_105.png" alt="위치 회전 복제 테스트" class="image">
-                    <p class="image-caption">위치 회전 복제 테스트</p>
+                    <img src="img/image_105.png" alt="位置回転複製テスト" class="image">
+                    <p class="image-caption">位置回転複製テスト</p>
                 </li>
             </ol>
         </section>
@@ -2361,8 +2361,8 @@ private:
 
     
 
-    <!-- 이미지 모달 컴포넌트 include -->
-    <!-- 이미지 모달 - 모든 HTML 문서에서 재사용 가능한 공통 컴포넌트 -->
+    <!-- Image modal component include -->
+    <!-- Image modal - Common component reusable in all HTML documents -->
     <div id="imageModal" class="image-modal">
         <div class="image-modal-content">
             <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
@@ -2370,6 +2370,6 @@ private:
             <div id="modalCaption" class="image-modal-caption"></div>
         </div>
     </div>
-    <!-- JavaScript는 js/image-modal.js와 js/syntax-highlighting.js에서 자동 로드됨 -->
+    <!-- JavaScript is automatically loaded from js/image-modal.js and js/syntax-highlighting.js -->
 </body>
 </html> 
